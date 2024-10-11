@@ -5,6 +5,7 @@ import FabricText from "../classes/text";
 import ButtonImage from "../classes/imageButton";
 import FabricInputField from "../classes/inputField";
 
+
 const CanvasArea = ({
   elements,
   onUpdatePosition,
