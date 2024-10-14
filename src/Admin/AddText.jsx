@@ -8,6 +8,7 @@ import { API_KEY } from "../constant";
 const AddText = () => {
   const canvasRef = useRef(null);
   const [canvasObj, setCanvasObj] = useState(null);
+  const [boundingBox, setBoundingBox] = useState({ width: 0, height: 0 });
   const [elementData, setElementData] = useState({
     id: Date.now(),
     type: "Text",
@@ -57,6 +58,12 @@ const AddText = () => {
           id: fabricElement.id,
         }));
       });
+      // Calculate bounding box once the element is added
+      const boundingRect = fabricElement.getBoundingRect();
+      setBoundingBox({
+        width: boundingRect.width,
+        height: boundingRect.height,
+      });
     }
   };
 
@@ -86,6 +93,13 @@ const AddText = () => {
       selectable: true, // Allow dragging
       hasControls: true, // Show controls for resizing, etc.
       hasBorders: true, // Show borders
+    });
+
+    // Calculate bounding box
+    const boundingRect = fabricElement.getBoundingRect();
+    setBoundingBox({
+      width: boundingRect.width,
+      height: boundingRect.height,
     });
 
     return fabricElement;
@@ -189,6 +203,10 @@ const AddText = () => {
             )}
           </div>
         ))}
+        <div className="mt-4">
+          <p>Bounding Box Width: {boundingBox.width}</p>
+          <p>Bounding Box Height: {boundingBox.height}</p>
+        </div>
         {!loading ? (
           <button
             onClick={handleSubmit}

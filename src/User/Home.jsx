@@ -12,6 +12,7 @@ const Home = () => {
   // State for holding UI elements, their positions, the selected element, and generated code
   const [elements, setElements] = useState([]);
   const [positions, setPositions] = useState([]);
+  const [heights, setHeights] = useState([]);
   const [selectedElement, setSelectedElement] = useState(null);
   const [generatedCode, setGeneratedCode] = useState("");
   const [codeDisplay, setCodeDisplay] = useState(false);
@@ -29,6 +30,11 @@ const Home = () => {
       ...prev,
       [updatedElement.id]: { x: 100, y: 100 }, // Initialize position for the new element
     }));
+
+    setHeights((prev) => ({
+      ...prev,
+      [updatedElement.id]: { height: 0 },
+    }));
   };
 
   // Function to update the position of an element
@@ -36,6 +42,13 @@ const Home = () => {
     setPositions((prev) => ({
       ...prev,
       [element.id]: { x: element.x, y: element.y }, // Update position for the specific element
+    }));
+  };
+
+  const handleUpdateSize = (element) => {
+    setHeights((prev) => ({
+      ...prev,
+      [element.id]: { height: element.height }, // Update height only
     }));
   };
 
@@ -51,79 +64,96 @@ const Home = () => {
   const handleGenerateCode = () => {
     setCodeDisplay(!codeDisplay);
 
+    // Collect all element names for the global declaration
+    let globalElementNames = elements
+      .map(
+        (el, index) =>
+          `${el.type === "BasicButton" ? "Button" : el.type}_${index + 1}`
+      )
+      .join(", ");
+
     let pythonCode = `
 def create_ui(window):
+
+  global ${globalElementNames}  # Declaring all UI elements globally
 `; // Initial code string
 
     elements.forEach((el, index) => {
       const pos = positions[el.id] || { x: 50, y: 50 }; // Get position or default
-      let params = `(window=window, x=${pos.x}, y=${pos.y}`;
+      const elHeight = heights[el.id]?.height || 0;
+      let params = `(window=window, x=${pos.x}, y=${
+        !height ? 400 - pos.y - elHeight : height - pos.y - elHeight
+      }`;
 
       // Handle parameters for each element type
       switch (el.type) {
         case "BasicButton":
           params += `, width=${el.width}, height=${el.height}, text='${el.text}',
-          font = '${el.fontFamily}', font_size=${el.fontSize}, font_color = '${el.textColor}',
-          idle_color = '${el.idleColor}', hover_color = '${el.hoverColor}',  
-          border_color='${el.borderColor}', border_thickness=${el.borderThickness},
-          on_hover=${el.type}${index}_on_hover, on_click=${el.type}${index}_on_click, on_release=${el.type}${index}_on_release, name = "${el.type}${index}_name"
-          `;
+                font = '${el.fontFamily}', font_size=${el.fontSize}, font_color = '${el.textColor}',
+                idle_color = '${el.idleColor}', hover_color = '${el.hoverColor}', clickedColor=${el.clickedColor} ,  
+                border_color='${el.borderColor}', border_thickness=${el.borderThickness},
+                on_hover=None, on_click=None, on_release=None, name = "${el.type}_${index}"
+                `;
           break;
 
         case "InputField":
           params += `, ${el.width}, ${el.height}, placeholder='${el.placeholder}', 
-                     bg_color='${el.bgColor}', border_color='${el.borderColor}', 
-                     border_thickness=${el.borderThickness}, text_color='${el.textColor}', 
-                     placeholder_color='${el.placeholderColor}', font_size=${el.fontSize}, 
-                     cursor_blink_speed=${el.cursorBlinkSpeed}, padding=${el.padding}`;
+                         bg_color='${el.bgColor}', border_color='${el.borderColor}', 
+                         border_thickness=${el.borderThickness}, text_color='${el.textColor}', 
+                         placeholder_color='${el.placeholderColor}', font_size=${el.fontSize}, 
+                         cursor_blink_speed=${el.cursorBlinkSpeed}, padding=${el.padding}`;
           break;
 
         case "Text":
-          let Bold = (el.bold === true) ? 'True' : 'False'
-          let Italic = (el.italic === true) ? 'True' : 'False'
-          let Underline = (el.underline === true) ? 'True' : 'False'
-          let Strike = (el.strikethrough === true) ? 'True' : 'False'
+          let Bold = el.bold === true ? "True" : "False";
+          let Italic = el.italic === true ? "True" : "False";
+          let Underline = el.underline === true ? "True" : "False";
+          let Strike = el.strikethrough === true ? "True" : "False";
           params += `, text='${el.text}',
-          font="Roboto", font_color='${el.color}', font_size=${el.fontSize},
-          bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}`;
+                font="Roboto", font_color='${el.color}', font_size=${el.fontSize},
+                bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}`;
           break;
 
         case "Toggle":
           params += `, ${el.width}, ${el.height}, initial_state=${el.initialState}, 
-                     border_color='${el.borderColor}', border_thickness=${el.borderThickness}, 
-                     colors={'onColor': '${el.colors.onColor}', 'offColor': '${el.colors.offColor}', 'handleColor': '${el.colors.handleColor}'}, scale=${el.scale}`;
+                         border_color='${el.borderColor}', border_thickness=${el.borderThickness}, 
+                         colors={'onColor': '${el.colors.onColor}', 'offColor': '${el.colors.offColor}', 'handleColor': '${el.colors.handleColor}'}, scale=${el.scale}`;
           break;
 
         case "Slider":
           params += `, ${el.width}, ${el.height}, min_value=${el.minValue}, 
-                     max_value=${el.maxValue}, initial_value=${el.initialValue}, 
-                     colors={'trackColor': '${el.colors.trackColor}', 'fillColor': '${el.colors.fillColor}', 'knobColor': '${el.colors.knobColor}'}, 
-                     knob_size=${el.knobSize}, font_size=${el.fontSize}, 
-                     text_color='${el.textColor}', text_offset=${el.textOffset}, 
-                     show_text=${el.showText}`;
+                         max_value=${el.maxValue}, initial_value=${el.initialValue}, 
+                         colors={'trackColor': '${el.colors.trackColor}', 'fillColor': '${el.colors.fillColor}', 'knobColor': '${el.colors.knobColor}'}, 
+                         knob_size=${el.knobSize}, font_size=${el.fontSize}, 
+                         text_color='${el.textColor}', text_offset=${el.textOffset}, 
+                         show_text=${el.showText}`;
           break;
 
         case "Checkbox":
           params += `, ${el.width}, ${el.height}, checked=${el.checked}, 
-                     border_color='${el.borderColor}', border_thickness=${el.borderThickness}, 
-                     scale=${el.scale}`;
+                         border_color='${el.borderColor}', border_thickness=${el.borderThickness}, 
+                         scale=${el.scale}`;
           break;
 
         case "RadioButton":
           params += `, ${el.size}, num_buttons=${
             el.numButtons
           }, selected_index=${el.selectedIndex}, 
-                     layout='${el.layout}', gap=${el.gap}, scale=${el.scale}, 
-                     border_color='${el.borderColor}', border_thickness=${
+                         layout='${el.layout}', gap=${el.gap}, scale=${
+            el.scale
+          }, 
+                         border_color='${el.borderColor}', border_thickness=${
             el.borderThickness
           }, 
-                     colors={'selectedColor': '${
-                       el.colors.selectedColor
-                     }', 'unselectedColor': '${el.colors.unselectedColor}'}, 
-                     labels=${JSON.stringify(el.labels)}, font_size=${
+                         colors={'selectedColor': '${
+                           el.colors.selectedColor
+                         }', 'unselectedColor': '${
+            el.colors.unselectedColor
+          }'}, 
+                         labels=${JSON.stringify(el.labels)}, font_size=${
             el.fontSize
           }, 
-                     text_color='${el.textColor}', text_offset=${
+                         text_color='${el.textColor}', text_offset=${
             el.textOffset
           }`;
           break;
@@ -132,40 +162,45 @@ def create_ui(window):
           params += `, ${el.width}, ${el.height}, options=${JSON.stringify(
             el.options
           )}, 
-                     placeholder='${el.placeholder}', font_size=${el.fontSize}, 
-                     text_color='${el.textColor}', bg_color='${el.bgColor}', 
-                     border_color='${el.borderColor}', border_thickness=${
+                         placeholder='${el.placeholder}', font_size=${
+            el.fontSize
+          }, 
+                         text_color='${el.textColor}', bg_color='${
+            el.bgColor
+          }', 
+                         border_color='${el.borderColor}', border_thickness=${
             el.borderThickness
           }, 
-                     dropdown_bg_color='${el.dropdownBgColor}', hover_color='${
-            el.hoverColor
-          }', padding=${el.padding}`;
+                         dropdown_bg_color='${
+                           el.dropdownBgColor
+                         }', hover_color='${el.hoverColor}', padding=${
+            el.padding
+          }`;
           break;
 
         case "ProgressBar":
           params += `, ${el.width}, ${el.height}, min_value=${el.minValue}, 
-                     max_value=${el.maxValue}, initial_value=${el.initialValue}, 
-                     scale=${el.scale}, font_size=${el.fontSize}, text_color='${el.textColor}', 
-                     text_offset=${el.textOffset}, show_text=${el.showText}`;
+                         max_value=${el.maxValue}, initial_value=${el.initialValue}, 
+                         scale=${el.scale}, font_size=${el.fontSize}, text_color='${el.textColor}', 
+                         text_offset=${el.textOffset}, show_text=${el.showText}`;
           break;
         case "Image":
           params += `, image_path = "${el.imageName}" scale_value = ${el.scale_value}`;
         case "ButtonImage":
           params += `, idle_image = "./assets/${el.id}-idle.png",
-                     hover_image = "./assets/${el.id}-hover.png",
-                       clicked_image = "./assets/${el.id}-clicked.png",
-                        scale = ${el.scale}`;
+                         hover_image = "./assets/${el.id}-hover.png",
+                           clicked_image = "./assets/${el.id}-clicked.png",
+                            scale = ${el.scale}`;
 
         default:
           break;
       }
 
       params += ")";
-      pythonCode += ` #Element ${index + 1}
-  ${el.type}${index + 1} = pv.${
-        el.type
-      }${params}\n`;
-      //pythonCode += 'ui_elements.append(' + el.type + ')\n';
+      pythonCode += ` 
+    #Element ${index + 1}\n   ${
+        el.type === "BasicButton" ? "Button" : el.type
+      }_${index + 1} = pv.${el.type}${params}\n`;
     });
 
     pythonCode += `
@@ -173,7 +208,9 @@ def create_ui(window):
     
 def main():
   # Create a window for the calculator
-  window = pv.Window(width=${!width ? 700 : width},height=${!height ? 400 : height}, title="PyVisual")
+  window = pv.Window(width=${!width ? 700 : width},height=${
+      !height ? 400 : height
+    }, title="PyVisual")
   create_ui(window)
   # Display the window
   window.show()
@@ -258,6 +295,7 @@ if __name__ == '__main__':
           <CanvasArea
             elements={elements} // Pass down the elements to CanvasArea
             onUpdatePosition={handleUpdatePosition} // Pass down the position update handler
+            onUpdateSize={handleUpdateSize}
             onScaleElement={handleScaleElement} // Pass down the scale element handler
             setSelectedElement={setSelectedElement} // Pass down the selected element setter
             positions={positions}

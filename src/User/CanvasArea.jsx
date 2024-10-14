@@ -5,10 +5,10 @@ import FabricText from "../classes/text";
 import ButtonImage from "../classes/imageButton";
 import FabricInputField from "../classes/inputField";
 
-
 const CanvasArea = ({
   elements,
   onUpdatePosition,
+  onUpdateSize,
   onScaleElement,
   setSelectedElement,
   positions,
@@ -21,6 +21,7 @@ const CanvasArea = ({
   const [selected, setSelected] = useState(null);
   const [elementData, setElementData] = useState(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [size, setSize] = useState({ width: 0, height: 0 }); // State for height and width
 
   // Initialize Fabric canvas
   useEffect(() => {
@@ -74,6 +75,7 @@ const CanvasArea = ({
               handleElementMovement(fabricElement, element.id);
               setElementData(element);
               onSelectedElement();
+              handleElementSizing(fabricElement, element.id); // Update size when selected
             });
           }
         } catch (error) {
@@ -304,6 +306,18 @@ const CanvasArea = ({
     onUpdatePosition({ id, x: xPos, y: yPos });
   };
 
+  // Handle element sizing and update width/height
+  const handleElementSizing = (element, id) => {
+    const width = element.width * element.scaleX; // scaled width
+    const height = element.height * element.scaleY; // scaled height
+
+    // Only update size if it has changed
+    if (size.width !== width.toFixed(0) || size.height !== height.toFixed(0)) {
+      setSize({ width: width.toFixed(0), height: height.toFixed(0) });
+      onUpdateSize({ id, width: width.toFixed(0), height: height.toFixed(0) });
+    }
+  };
+
   return (
     <div className="flex items-center justify-center p-4 relative">
       <canvas ref={canvasRef} id="canvas" className="border shadow-lg" />
@@ -311,6 +325,8 @@ const CanvasArea = ({
         <div className="absolute top-2 left-2 p-2 bg-blue-100 border border-blue-300 rounded">
           <p>X: {position.x}</p>
           <p>Y: {position.y}</p>
+          <p>Width: {size.width}</p>
+          <p>Height: {size.height}</p>
         </div>
       )}
     </div>
