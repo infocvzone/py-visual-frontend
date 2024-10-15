@@ -9,6 +9,8 @@ import { API_KEY } from "../constant";
 const AddButton = () => {
   const canvasRef = useRef(null);
   const [canvasObj, setCanvasObj] = useState(null);
+  const [boundingBox, setBoundingBox] = useState({ width: 0, height: 0 });
+  const [Fonts, setFont] = useState([]);
   const [elementData, setElementData] = useState({
     id: Date.now(),
     type: "BasicButton",
@@ -24,7 +26,7 @@ const AddButton = () => {
     hoverColor: "#7cc8f4",
     clickedColor: "#155980",
     borderColor: "#000000",
-    borderThickness: 1,
+    borderThickness: 0,
   });
 
   const [loading, setLoading] = useState(false);
@@ -61,20 +63,46 @@ const AddButton = () => {
           id: fabricElement.id,
         }));
       });
+      // Calculate bounding box once the element is added
+      const boundingRect = fabricElement.getBoundingRect();
+      setBoundingBox({
+        width: boundingRect.width,
+        height: boundingRect.height,
+      });
     }
+  };
+
+  const calculateCenterPosition = (canvas) => {
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    return { centerX, centerY };
   };
 
   useEffect(() => {
     addElementToCanvas();
   }, [canvasObj, elementData]); // Trigger when canvasObj or elementData changes
 
+  useEffect(() => {
+    const fetchFonts = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/fonts/`);
+        setFont(response.data); // Assuming response.data contains an array of font objects
+      } catch (error) {
+        console.log("error:", error);
+      }
+    };
+
+    fetchFonts();
+  }, []); // Added empty dependency array to run only once on mount
+
   const createFabricElement = (element) => {
     if (!canvasObj) return null;
+    const { centerX, centerY } = calculateCenterPosition(canvasObj);
 
     const fabricElement = new FabricButton(
       canvasObj,
-      element.x,
-      element.y,
+      centerX - element.width / 2, // Set text's initial display at canvas center
+      centerY - element.height / 2,
       element.width,
       element.height,
       element.text,
@@ -96,6 +124,12 @@ const AddButton = () => {
       hasControls: true, // Show controls for resizing, etc.
       hasBorders: true, // Show borders
     });
+    // Calculate bounding box and set it in the state
+    const boundingRect = fabricElement.getBoundingRect();
+    setBoundingBox({
+      width: boundingRect.width,
+      height: boundingRect.height,
+    });
 
     return fabricElement;
   };
@@ -113,7 +147,7 @@ const AddButton = () => {
       "x",
       "y",
     ].includes(name)
-      ? parseFloat(value) || 1 // Convert to float, default to 0 if NaN
+      ? parseFloat(value) || 0 // Convert to float, default to 0 if NaN
       : value || ""; // Keep as string or empty string
 
     setElementData((prev) => ({
@@ -126,10 +160,7 @@ const AddButton = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(
-        `${API_KEY}api/buttons/`,
-        elementData
-      );
+      const response = await axios.post(`${API_KEY}api/buttons/`, elementData);
       const result = await response.data;
       console.log("Button saved:", result);
       setLoading(false);
@@ -164,14 +195,13 @@ const AddButton = () => {
                 onChange={handleInputChange}
                 className="border p-1 rounded"
               >
-                <option value="Arial">Arial</option>
-                <option value="Courier New">Courier New</option>
-                <option value="Georgia">Georgia</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Trebuchet MS">Trebuchet MS</option>
-                <option value="Verdana">Verdana</option>
-                <option value="sans-serif">Sans-Serif</option>
-                <option value="serif">Serif</option>
+                {/* Map the fetched fonts to options */}
+                {Fonts.map((font, index) => (
+                  <option key={index} value={font.name}>
+                    {font.name}{" "}
+                    {/* Assuming 'family' is the property holding the font name */}
+                  </option>
+                ))}
               </select>
             ) : (
               <input

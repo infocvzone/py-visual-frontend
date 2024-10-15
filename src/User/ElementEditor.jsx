@@ -4,6 +4,20 @@ import { API_KEY } from "../constant";
 
 const ElementEditor = ({ selectedElement, elements, setElements }) => {
   const [editedElement, setEditedElement] = useState(null);
+  const [Fonts, setFont] = useState([]);
+
+  useEffect(() => {
+    const fetchFonts = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/fonts/`);
+        setFont(response.data); // Assuming response.data contains an array of font objects
+      } catch (error) {
+        console.log("error:", error);
+      }
+    };
+
+    fetchFonts();
+  }, []); // Added empty dependency array to run only once on mount
 
   // Update the local state when the selected element changes
   useEffect(() => {
@@ -248,16 +262,15 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="fontFamily"
                 value={editedElement.fontFamily}
                 onChange={handleChange}
-                className="border p-1 rounded w-[100px]"
+                className="border p-1 rounded"
               >
-                <option value="Arial">Arial</option>
-                <option value="Courier New">Courier New</option>
-                <option value="Georgia">Georgia</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Trebuchet MS">Trebuchet MS</option>
-                <option value="Verdana">Verdana</option>
-                <option value="sans-serif">Sans-Serif</option>
-                <option value="serif">Serif</option>
+                {/* Map the fetched fonts to options */}
+                {Fonts.map((font, index) => (
+                  <option key={index} value={font.name}>
+                    {font.name}{" "}
+                    {/* Assuming 'family' is the property holding the font name */}
+                  </option>
+                ))}
               </select>
             </div>
 

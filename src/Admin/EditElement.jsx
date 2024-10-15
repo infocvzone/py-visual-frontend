@@ -11,6 +11,7 @@ import { API_KEY } from "../constant";
 function EditElement({ type, element }) {
   const canvasRef = useRef(null);
   const [canvasObj, setCanvasObj] = useState(null);
+  const [Fonts, setFont] = useState([]);
   const [elementData, setElementData] = useState(element);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -34,6 +35,25 @@ function EditElement({ type, element }) {
     };
   }, []);
 
+  const calculateCenterPosition = (canvas) => {
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    return { centerX, centerY };
+  };
+
+  useEffect(() => {
+    const fetchFonts = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/fonts/`);
+        setFont(response.data); // Assuming response.data contains an array of font objects
+      } catch (error) {
+        console.log("error:", error);
+      }
+    };
+
+    fetchFonts();
+  }, []); // Added empty dependency array to run only once on mount
+
   const addElementToCanvas = async () => {
     if (!canvasObj) return;
     canvasObj.clear(); // Clear canvas before adding new elements
@@ -55,13 +75,14 @@ function EditElement({ type, element }) {
 
   const createFabricElement = (element) => {
     if (!canvasObj) return null;
+    const { centerX, centerY } = calculateCenterPosition(canvasObj);
 
     switch (element.type) {
       case "BasicButton":
         const fabricButtonElement = new FabricButton(
           canvasObj,
-          element.x,
-          element.y,
+          centerX - element.width / 2 || element.fontSize || 20, // Set text's initial display at canvas center
+          centerY - element.height / 2 || element.fontSize || 20,
           element.width,
           element.height,
           element.text,
@@ -88,8 +109,8 @@ function EditElement({ type, element }) {
 
       case "Text":
         const fabricTextElement = new FabricText(
-          element.x,
-          element.y,
+          centerX - element.fontSize, // Set text's initial display at canvas center
+          centerY - element.fontSize,
           element.text,
           element.scale,
           element.fontPath || null,
@@ -244,19 +265,18 @@ function EditElement({ type, element }) {
                 />
               ) : key === "fontFamily" ? (
                 <select
-                  name={key}
-                  value={elementData[key]}
+                  name="fontFamily"
+                  value={elementData.fontFamily}
                   onChange={handleInputChange}
-                  className="border p-1 rounded w-full"
+                  className="border p-1 rounded"
                 >
-                  <option value="">Select Font Family</option>
-                  <option value="Arial">Arial</option>
-                  <option value="Helvetica">Helvetica</option>
-                  <option value="Times New Roman">Times New Roman</option>
-                  <option value="Georgia">Georgia</option>
-                  <option value="Courier New">Courier New</option>
-                  <option value="Verdana">Verdana</option>
-                  <option value="Tahoma">Tahoma</option>
+                  {/* Map the fetched fonts to options */}
+                  {Fonts.map((font, index) => (
+                    <option key={index} value={font.name}>
+                      {font.name}{" "}
+                      {/* Assuming 'family' is the property holding the font name */}
+                    </option>
+                  ))}
                 </select>
               ) : key === "bold" ||
                 key === "italic" ||
@@ -299,8 +319,10 @@ function EditElement({ type, element }) {
           <img src={load} alt="loading" className="w-[50px] h-[50px]" />
         )}
       </div>
-      <div className="w-[70%] h-[400px] border-l p-4">
-        <canvas ref={canvasRef} />
+      <div className="w-[70%] h-[450px]">
+        <div className="flex items-center justify-center p-4 relative">
+          <canvas ref={canvasRef} id="canvas" className="border shadow-lg" />
+        </div>
       </div>
     </div>
   );

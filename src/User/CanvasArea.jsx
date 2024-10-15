@@ -65,9 +65,14 @@ const CanvasArea = ({
           if (fabricElement) {
             console.log(fabricElement);
             canvasObj.add(fabricElement);
-            fabricElement.on("moving", () =>
-              handleElementMovement(fabricElement, element.id)
-            );
+            fabricElement.on("moving", () => {
+              setSelected(fabricElement);
+              setSelectedElement(fabricElement);
+              handleElementMovement(fabricElement, element.id);
+              setElementData(element);
+              onSelectedElement();
+              handleElementSizing(fabricElement, element.id); // Update size when selected
+            });
             fabricElement.on("scaling", () => onScaleElement(fabricElement));
             fabricElement.on("selected", () => {
               setSelected(fabricElement);
@@ -320,13 +325,16 @@ const CanvasArea = ({
 
   return (
     <div className="flex items-center justify-center p-4 relative">
-      <canvas ref={canvasRef} id="canvas" className="border shadow-lg" />
+      <div
+        className={`bg-[url('https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80')] bg-cover bg-center w-[${Width || 700}px] h-[${Height || 400}] shadow-xl`}
+      >
+        <canvas ref={canvasRef} id="canvas" className="shadow-xl" />
+      </div>
+
       {selected && (
         <div className="absolute top-2 left-2 p-2 bg-blue-100 border border-blue-300 rounded">
           <p>X: {position.x}</p>
           <p>Y: {position.y}</p>
-          <p>Width: {size.width}</p>
-          <p>Height: {size.height}</p>
         </div>
       )}
     </div>

@@ -6,6 +6,7 @@ import ElementEditor from "./ElementEditor";
 import Header from "./Header";
 import JSZip from "jszip";
 import FileSaver from "file-saver";
+import axios from "axios";
 
 // Home component definition
 const Home = () => {
@@ -89,7 +90,7 @@ def create_ui(window):
       switch (el.type) {
         case "BasicButton":
           params += `, width=${el.width}, height=${el.height}, text='${el.text}',
-                font = '${el.fontFamily}', font_size=${el.fontSize}, font_color = '${el.textColor}',
+          font=assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf, font_size=${el.fontSize}, font_color = '${el.textColor}',
                 idle_color = '${el.idleColor}', hover_color = '${el.hoverColor}', clickedColor=${el.clickedColor} ,  
                 border_color='${el.borderColor}', border_thickness=${el.borderThickness},
                 on_hover=None, on_click=None, on_release=None, name = "${el.type}_${index}"
@@ -110,7 +111,7 @@ def create_ui(window):
           let Underline = el.underline === true ? "True" : "False";
           let Strike = el.strikethrough === true ? "True" : "False";
           params += `, text='${el.text}',
-                font="Roboto", font_color='${el.color}', font_size=${el.fontSize},
+                font=assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf, font_color='${el.color}', font_size=${el.fontSize},
                 bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}`;
           break;
 
@@ -224,7 +225,25 @@ if __name__ == '__main__':
 
   const handleDownloadProject = async () => {
     const zip = new JSZip();
-    const folder = zip.folder("assets"); // Create folder for assets
+    const assetsFolder = zip.folder("assets"); // Create folder for assets
+    const fontsFolder = assetsFolder.folder("fonts"); // Create folder for fonts
+
+    // Fetch available fonts from the database
+    let fontsData = [];
+    try {
+      const response = await axios.get("http://localhost:3000/api/fonts"); // Replace with your API URL
+      fontsData = response.data;
+    } catch (error) {
+      console.error("Error fetching fonts:", error);
+      return;
+    }
+
+    // Helper function to download a font by URL
+    const downloadFont = async (url) => {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to download font");
+      return await res.blob();
+    };
 
     // Generate the main.py file
     zip.file("main.py", generatedCode);
@@ -235,22 +254,44 @@ if __name__ == '__main__':
         // Convert the Base64 images into blobs and save them in the assets folder
         if (element.idleImage) {
           const idleImageBlob = base64ToBlob(element.idleImage);
-          folder.file(`${element.id}-idle.png`, idleImageBlob);
+          assetsFolder.file(`${element.id}-idle.png`, idleImageBlob);
         }
         if (element.hoverImage) {
           const hoverImageBlob = base64ToBlob(element.hoverImage);
-          folder.file(`${element.id}-hover.png`, hoverImageBlob);
+          assetsFolder.file(`${element.id}-hover.png`, hoverImageBlob);
         }
         if (element.clickedImage) {
           const clickImageBlob = base64ToBlob(element.clickedImage);
-          folder.file(`${element.id}-clicked.png`, clickImageBlob);
+          assetsFolder.file(`${element.id}-clicked.png`, clickImageBlob);
+        }
+      }
+
+      // Check if the element has a font that matches any fetched font
+      if (element.fontFamily) {
+        const matchedFont = fontsData.find(
+          (font) => font.name === element.fontFamily
+        );
+        if (matchedFont) {
+          try {
+            const fontBlob = await downloadFont(matchedFont.url);
+
+            // Create a sub-folder for the font inside the fonts folder
+            const fontSubFolder = fontsFolder.folder(matchedFont.name);
+            fontSubFolder.file(`${matchedFont.name}.ttf`, fontBlob);
+          } catch (error) {
+            console.error(
+              `Failed to download font: ${matchedFont.name}`,
+              error
+            );
+          }
         }
       }
     }
 
-    // Generate the zip file and trigger download
-    const content = await zip.generateAsync({ type: "blob" });
-    FileSaver.saveAs(content, "project.zip"); // Save the zip file as project.zip
+    // Generate the ZIP file
+    zip.generateAsync({ type: "blob" }).then((content) => {
+      saveAs(content, "project.zip");
+    });
   };
 
   // Helper function to convert Base64 to Blob
