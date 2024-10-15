@@ -92,10 +92,10 @@ def create_ui(window):
       switch (el.type) {
         case "BasicButton":
           params += `, width=${el.width}, height=${el.height}, text='${el.text}',
-          font=assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf, font_size=${el.fontSize}, font_color = '${el.textColor}',
-                idle_color = '${el.idleColor}', hover_color = '${el.hoverColor}', clickedColor=${el.clickedColor} ,  
+          font="assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf", font_size=${el.fontSize}, font_color = '${el.textColor}',
+                idle_color = '${el.idleColor}', hover_color = '${el.hoverColor}', clicked_color = '${el.clickedColor}' ,  
                 border_color='${el.borderColor}', border_thickness=${el.borderThickness},
-                on_hover=${el.onHover}, on_click=${el.onClick}, on_release=${el.onRelease}, name = "${el.name}"
+                on_hover=${(el.onHover === null) ? "None" : el.onHover}, on_click=${el.onClick === null ? "None" : el.onClick}, on_release=${el.onRelease === null ? "None" : el.onRelease}, name = "Button_${index+1}"
                 `;
           break;
 
@@ -113,7 +113,7 @@ def create_ui(window):
           let Underline = el.underline === true ? "True" : "False";
           let Strike = el.strikethrough === true ? "True" : "False";
           params += `, text='${el.text}',
-                font=assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf, font_color='${el.color}', font_size=${el.fontSize},
+                font="assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf", font_color='${el.color}', font_size=${el.fontSize},
                 bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}`;
           break;
 
@@ -207,7 +207,6 @@ def create_ui(window):
     });
 
     pythonCode += `
-    
     
 def main():
   # Create a window for the calculator
