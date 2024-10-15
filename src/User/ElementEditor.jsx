@@ -19,6 +19,24 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
     fetchFonts();
   }, []); // Added empty dependency array to run only once on mount
 
+  useEffect(() => {
+    WebFont.load({
+      google: {
+        families: ['Roboto', 'Open Sans'],
+      },
+    });
+  }, [editedElement]);
+
+  const loadFont = (fontName) => {
+    WebFont.load({
+      google: {
+        families: [fontName],
+      },
+    });
+  };
+
+
+
   // Update the local state when the selected element changes
   useEffect(() => {
     if (selectedElement) {
@@ -40,7 +58,10 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     let updatedValue = value;
-    if (name === "borderThickness") {
+    if(name === "fontFamily"){
+      loadFont(value);
+    }
+    if (name === "borderThickness" || name === "width" || name === "height") {
       updatedValue = parseFloat(value);
     }
     const updatedElement = {
@@ -110,7 +131,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
     switch (editedElement.type) {
       case "BasicButton":
         return (
-          <>
+          <div className="flex flex-wrap gap-2">
             <div className="flex flex-col items-center justify-center">
               <label className="block">Text</label>
               <input
@@ -131,6 +152,43 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 onChange={handleChange}
                 className="p-2 h-8 w-12 border rounded"
               />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Width</label>
+              <input
+                type="number"
+                name="width"
+                value={editedElement.width || 150}
+                onChange={handleChange}
+                className="p-2 h-8 w-12 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Height</label>
+              <input
+                type="number"
+                name="height"
+                value={editedElement.height || 30}
+                onChange={handleChange}
+                className="p-2 h-8 w-12 border rounded"
+              />
+            </div>
+            <div className="">
+              <label className="block">Font Family</label>
+              <select
+                name="fontFamily"
+                value={editedElement.fontFamily}
+                onChange={handleChange}
+                className="border p-1 rounded"
+              >
+                {/* Map the fetched fonts to options */}
+                {Fonts.map((font, index) => (
+                  <option key={index} value={font.name}>
+                    {font.name}{" "}
+                    {/* Assuming 'family' is the property holding the font name */}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="flex flex-col items-center justify-center">
               <label className="block">Border</label>
@@ -193,7 +251,47 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 className="p-2 h-8 border rounded"
               />
             </div>
-          </>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">On_hover</label>
+              <input
+                type="text"
+                name="onHover"
+                value={editedElement.onHover}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">On_Click</label>
+              <input
+                type="text"
+                name="onClick"
+                value={editedElement.onClick}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">On_Release</label>
+              <input
+                type="text"
+                name="onRelease"
+                value={editedElement.onRelease}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Name</label>
+              <input
+                type="text"
+                name="name"
+                value={editedElement.name}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+          </div>
         );
       case "InputField":
         return (
@@ -518,7 +616,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
   };
 
   return (
-    <div className="flex gap-4 p-1 border mb-2 items-center justify-center bg-white shadow-md w-[90%]  mt-4 rounded-full mx-auto">
+    <div className="flex gap-2 p-2 border mb-2 items-center justify-center bg-white shadow-md w-[95%]  mt-4 rounded-xs mx-auto">
       {renderPropertiesByType()}
       <div className="mt-6 flex justify-between">
         <button

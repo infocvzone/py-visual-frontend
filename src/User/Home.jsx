@@ -20,6 +20,7 @@ const Home = () => {
   const [codeDisplay, setCodeDisplay] = useState(false);
   const [height, setHeight] = useState();
   const [width, setWidth] = useState();
+  const [bgImage , setBgImage] = useState("https://img.freepik.com/free-photo/white-png-base_23-2151645368.jpg?size=626&ext=jpg&ga=GA1.1.1880011253.1728950400&semt=ais_hybrid-rr-similar");
 
   // Function to add a new element
   const handleAddElement = (type, element) => {
@@ -94,7 +95,7 @@ def create_ui(window):
           font=assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf, font_size=${el.fontSize}, font_color = '${el.textColor}',
                 idle_color = '${el.idleColor}', hover_color = '${el.hoverColor}', clickedColor=${el.clickedColor} ,  
                 border_color='${el.borderColor}', border_thickness=${el.borderThickness},
-                on_hover=None, on_click=None, on_release=None, name = "${el.type}_${index}"
+                on_hover=${el.onHover}, on_click=${el.onClick}, on_release=${el.onRelease}, name = "${el.name}"
                 `;
           break;
 
@@ -322,6 +323,9 @@ if __name__ == '__main__':
         {/* Main container for layout */}
         <Sidebar
           onAddElement={handleAddElement} // Pass down the add element handler
+          onBgImageChange={(image)=>{
+            setBgImage(image)
+          }}
         />
         <div className="flex-1 relative">
           {" "}
@@ -343,6 +347,7 @@ if __name__ == '__main__':
             positions={positions}
             Height={height}
             Width={width}
+            Image={bgImage}
             selectedIndex={(elementData) => {
               setSelectedElement(elementData);
             }}

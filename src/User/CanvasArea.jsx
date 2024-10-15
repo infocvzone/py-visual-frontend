@@ -15,6 +15,7 @@ const CanvasArea = ({
   Height,
   Width,
   selectedIndex,
+  Image,
 }) => {
   const canvasRef = useRef(null);
   const [canvasObj, setCanvasObj] = useState(null);
@@ -35,9 +36,10 @@ const CanvasArea = ({
       selection: false,
     });
     setCanvasObj(canvas);
+    console.log(Image);
 
     return () => canvas.dispose();
-  }, [Height, Width]);
+  }, [Height, Width, Image]);
 
   const onSelectedElement = () => {
     selectedIndex(elementData);
@@ -326,7 +328,14 @@ const CanvasArea = ({
   return (
     <div className="flex items-center justify-center p-4 relative">
       <div
-        className={`bg-[url('https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80')] bg-cover bg-center w-[${Width || 700}px] h-[${Height || 400}] shadow-xl`}
+        style={{
+          backgroundImage: `url('${Image}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          width: `${Width || 700}px`,
+          height: `${Height || 400}px`,
+          boxShadow: "0 10px 15px rgba(0, 0, 0, 0.1)", // Equivalent to shadow-xl
+        }}
       >
         <canvas ref={canvasRef} id="canvas" className="shadow-xl" />
       </div>

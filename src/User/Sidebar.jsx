@@ -7,12 +7,13 @@ import TextComponent from "../components/textComponent";
 import ImageSvg from "../assets/categories/image-svg.svg";
 import { API_KEY } from "../constant";
 
-const Sidebar = ({ onAddElement }) => {
+const Sidebar = ({ onAddElement, onBgImageChange}) => {
   const hiddenFileInput = React.useRef(null);
   const [activeCategory, setActiveCategory] = useState(null);
   const [buttonData, setButtonData] = useState([]);
   const [inputfield, setInputfield] = useState([]);
   const [textData, setTextData] = useState([]);
+  const [ImageData, setImageData] = useState([]);
   const [buttonimageData, setButtonImageData] = useState([]); // New state for images
   const [loading, setLoading] = useState(true);
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -20,9 +21,7 @@ const Sidebar = ({ onAddElement }) => {
   useEffect(() => {
     const fetchButtonData = async () => {
       try {
-        const response = await axios.get(
-          `${API_KEY}api/buttons/`
-        );
+        const response = await axios.get(`${API_KEY}api/buttons/`);
         setButtonData(response.data);
       } catch (error) {
         console.error("Error fetching button data:", error);
@@ -33,9 +32,7 @@ const Sidebar = ({ onAddElement }) => {
 
     const fetchTextData = async () => {
       try {
-        const response = await axios.get(
-          `${API_KEY}api/texts/`
-        );
+        const response = await axios.get(`${API_KEY}api/texts/`);
         setTextData(response.data);
       } catch (error) {
         console.error("Error fetching text data:", error);
@@ -46,9 +43,7 @@ const Sidebar = ({ onAddElement }) => {
 
     const fetchImageData = async () => {
       try {
-        const response = await axios.get(
-          `${API_KEY}api/buttonImages/`
-        );
+        const response = await axios.get(`${API_KEY}api/buttonImages/`);
         setButtonImageData(response.data); // Fetch and store image data
       } catch (error) {
         console.error("Error fetching images:", error);
@@ -57,20 +52,27 @@ const Sidebar = ({ onAddElement }) => {
 
     const fetchInputfieldData = async () => {
       try {
-        const response = await axios.get(
-          `${API_KEY}api/inputfields`
-        );
+        const response = await axios.get(`${API_KEY}api/inputfields`);
         setInputfield(response.data); // Fetch and store image data
       } catch (error) {
         console.error("Error fetching images:", error);
       }
     };
-    
+    const fetchBgImagesData = async () => {
+      try {
+        const response = await axios.get(`${API_KEY}api/images`);
+        setImageData(response.data); // Fetch and store image data
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
 
     fetchButtonData();
     fetchTextData();
     fetchImageData(); // Fetch images
     fetchInputfieldData();
+    fetchBgImagesData();
   }, []);
 
   const toggleCategory = (category) => {
@@ -80,6 +82,10 @@ const Sidebar = ({ onAddElement }) => {
   const handleClick = () => {
     hiddenFileInput.current.click(); // Trigger the hidden input when the button is clicked
   };
+
+  const handleImageChange = (image)=>{
+    onBgImageChange(image);
+  }
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
@@ -173,6 +179,24 @@ const Sidebar = ({ onAddElement }) => {
               <h1 className="text-xs mt-1 text-center text-black">Input</h1>
             </button>
           </div>
+
+          {/* buttonImage Button */}
+          <div className="flex items-center">
+            <button onClick={() => toggleCategory("background")}>
+              <img
+                src={ImageSvg}
+                alt="background"
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                  activeCategory === "background"
+                    ? "border-blue-400"
+                    : "border-black"
+                }`}
+              />
+              <h1 className="text-xs mt-1 text-center text-black">
+                Background
+              </h1>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -258,6 +282,24 @@ const Sidebar = ({ onAddElement }) => {
                     className="w-full border h-[80px] bg-white p-2 shadow-lg rounded-lg"
                     onClick={() => onAddElement("InputField", input)}
                   ></button>
+                ))}
+              </div>
+            )}
+
+            {activeCategory === "background" && (
+              <div className="grid grid-cols-2 gap-1">
+                {ImageData.map((image) => (
+                  <button
+                    key={image._id}
+                    className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
+                    onClick={() => handleImageChange(image.url)}
+                  >
+                    <img
+                      src={image.url}
+                      alt={image.name}
+                      className="w-[150px] h-[120px]"
+                    />
+                  </button>
                 ))}
               </div>
             )}
