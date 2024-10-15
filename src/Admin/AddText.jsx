@@ -204,7 +204,7 @@ const AddText = () => {
       if (response.data.success) {
         // Fetch updated font list
         const updatedFontsResponse = await axios.get(
-          `http://localhost:3000/api/fonts/`
+          `${API_KEY}api/fonts/`
         );
         setFont(updatedFontsResponse.data);
         Swal.fire({
