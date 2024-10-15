@@ -7,6 +7,7 @@ import Header from "./Header";
 import JSZip from "jszip";
 import FileSaver from "file-saver";
 import axios from "axios";
+import { API_KEY } from "../constant";
 
 // Home component definition
 const Home = () => {
@@ -231,7 +232,7 @@ if __name__ == '__main__':
     // Fetch available fonts from the database
     let fontsData = [];
     try {
-      const response = await axios.get("http://localhost:3000/api/fonts"); // Replace with your API URL
+      const response = await axios.get(`${API_KEY}api/fonts/`); // Replace with your API URL
       fontsData = response.data;
     } catch (error) {
       console.error("Error fetching fonts:", error);

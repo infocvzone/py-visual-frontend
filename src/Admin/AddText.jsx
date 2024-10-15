@@ -84,7 +84,7 @@ const AddText = () => {
   useEffect(() => {
     const fetchFonts = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/fonts/`);
+        const response = await axios.get(`${API_KEY}api/fonts/`);
         setFont(response.data); // Assuming response.data contains an array of font objects
       } catch (error) {
         console.log("error:", error);
@@ -192,7 +192,7 @@ const AddText = () => {
       setLoading(true);
       // Send font file to API
       const response = await axios.post(
-        `http://localhost:3000/api/fonts/`,
+        `${API_KEY}api/fonts/`,
         formData,
         {
           headers: {
