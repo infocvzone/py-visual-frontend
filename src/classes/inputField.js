@@ -14,7 +14,15 @@ class FabricInputField {
     fontSize = 15,
     cursorBlinkSpeed = 500,
     padding = 10,
-    fontFamily = "sans-serif"
+    fontFamily = "Roboto",
+    input_type = "text",
+    default_text = "",
+    padding_left = 10,
+    padding_right = 10,
+    padding_top = 0,
+    padding_bottom = 10,
+    border_style = ["bottom", "top", "right", "left"],
+    on_input = null
   ) {
     this.canvas = canvas;
     this.x = x;
@@ -37,6 +45,14 @@ class FabricInputField {
     this.cursorBlinkSpeed = cursorBlinkSpeed;
     this.padding = padding;
     this.fontFamily = fontFamily;
+    this.input_type = input_type;
+    this.padding_left = padding_left;
+    this.padding_right = padding_right;
+    this.padding_top = padding_top;
+    this.padding_bottom = padding_bottom;
+    this.default_text = default_text;
+    this.border_style = border_style;
+    this.on_input = on_input;
 
     // Create a Fabric rectangle to represent the input field
     this.inputRect = new fabric.Rect({

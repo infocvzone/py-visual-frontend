@@ -285,7 +285,8 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
         );
       case "InputField":
         return (
-          <>
+          <div className="flex flex-wrap gap-2">
+            {/* Placeholder */}
             <div className="">
               <label className="block">Placeholder</label>
               <input
@@ -293,20 +294,237 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="placeholder"
                 value={editedElement.placeholder || ""}
                 onChange={handleChange}
-                className="p-2 h-8 w-18 border rounded"
+                className="p-2 h-8 w-[120px] border rounded"
               />
             </div>
+
+            {/* Default Text */}
             <div className="">
-              <label className="block">Background</label>
+              <label className="block">Default Text</label>
+              <input
+                type="text"
+                name="default_text"
+                value={editedElement.default_text || ""}
+                onChange={handleChange}
+                className="p-2 h-8 w-[120px] border rounded"
+              />
+            </div>
+
+            {/* Input Type */}
+            <div className="">
+              <label className="block">Input Type</label>
+              <select
+                name="input_type"
+                value={editedElement.input_type || "text"}
+                onChange={handleChange}
+                className="p-2 h-8 w-[120px] border rounded"
+              >
+                <option value="text">Text</option>
+                <option value="number">Number</option>
+                <option value="email">Email</option>
+                <option value="password">Password</option>
+              </select>
+            </div>
+
+            {/* Width */}
+            <div className="">
+              <label className="block">Width</label>
+              <input
+                type="number"
+                name="width"
+                value={editedElement.width || 300}
+                onChange={handleChange}
+                className="p-2 h-8 w-[120px] border rounded"
+              />
+            </div>
+
+            {/* Height */}
+            <div className="">
+              <label className="block">Height</label>
+              <input
+                type="number"
+                name="height"
+                value={editedElement.height || 40}
+                onChange={handleChange}
+                className="p-2 h-8 w-[120px] border rounded"
+              />
+            </div>
+
+            {/* Background Color */}
+            <div className="">
+              <label className="block">Background Color</label>
               <input
                 type="color"
                 name="bgColor"
-                value={editedElement.bgColor || "#00000"}
+                value={editedElement.bgColor || "#ffffff"}
                 onChange={handleChange}
                 className="p-2 h-8 border rounded"
               />
             </div>
-          </>
+
+            {/* Border Color */}
+            <div className="">
+              <label className="block">Border Color</label>
+              <input
+                type="color"
+                name="borderColor"
+                value={editedElement.borderColor || "#c8c8c8"}
+                onChange={handleChange}
+                className="p-2 h-8 border rounded"
+              />
+            </div>
+
+            {/* Border Thickness */}
+            <div className="">
+              <label className="block">Border Thickness</label>
+              <input
+                type="number"
+                name="borderThickness"
+                value={editedElement.borderThickness || 1}
+                onChange={handleChange}
+                className="p-2 h-8 w-[120px] border rounded"
+              />
+            </div>
+
+            {/* Text Color */}
+            <div className="">
+              <label className="block">Text Color</label>
+              <input
+                type="color"
+                name="textColor"
+                value={editedElement.textColor || "#323232"}
+                onChange={handleChange}
+                className="p-2 h-8 border rounded"
+              />
+            </div>
+
+            {/* Placeholder Color 
+            <div className="">
+              <label className="block">Placeholder Color</label>
+              <input
+                type="color"
+                name="placeholderColor"
+                value={editedElement.placeholderColor || "#c8c8c8"}
+                onChange={handleChange}
+                className="p-2 h-8 border rounded"
+              />
+            </div>*/}
+
+            {/* Font Size */}
+            <div className="">
+              <label className="block">Font Size</label>
+              <input
+                type="number"
+                name="fontSize"
+                value={editedElement.fontSize || 15}
+                onChange={handleChange}
+                className="p-2 h-8 w-[120px] border rounded"
+              />
+            </div>
+
+            {/* Font Family */}
+            <div className="">
+              <label className="block">Font Family</label>
+              <select
+                name="fontFamily"
+                value={editedElement.fontFamily}
+                onChange={handleChange}
+                className="border p-1 rounded"
+              >
+                {/* Map the fetched fonts to options */}
+                {Fonts.map((font, index) => (
+                  <option key={index} value={font.name}>
+                    {font.name}{" "}
+                    {/* Assuming 'family' is the property holding the font name */}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Padding Left */}
+            <div className="">
+              <label className="block">Padding Left</label>
+              <input
+                type="number"
+                name="padding_left"
+                value={editedElement.padding_left || 10}
+                onChange={handleChange}
+                className="p-2 h-8 w-[120px] border rounded"
+              />
+            </div>
+
+            {/* Padding Right */}
+            <div className="">
+              <label className="block">Padding Right</label>
+              <input
+                type="number"
+                name="padding_right"
+                value={editedElement.padding_right || 10}
+                onChange={handleChange}
+                className="p-2 h-8 w-[120px] border rounded"
+              />
+            </div>
+
+            {/* Padding Top */}
+            <div className="">
+              <label className="block">Padding Top</label>
+              <input
+                type="number"
+                name="padding_top"
+                value={editedElement.padding_top || 0}
+                onChange={handleChange}
+                className="p-2 h-8 w-[120px] border rounded"
+              />
+            </div>
+
+            {/* Padding Bottom */}
+            <div className="">
+              <label className="block">Padding Bottom</label>
+              <input
+                type="number"
+                name="padding_bottom"
+                value={editedElement.padding_bottom || 10}
+                onChange={handleChange}
+                className="p-2 h-8 w-[120px] border rounded"
+              />
+            </div>
+
+            {/* Border Style 
+            <div className="">
+              <label className="block">Border Style</label>
+              <select
+                name="border_style"
+                value={
+                  editedElement.border_style || [
+                    "bottom",
+                    "top",
+                    "right",
+                    "left",
+                  ]
+                }
+                onChange={handleChange}
+                className="p-2 h-8 w-full border rounded"
+                multiple
+              >
+                <option value="bottom">Bottom</option>
+                <option value="top">Top</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+              </select>
+            </div>*/}
+
+            {/* onInput (Optional) */}
+            <div className="">
+              <label className="block">On Input (Function)</label>
+              <input
+                type="text"
+                name="on_input"
+                value={editedElement.on_input || ""}
+                onChange={handleChange}
+                className="p-2 h-8 w-[120px] border rounded"
+              />
+            </div>
+          </div>
         );
       case "Text":
         return (
