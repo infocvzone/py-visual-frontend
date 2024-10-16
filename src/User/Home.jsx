@@ -112,7 +112,7 @@ def create_ui(window):
           placeholder='${el.placeholder}', default_text="${el.text}", 
           text_padding_left=${el.padding_left}, text_padding_right=${el.padding_right
             }, text_padding_top=${el.padding_top}, text_padding_bottom=${el.padding_bottom},
-          font="${el.fontFamily}", font_size=${el.fontSize}, font_color="${el.textColor
+          font="assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf", font_size=${el.fontSize}, font_color="${el.textColor
             }",
           border_color='${el.borderColor}', border_thickness=${el.borderThickness
             }, 
