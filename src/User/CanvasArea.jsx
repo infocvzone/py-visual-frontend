@@ -16,6 +16,7 @@ const CanvasArea = ({
   Width,
   selectedIndex,
   Image,
+  bgColor,
 }) => {
   const canvasRef = useRef(null);
   const [canvasObj, setCanvasObj] = useState(null);
@@ -329,7 +330,8 @@ const CanvasArea = ({
     <div className="flex items-center justify-center p-4 relative">
       <div
         style={{
-          backgroundImage: `url('${Image}')`,
+          backgroundImage: Image ? `url('${Image}')` : "none",
+          backgroundColor: Image ? "transparent" : bgColor || "#ffffff", // Set BgColor or a fallback color
           backgroundSize: "cover",
           backgroundPosition: "center",
           width: `${Width || 700}px`,

@@ -7,7 +7,7 @@ import TextComponent from "../components/textComponent";
 import ImageSvg from "../assets/categories/image-svg.svg";
 import { API_KEY } from "../constant";
 
-const Sidebar = ({ onAddElement, onBgImageChange}) => {
+const Sidebar = ({ onAddElement, onBgImageChange }) => {
   const hiddenFileInput = React.useRef(null);
   const [activeCategory, setActiveCategory] = useState(null);
   const [buttonData, setButtonData] = useState([]);
@@ -83,9 +83,9 @@ const Sidebar = ({ onAddElement, onBgImageChange}) => {
     hiddenFileInput.current.click(); // Trigger the hidden input when the button is clicked
   };
 
-  const handleImageChange = (image)=>{
+  const handleImageChange = (image) => {
     onBgImageChange(image);
-  }
+  };
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
@@ -288,6 +288,16 @@ const Sidebar = ({ onAddElement, onBgImageChange}) => {
 
             {activeCategory === "background" && (
               <div className="grid grid-cols-2 gap-1">
+                <button
+                  className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
+                  onClick={() => handleImageChange(null)}
+                >
+                  <img
+                    src="https://img.freepik.com/free-photo/white-png-base_23-2151645368.jpg?size=626&ext=jpg&ga=GA1.1.1880011253.1728950400&semt=ais_hybrid-rr-similar"
+                    alt="null"
+                    className="w-[150px] h-[120px] border"
+                  />
+                </button>
                 {ImageData.map((image) => (
                   <button
                     key={image._id}

@@ -54,6 +54,22 @@ function EditElement({ type, element }) {
     fetchFonts();
   }, []); // Added empty dependency array to run only once on mount
 
+  useEffect(() => {
+    WebFont.load({
+      google: {
+        families: ["Poppins", "Open Sans"],
+      },
+    });
+  }, []);
+
+  const loadFont = (fontName) => {
+    WebFont.load({
+      google: {
+        families: [fontName],
+      },
+    });
+  };
+
   const addElementToCanvas = async () => {
     if (!canvasObj) return;
     canvasObj.clear(); // Clear canvas before adding new elements
@@ -150,6 +166,10 @@ function EditElement({ type, element }) {
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, type, value, checked } = e.target;
+
+    if (name === "fontFamily") {
+      loadFont(value);
+    }
 
     const updatedValue =
       type === "checkbox"

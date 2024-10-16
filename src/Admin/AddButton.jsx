@@ -83,6 +83,22 @@ const AddButton = () => {
   }, [canvasObj, elementData]); // Trigger when canvasObj or elementData changes
 
   useEffect(() => {
+    WebFont.load({
+      google: {
+        families: ["Poppins", "Open Sans"],
+      },
+    });
+  }, []);
+
+  const loadFont = (fontName) => {
+    WebFont.load({
+      google: {
+        families: [fontName],
+      },
+    });
+  };
+
+  useEffect(() => {
     const fetchFonts = async () => {
       try {
         const response = await axios.get(`${API_KEY}api/fonts/`);
@@ -137,6 +153,10 @@ const AddButton = () => {
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "fontFamily") {
+      loadFont(value);
+    }
 
     // Check if the field should be a number and convert if necessary
     const updatedValue = [

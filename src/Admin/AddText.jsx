@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 import load from "../assets/loading.gif";
 import { API_KEY } from "../constant";
 
-
 const AddText = () => {
   const canvasRef = useRef(null);
   const [canvasObj, setCanvasObj] = useState(null);
@@ -78,6 +77,22 @@ const AddText = () => {
   };
 
   useEffect(() => {
+    WebFont.load({
+      google: {
+        families: ["Roboto", "Open Sans"],
+      },
+    });
+  }, []);
+
+  const loadFont = (fontName) => {
+    WebFont.load({
+      google: {
+        families: [fontName],
+      },
+    });
+  };
+
+  useEffect(() => {
     addElementToCanvas();
   }, [canvasObj, elementData]); // Trigger when canvasObj or elementData changes
 
@@ -103,7 +118,7 @@ const AddText = () => {
     // Create the FabricText object and use the center position for display
     const fabricElement = new FabricText(
       centerX - element.fontSize, // Set text's initial display at canvas center
-      centerY -element.fontSize, // Set text's initial display at canvas center
+      centerY - element.fontSize, // Set text's initial display at canvas center
       element.text,
       element.scale,
       element.fontPath || null,
@@ -134,6 +149,10 @@ const AddText = () => {
   // Handle input changes, including parsing numerical values and handling checkboxes
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    if (name === "fontFamily") {
+      loadFont(value);
+    }
 
     // Determine the updated value based on the input type
     const updatedValue =
@@ -191,21 +210,15 @@ const AddText = () => {
     try {
       setLoading(true);
       // Send font file to API
-      const response = await axios.post(
-        `${API_KEY}api/fonts/`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${API_KEY}api/fonts/`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (response.data.success) {
         // Fetch updated font list
-        const updatedFontsResponse = await axios.get(
-          `${API_KEY}api/fonts/`
-        );
+        const updatedFontsResponse = await axios.get(`${API_KEY}api/fonts/`);
         setFont(updatedFontsResponse.data);
         Swal.fire({
           title: "Font Uploaded Successfully!",
@@ -232,52 +245,56 @@ const AddText = () => {
     <div className="flex border rounded shadow-sm">
       <div className="w-[30%] h-[400px] p-4 overflow-auto">
         <h2 className="text-lg font-bold">Properties</h2>
-        {Object.keys(elementData).map((key) => (
-          <div key={key} className="mb-2">
-            <label className="block">{key}:</label>
-            {key === "fontFamily" ? (
-              <select
-                name="fontFamily"
-                value={elementData.fontFamily}
-                onChange={handleInputChange}
-                className="border p-1 rounded"
-              >
-                {/* Map the fetched fonts to options */}
-                {Fonts.map((font, index) => (
-                  <option key={index} value={font.name}>
-                    {font.name}{" "}
-                    {/* Assuming 'family' is the property holding the font name */}
-                  </option>
-                ))}
-              </select>
-            ) : key === "bold" ||
-              key === "italic" ||
-              key === "underline" ||
-              key === "strikethrough" ? (
-              <input
-                type="checkbox"
-                name={key}
-                checked={elementData[key]}
-                onChange={handleInputChange}
-                className="border p-1 rounded"
-              />
-            ) : (
-              <input
-                type={
-                  key.includes("color")
-                    ? "color"
-                    : key.includes("fontSize")
-                    ? "number"
-                    : "text"
-                }
-                name={key}
-                value={elementData[key]}
-                onChange={handleInputChange}
-                className="border p-1 rounded"
-              />
-            )}
-          </div>
-        ))}
+        {Object.keys(elementData).map(
+          (key) =>
+            key !== "scale" && ( // Exclude 'scale' from rendering
+              <div key={key} className="mb-2">
+                <label className="block">{key}:</label>
+                {key === "fontFamily" ? (
+                  <select
+                    name="fontFamily"
+                    value={elementData.fontFamily}
+                    onChange={handleInputChange}
+                    className="border p-1 rounded"
+                  >
+                    {/* Map the fetched fonts to options */}
+                    {Fonts.map((font, index) => (
+                      <option key={index} value={font.name}>
+                        {font.name}{" "}
+                        {/* Assuming 'family' is the property holding the font name */}
+                      </option>
+                    ))}
+                  </select>
+                ) : key === "bold" ||
+                  key === "italic" ||
+                  key === "underline" ||
+                  key === "strikethrough" ? (
+                  <input
+                    type="checkbox"
+                    name={key}
+                    checked={elementData[key]}
+                    onChange={handleInputChange}
+                    className="border p-1 rounded"
+                  />
+                ) : (
+                  <input
+                    type={
+                      key.includes("color")
+                        ? "color"
+                        : key.includes("fontSize")
+                        ? "number"
+                        : "text"
+                    }
+                    name={key}
+                    value={elementData[key]}
+                    onChange={handleInputChange}
+                    className="border p-1 rounded"
+                    readOnly={["id", "type", "x", "y"].includes(key)} // Make specific fields non-editable
+                  />
+                )}
+              </div>
+            )
+        )}
         {!loading ? (
           <button
             onClick={handleTextSubmit}

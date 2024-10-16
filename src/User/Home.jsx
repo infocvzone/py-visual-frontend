@@ -20,7 +20,8 @@ const Home = () => {
   const [codeDisplay, setCodeDisplay] = useState(false);
   const [height, setHeight] = useState();
   const [width, setWidth] = useState();
-  const [bgImage , setBgImage] = useState("https://img.freepik.com/free-photo/white-png-base_23-2151645368.jpg?size=626&ext=jpg&ga=GA1.1.1880011253.1728950400&semt=ais_hybrid-rr-similar");
+  const [color, setColor] = useState();
+  const [bgImage, setBgImage] = useState(null);
 
   // Function to add a new element
   const handleAddElement = (type, element) => {
@@ -91,11 +92,25 @@ def create_ui(window):
       // Handle parameters for each element type
       switch (el.type) {
         case "BasicButton":
-          params += `, width=${el.width}, height=${el.height}, text='${el.text}',
-          font="assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf", font_size=${el.fontSize}, font_color = '${el.textColor}',
-                idle_color = '${el.idleColor}', hover_color = '${el.hoverColor}', clicked_color = '${el.clickedColor}' ,  
-                border_color='${el.borderColor}', border_thickness=${el.borderThickness},
-                on_hover=${(el.onHover === null) ? "None" : el.onHover}, on_click=${el.onClick === null ? "None" : el.onClick}, on_release=${el.onRelease === null ? "None" : el.onRelease}, name = "Button_${index+1}"
+          params += `, width=${el.width}, height=${el.height}, text='${
+            el.text
+          }',
+          font="assets/fonts/${el.fontFamily}/${
+            el.fontFamily
+          }.ttf", font_size=${el.fontSize}, font_color = '${el.textColor}',
+                idle_color = '${el.idleColor}', hover_color = '${
+            el.hoverColor
+          }', clicked_color = '${el.clickedColor}' ,  
+                border_color='${el.borderColor}', border_thickness=${
+            el.borderThickness
+          },
+                on_hover=${
+                  el.onHover === null ? "None" : el.onHover
+                }, on_click=${
+            el.onClick === null ? "None" : el.onClick
+          }, on_release=${
+            el.onRelease === null ? "None" : el.onRelease
+          }, name = "Button_${index + 1}"
                 `;
           break;
 
@@ -212,7 +227,9 @@ def main():
   # Create a window for the calculator
   window = pv.Window(width=${!width ? 700 : width},height=${
       !height ? 400 : height
-    }, title="PyVisual")
+    }, title="PyVisual", background_image=${!bgImage ? "None" : `"assets/background.jpg"`} , background_color="${
+      !color ? "#ffffff" : color
+    }")
   create_ui(window)
   # Display the window
   window.show()
@@ -239,10 +256,10 @@ if __name__ == '__main__':
       return;
     }
 
-    // Helper function to download a font by URL
-    const downloadFont = async (url) => {
+    // Helper function to download a font or image by URL
+    const downloadResource = async (url) => {
       const res = await fetch(url);
-      if (!res.ok) throw new Error("Failed to download font");
+      if (!res.ok) throw new Error(`Failed to download resource from ${url}`);
       return await res.blob();
     };
 
@@ -274,7 +291,7 @@ if __name__ == '__main__':
         );
         if (matchedFont) {
           try {
-            const fontBlob = await downloadFont(matchedFont.url);
+            const fontBlob = await downloadResource(matchedFont.url);
 
             // Create a sub-folder for the font inside the fonts folder
             const fontSubFolder = fontsFolder.folder(matchedFont.name);
@@ -289,12 +306,21 @@ if __name__ == '__main__':
       }
     }
 
+    // Download background image if the URL is provided and save it as background.jpg
+    if (bgImage) {
+      try {
+        const backgroundImageBlob = await downloadResource(bgImage);
+        assetsFolder.file("background.jpg", backgroundImageBlob);
+      } catch (error) {
+        console.error("Failed to download background image:", error);
+      }
+    }
+
     // Generate the ZIP file
     zip.generateAsync({ type: "blob" }).then((content) => {
       saveAs(content, "project.zip");
     });
   };
-
   // Helper function to convert Base64 to Blob
   const base64ToBlob = (base64) => {
     const byteString = atob(base64.split(",")[1]);
@@ -312,9 +338,10 @@ if __name__ == '__main__':
       <Header
         onGenerateCode={handleGenerateCode} // Pass down the generate code handler
         onDownloadProject={handleDownloadProject}
-        onWindowSizeChange={(width, height) => {
+        onWindowSizeChange={(width, height, color) => {
           setHeight(height);
           setWidth(width);
+          setColor(color);
         }}
       />
       <div className="flex h-screen">
@@ -322,8 +349,8 @@ if __name__ == '__main__':
         {/* Main container for layout */}
         <Sidebar
           onAddElement={handleAddElement} // Pass down the add element handler
-          onBgImageChange={(image)=>{
-            setBgImage(image)
+          onBgImageChange={(image) => {
+            setBgImage(image);
           }}
         />
         <div className="flex-1 relative">
@@ -347,6 +374,7 @@ if __name__ == '__main__':
             Height={height}
             Width={width}
             Image={bgImage}
+            bgColor={color}
             selectedIndex={(elementData) => {
               setSelectedElement(elementData);
             }}

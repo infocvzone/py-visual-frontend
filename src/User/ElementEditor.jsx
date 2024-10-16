@@ -22,7 +22,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
   useEffect(() => {
     WebFont.load({
       google: {
-        families: ['Roboto', 'Open Sans'],
+        families: ["Roboto", "Open Sans"],
       },
     });
   }, [editedElement]);
@@ -34,8 +34,6 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       },
     });
   };
-
-
 
   // Update the local state when the selected element changes
   useEffect(() => {
@@ -58,7 +56,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     let updatedValue = value;
-    if(name === "fontFamily"){
+    if (name === "fontFamily") {
       loadFont(value);
     }
     if (name === "borderThickness" || name === "width" || name === "height") {
