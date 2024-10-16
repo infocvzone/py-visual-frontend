@@ -16,6 +16,14 @@ const TextComponent = ({
   const textInstanceRef = useRef(null); // Create a reference to store the PlainText instance
 
   useEffect(() => {
+    WebFont.load({
+      google: {
+        families: [fontFamily],
+      },
+    });
+  }, [fontFamily]);
+
+  useEffect(() => {
     const container = textContainerRef.current;
 
     // Clear the previous text element if it exists

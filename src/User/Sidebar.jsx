@@ -223,6 +223,7 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
                       height={40}
                       border_thickness={button.borderThickness}
                       borderColor={button.borderColor}
+                      fontFamily={button.fontFamily}
                     />
                   </button>
                 ))}

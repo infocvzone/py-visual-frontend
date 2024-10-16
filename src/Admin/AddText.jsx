@@ -79,7 +79,7 @@ const AddText = () => {
   useEffect(() => {
     WebFont.load({
       google: {
-        families: ["Roboto", "Open Sans"],
+        families: [elementData.fontFamily],
       },
     });
   }, []);

@@ -19,14 +19,6 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
     fetchFonts();
   }, []); // Added empty dependency array to run only once on mount
 
-  useEffect(() => {
-    WebFont.load({
-      google: {
-        families: ["Roboto", "Open Sans"],
-      },
-    });
-  }, [editedElement]);
-
   const loadFont = (fontName) => {
     WebFont.load({
       google: {

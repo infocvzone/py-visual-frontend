@@ -85,7 +85,7 @@ const AddButton = () => {
   useEffect(() => {
     WebFont.load({
       google: {
-        families: ["Poppins", "Open Sans"],
+        families: [elementData.fontFamily],
       },
     });
   }, []);
@@ -238,6 +238,7 @@ const AddButton = () => {
                 value={elementData[key]}
                 onChange={handleInputChange}
                 className="border p-1 rounded"
+                readOnly={["id", "type", "x", "y"].includes(key)}
               />
             )}
           </div>

@@ -57,7 +57,7 @@ function EditElement({ type, element }) {
   useEffect(() => {
     WebFont.load({
       google: {
-        families: ["Poppins", "Open Sans"],
+        families: [elementData.fontFamily],
       },
     });
   }, []);
@@ -260,6 +260,7 @@ function EditElement({ type, element }) {
     "onHover",
     "onRelease",
     "onClick",
+    "scale"
   ];
 
   return (
