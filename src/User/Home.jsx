@@ -110,13 +110,13 @@ def create_ui(window):
           params += `, width=${el.width}, height=${el.height
             }, background_color='${el.bgColor}', input_type='${el.input_type}',
           placeholder='${el.placeholder}', default_text="${el.text}", 
-          padding_left=${el.padding_left}, padding_right=${el.padding_right
-            }, padding_top=${el.padding_top}, padding_bottom=${el.padding_bottom},
+          text_padding_left=${el.padding_left}, text_padding_right=${el.padding_right
+            }, text_padding_top=${el.padding_top}, text_padding_bottom=${el.padding_bottom},
           font="${el.fontFamily}", font_size=${el.fontSize}, font_color="${el.textColor
             }",
           border_color='${el.borderColor}', border_thickness=${el.borderThickness
             }, 
-          border_style= ["${el.border_style}"], on_input=${!el.on_input ? "None" : `"${el.on_input}"`
+          border_style= ["${el.border_style[0]}", "${el.border_style[1]}", "${el.border_style[2]}", "${el.border_style[3]}"], on_input=${!el.on_input ? "None" : `"${el.on_input}"`
             }`;
 
           break;
