@@ -210,6 +210,7 @@ function EditElement({ type, element }) {
             "x",
             "y",
             "fontSize",
+            "padding",
           ].includes(name)
         ? parseFloat(value) || 0
         : value || ""; // This ensures it will never be null
