@@ -11,7 +11,6 @@ const AddText = () => {
   const [boundingBox, setBoundingBox] = useState({ width: 0, height: 0 });
   const [Fonts, setFont] = useState([]);
   const [elementData, setElementData] = useState({
-    id: Date.now(),
     type: "Text",
     x: 150,
     y: 150,
@@ -123,7 +122,7 @@ const AddText = () => {
       element.scale,
       element.fontPath || null,
       element.color,
-      element.fontFamily || "sans-serif",
+      element.fontFamily || "Roboto-Bold",
       element.fontSize,
       element.bold,
       element.italic,
@@ -173,6 +172,7 @@ const AddText = () => {
   const handleTextSubmit = async () => {
     setLoading(true);
     try {
+      console.log(elementData);
       const response = await axios.post(`${API_KEY}api/texts/`, elementData);
       const result = await response.data;
       console.log("Text saved:", result);
@@ -289,7 +289,7 @@ const AddText = () => {
                     value={elementData[key]}
                     onChange={handleInputChange}
                     className="border p-1 rounded"
-                    readOnly={["id", "type", "x", "y"].includes(key)} // Make specific fields non-editable
+                    readOnly={["type", "x", "y"].includes(key)} // Make specific fields non-editable
                   />
                 )}
               </div>
