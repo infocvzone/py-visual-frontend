@@ -1,10 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import hljs from "highlight.js"; // Import highlight.js
-import 'highlight.js/styles/atom-one-dark.css';
+import "highlight.js/styles/atom-one-dark.css";
 
-
-
-const CodeDisplay = ({ code }) => {
+const CodeDisplay = ({ code, setCodeDisplay }) => {
   const [copySuccess, setCopySuccess] = useState(""); // State to show copy success message
   const codeRef = useRef(null); // Ref to the <pre><code> block
 
@@ -21,7 +19,10 @@ const CodeDisplay = ({ code }) => {
       .writeText(code)
       .then(() => {
         setCopySuccess("Code copied!");
-        setTimeout(() => setCopySuccess(""), 2000); // Reset the message after 2 seconds
+        setTimeout(() => {
+          setCopySuccess("");
+          setCodeDisplay(false);
+        }, 700); // Reset the message after 2 seconds
       })
       .catch(() => {
         setCopySuccess("Failed to copy.");

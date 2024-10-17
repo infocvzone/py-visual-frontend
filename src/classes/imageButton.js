@@ -31,9 +31,9 @@ class ButtonImage {
           fabric.Image.fromURL(this.hoverImage, (hoverImg) => {
             fabric.Image.fromURL(this.clickedImage, (clickedImg) => {
               // Set images with desired width and height
-              this.idleImage = this.normalizeImage(idleImg, 100, 100);
-              this.hoverImage = this.normalizeImage(hoverImg, 100, 100);
-              this.clickedImage = this.normalizeImage(clickedImg, 100, 100);
+              this.idleImage = this.normalizeImage(idleImg, 150, 150);
+              this.hoverImage = this.normalizeImage(hoverImg, 150, 150);
+              this.clickedImage = this.normalizeImage(clickedImg, 150, 150);
 
               // Group all images into a fabric.Group
               this.imageGroup = new fabric.Group(

@@ -85,39 +85,56 @@ def create_ui(window):
     elements.forEach((el, index) => {
       const pos = positions[el.id] || { x: 50, y: 50 }; // Get position or default
       const elHeight = heights[el.id]?.height || 0;
-      let params = `(window=window, x=${pos.x}, y=${!height ? 400 - pos.y - elHeight : height - pos.y - elHeight
-        }`;
+      let params = `(window=window, x=${pos.x}, y=${
+        !height ? 400 - pos.y - elHeight : height - pos.y - elHeight
+      }`;
 
       // Handle parameters for each element type
       switch (el.type) {
         case "BasicButton":
-          params += `, width=${el.width}, height=${el.height}, text='${el.text
-            }',
-          font="assets/fonts/${el.fontFamily}/${el.fontFamily
-            }.ttf", font_size=${el.fontSize}, font_color = '${el.textColor}',
-                idle_color = '${el.idleColor}', hover_color = '${el.hoverColor
-            }', clicked_color = '${el.clickedColor}' ,  
-                border_color='${el.borderColor}', border_thickness=${el.borderThickness
-            },
-                on_hover=${el.onHover === null ? "None" : el.onHover
-            }, on_click=${el.onClick === null ? "None" : el.onClick
-            }, on_release=${el.onRelease === null ? "None" : el.onRelease
-            }, name = "Button_${index + 1}"
+          params += `, width=${el.width}, height=${el.height}, text='${
+            el.text
+          }',
+          font="assets/fonts/${el.fontFamily}/${
+            el.fontFamily
+          }.ttf", font_size=${el.fontSize}, font_color = '${el.textColor}',
+                idle_color = '${el.idleColor}', hover_color = '${
+            el.hoverColor
+          }', clicked_color = '${el.clickedColor}' ,  
+                border_color='${el.borderColor}', border_thickness=${
+            el.borderThickness
+          },
+                on_hover=${
+                  el.onHover === null ? "None" : el.onHover
+                }, on_click=${
+            el.onClick === null ? "None" : el.onClick
+          }, on_release=${
+            el.onRelease === null ? "None" : el.onRelease
+          }, name = "Button_${index + 1}"
                 `;
           break;
 
         case "InputField":
-          params += `, width=${el.width}, height=${el.height
-            }, background_color='${el.bgColor}', input_type='${el.input_type}',
+          params += `, width=${el.width}, height=${
+            el.height
+          }, background_color='${el.bgColor}', input_type='${el.input_type}',
           placeholder='${el.placeholder}', default_text="${el.text}", 
-          text_padding_left=${el.padding_left}, text_padding_right=${el.padding_right
-            }, text_padding_top=${el.padding_top}, text_padding_bottom=${el.padding_bottom},
-          font="assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf", font_size=${el.fontSize}, font_color="${el.textColor
-            }",
-          border_color='${el.borderColor}', border_thickness=${el.borderThickness
-            }, 
-          border_style= ["${el.border_style[0]}", "${el.border_style[1]}", "${el.border_style[2]}", "${el.border_style[3]}"], on_input=${!el.on_input ? "None" : `"${el.on_input}"`
-            }`;
+          text_padding_left=${el.padding_left}, text_padding_right=${
+            el.padding_right
+          }, text_padding_top=${el.padding_top}, text_padding_bottom=${
+            el.padding_bottom
+          },
+          font="assets/fonts/${el.fontFamily}/${
+            el.fontFamily
+          }.ttf", font_size=${el.fontSize}, font_color="${el.textColor}",
+          border_color='${el.borderColor}', border_thickness=${
+            el.borderThickness
+          }, 
+          border_style= ["${el.border_style[0]}", "${el.border_style[1]}", "${
+            el.border_style[2]
+          }", "${el.border_style[3]}"], on_input=${
+            !el.on_input ? "None" : `"${el.on_input}"`
+          }`;
 
           break;
 
@@ -153,34 +170,46 @@ def create_ui(window):
           break;
 
         case "RadioButton":
-          params += `, ${el.size}, num_buttons=${el.numButtons
-            }, selected_index=${el.selectedIndex}, 
-                         layout='${el.layout}', gap=${el.gap}, scale=${el.scale
-            }, 
-                         border_color='${el.borderColor}', border_thickness=${el.borderThickness
-            }, 
-                         colors={'selectedColor': '${el.colors.selectedColor
-            }', 'unselectedColor': '${el.colors.unselectedColor
-            }'}, 
-                         labels=${JSON.stringify(el.labels)}, font_size=${el.fontSize
-            }, 
-                         text_color='${el.textColor}', text_offset=${el.textOffset
-            }`;
+          params += `, ${el.size}, num_buttons=${
+            el.numButtons
+          }, selected_index=${el.selectedIndex}, 
+                         layout='${el.layout}', gap=${el.gap}, scale=${
+            el.scale
+          }, 
+                         border_color='${el.borderColor}', border_thickness=${
+            el.borderThickness
+          }, 
+                         colors={'selectedColor': '${
+                           el.colors.selectedColor
+                         }', 'unselectedColor': '${
+            el.colors.unselectedColor
+          }'}, 
+                         labels=${JSON.stringify(el.labels)}, font_size=${
+            el.fontSize
+          }, 
+                         text_color='${el.textColor}', text_offset=${
+            el.textOffset
+          }`;
           break;
 
         case "DropdownMenu":
           params += `, ${el.width}, ${el.height}, options=${JSON.stringify(
             el.options
           )}, 
-                         placeholder='${el.placeholder}', font_size=${el.fontSize
-            }, 
-                         text_color='${el.textColor}', bg_color='${el.bgColor
-            }', 
-                         border_color='${el.borderColor}', border_thickness=${el.borderThickness
-            }, 
-                         dropdown_bg_color='${el.dropdownBgColor
-            }', hover_color='${el.hoverColor}', padding=${el.padding
-            }`;
+                         placeholder='${el.placeholder}', font_size=${
+            el.fontSize
+          }, 
+                         text_color='${el.textColor}', bg_color='${
+            el.bgColor
+          }', 
+                         border_color='${el.borderColor}', border_thickness=${
+            el.borderThickness
+          }, 
+                         dropdown_bg_color='${
+                           el.dropdownBgColor
+                         }', hover_color='${el.hoverColor}', padding=${
+            el.padding
+          }`;
           break;
 
         case "ProgressBar":
@@ -192,9 +221,9 @@ def create_ui(window):
         case "Image":
           params += `, image_path = "${el.imageName}" scale_value = ${el.scale_value}`;
         case "ButtonImage":
-          params += `, idle_image = "./assets/${el.id}-idle.png",
-                         hover_image = "./assets/${el.id}-hover.png",
-                           clicked_image = "./assets/${el.id}-clicked.png",
+          params += `, idle_image = "assets/customButtom/${el.id}-idle.png",
+                         hover_image = "assets/customButtom/${el.id}-hover.png",
+                           clicked_image = "assets/customButtom/${el.id}-clicked.png",
                             scale = ${el.scale}`;
 
         default:
@@ -203,17 +232,32 @@ def create_ui(window):
 
       params += ")";
       pythonCode += ` 
-    #Element ${index + 1}\n   ${el.type === "BasicButton" ? "Button" : el.type === "InputField" ? "BasicTextInput" : el.type
-        }_${index + 1} = pv.${el.type === "InputField" ? "BasicTextInput" : el.type}${params}\n`;
+    #Element ${index + 1}\n   ${
+        el.type === "BasicButton"
+          ? "Button"
+          : el.type === "InputField"
+          ? "BasicTextInput"
+          : el.type === "ButtonImage"
+          ? "CustomButton"
+          : el.type
+      }_${index + 1} = pv.${
+        el.type === "InputField"
+          ? "BasicTextInput"
+          : el.type === "ButtonImage"
+          ? "CustomButton"
+          : el.type
+      }${params}\n`;
     });
 
     pythonCode += `
     
 def main():
   # Create a window for the calculator
-  window = pv.Window(width=${!width ? 700 : width},height=${!height ? 400 : height
-      }, title="PyVisual", background_image=${!bgImage ? "None" : `"assets/background/background.jpg"`
-      } , background_color="${!color ? "#ffffff" : color}")
+  window = pv.Window(width=${!width ? 700 : width},height=${
+      !height ? 400 : height
+    }, title="PyVisual", background_image=${
+      !bgImage ? "None" : `"assets/background/background.jpg"`
+    } , background_color="${!color ? "#ffffff" : color}")
   create_ui(window)
   # Display the window
   window.show()
@@ -229,7 +273,8 @@ if __name__ == '__main__':
     const zip = new JSZip();
     const assetsFolder = zip.folder("assets"); // Create folder for assets
     const fontsFolder = assetsFolder.folder("fonts"); // Create folder for fonts
-    const backgroundFolder = assetsFolder.folder("background")
+    const backgroundFolder = assetsFolder.folder("background");
+    const customButton = assetsFolder.folder("customButton");
 
     // Fetch available fonts from the database
     let fontsData = [];
@@ -257,15 +302,15 @@ if __name__ == '__main__':
         // Convert the Base64 images into blobs and save them in the assets folder
         if (element.idleImage) {
           const idleImageBlob = base64ToBlob(element.idleImage);
-          assetsFolder.file(`${element.id}-idle.png`, idleImageBlob);
+          customButton.file(`${element.id}-idle.png`, idleImageBlob);
         }
         if (element.hoverImage) {
           const hoverImageBlob = base64ToBlob(element.hoverImage);
-          assetsFolder.file(`${element.id}-hover.png`, hoverImageBlob);
+          customButton.file(`${element.id}-hover.png`, hoverImageBlob);
         }
         if (element.clickedImage) {
           const clickImageBlob = base64ToBlob(element.clickedImage);
-          assetsFolder.file(`${element.id}-clicked.png`, clickImageBlob);
+          customButton.file(`${element.id}-clicked.png`, clickImageBlob);
         }
       }
 
@@ -366,7 +411,9 @@ if __name__ == '__main__':
           />
         </div>
       </div>
-      {codeDisplay ? <CodeDisplay code={generatedCode} /> : null}
+      {codeDisplay ? (
+        <CodeDisplay code={generatedCode} setCodeDisplay={setCodeDisplay} />
+      ) : null}
     </div>
   );
 };
