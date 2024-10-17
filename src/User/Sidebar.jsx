@@ -6,6 +6,7 @@ import TextSvg from "../assets/categories/text-svg.svg";
 import TextComponent from "../components/textComponent";
 import ImageSvg from "../assets/categories/image-svg.svg";
 import { API_KEY } from "../constant";
+import InputComponent from "../components/InputComponent";
 
 const Sidebar = ({ onAddElement, onBgImageChange }) => {
   const hiddenFileInput = React.useRef(null);
@@ -276,13 +277,24 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
             )}
 
             {activeCategory === "InputField" && (
-              <div className="grid grid-cols-2 gap-1">
+              <div className="grid grid-cols-1 gap-1">
                 {inputfield.map((input) => (
                   <button
                     key={input._id}
                     className="w-full border h-[80px] bg-white p-2 shadow-lg rounded-lg"
                     onClick={() => onAddElement("InputField", input)}
-                  ></button>
+                  >
+                    <InputComponent
+                      width={input.width}
+                      height={input.height}
+                      placeholder={input.placeholder}
+                      bgColor={input.bgColor}
+                      borderColor={input.borderColor}
+                      textColor={input.textColor}
+                      fontSize={input.fontSize}
+                      fontFamily={input.fontFamily}
+                    />
+                  </button>
                 ))}
               </div>
             )}

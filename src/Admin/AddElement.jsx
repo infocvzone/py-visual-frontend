@@ -3,6 +3,7 @@ import AddButton from "./AddButton";
 import AddText from "./AddText";
 import AddButtonImage from "./AddImageButton";
 import ImageUploader from "./AddBgImages";
+import AddInputField from "./AddInputField";
 
 const AddElement = () => {
   const [selectedElement, setSelectedElement] = useState("");
@@ -21,7 +22,7 @@ const AddElement = () => {
             onChange={(e) => setSelectedElement(e.target.value)}
             className="mr-2"
           />
-          Add Button
+          Basic Button
         </label>
         <label className="mr-4">
           <input
@@ -31,7 +32,7 @@ const AddElement = () => {
             onChange={(e) => setSelectedElement(e.target.value)}
             className="mr-2"
           />
-          Add Text
+          Text
         </label>
         <label className="mr-4">
           <input
@@ -41,7 +42,17 @@ const AddElement = () => {
             onChange={(e) => setSelectedElement(e.target.value)}
             className="mr-2"
           />
-          Add Image Button
+          Custom Button
+        </label>
+        <label className="mr-4">
+          <input
+            type="radio"
+            value="InputField"
+            checked={selectedElement === "InputField"}
+            onChange={(e) => setSelectedElement(e.target.value)}
+            className="mr-2"
+          />
+          Basic InputField
         </label>
         <label className="mr-4">
           <input
@@ -51,7 +62,7 @@ const AddElement = () => {
             onChange={(e) => setSelectedElement(e.target.value)}
             className="mr-2"
           />
-          Add Background Images
+          Background Images
         </label>
       </div>
 
@@ -60,6 +71,7 @@ const AddElement = () => {
       {selectedElement === "text" && <AddText />}
       {selectedElement === "buttonImage" && <AddButtonImage />}
       {selectedElement === "bgImage" && <ImageUploader/>}
+      {selectedElement === "InputField" && <AddInputField/>}
     </div>
   );
 };

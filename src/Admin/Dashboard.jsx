@@ -6,11 +6,13 @@ import ButtonComponent from "../components/buttonComponet";
 import TextComponent from "../components/textComponent";
 import { useNavigate } from "react-router-dom";
 import { API_KEY } from "../constant";
+import InputComponent from "../components/InputComponent";
 
 function Dashboard() {
   const [buttonData, setButtonData] = useState([]); // To store fetched button data
   const [textData, setTextData] = useState([]); // To store fetched text data
   const [buttonImmageData, setButtonImageData] = useState([]);
+  const [InputFieldData, setInputFieldData] = useState([]);
   const [loading, setLoading] = useState(true); // To handle loading state
   const navigate = useNavigate();
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -19,9 +21,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchButtonData = async () => {
       try {
-        const response = await axios.get(
-          `${API_KEY}api/buttons/`
-        ); // Replace with your actual API endpoint
+        const response = await axios.get(`${API_KEY}api/buttons/`); // Replace with your actual API endpoint
         setButtonData(response.data); // Set fetched button data
       } catch (error) {
         console.error("Error fetching button data:", error);
@@ -32,9 +32,7 @@ function Dashboard() {
 
     const fetchButtonImageData = async () => {
       try {
-        const response = await axios.get(
-          `${API_KEY}api/buttonImages/`
-        ); // Replace with your actual API endpoint
+        const response = await axios.get(`${API_KEY}api/buttonImages/`); // Replace with your actual API endpoint
         setButtonImageData(response.data); // Set fetched button data
       } catch (error) {
         console.error("Error fetching button data:", error);
@@ -45,10 +43,19 @@ function Dashboard() {
 
     const fetchTextData = async () => {
       try {
-        const response = await axios.get(
-          `${API_KEY}api/texts/`
-        ); // Replace with your actual API endpoint for text
+        const response = await axios.get(`${API_KEY}api/texts/`); // Replace with your actual API endpoint for text
         setTextData(response.data); // Set fetched text data
+      } catch (error) {
+        console.error("Error fetching text data:", error);
+      } finally {
+        setLoading(false); // Stop loading spinner
+      }
+    };
+
+    const fetchInputFieldData = async () => {
+      try {
+        const response = await axios.get(`${API_KEY}api/inputfields/`); // Replace with your actual API endpoint for text
+        setInputFieldData(response.data); // Set fetched text data
       } catch (error) {
         console.error("Error fetching text data:", error);
       } finally {
@@ -60,6 +67,7 @@ function Dashboard() {
     fetchButtonData();
     fetchTextData();
     fetchButtonImageData();
+    fetchInputFieldData();
   }, []);
 
   const onAddElement = (type, element) => {
@@ -134,6 +142,29 @@ function Dashboard() {
                 bold={textItem.bold}
                 underline={textItem.underline}
                 strikethrough={textItem.strikethrough}
+              />
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="flex-grow p-6 ml-64 mt-6">
+        <h1 className="text-4xl font-bold text-blue-900 mb-6">Input Field</h1>
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {InputFieldData.map((input) => (
+            <button
+              key={input._id} // Use _id from the API response
+              className="w-full border p-3 rounded-lg shadow-lg transition-all transform hover:scale-105 bg-gray-100"
+              onClick={() => onAddElement("InputField", input)}
+            >
+              <InputComponent
+                width={input.width}
+                height={input.height}
+                placeholder={input.placeholder}
+                bgColor={input.bgColor}
+                borderColor={input.borderColor}
+                textColor={input.textColor}
+                fontSize={input.fontSize}
+                fontFamily={input.fontFamily}
               />
             </button>
           ))}

@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import load from "../assets/loading.gif";
 import { API_KEY } from "../constant";
+import FabricInputField from "../classes/inputField";
 
 function EditElement({ type, element }) {
   const canvasRef = useRef(null);
@@ -147,6 +148,33 @@ function EditElement({ type, element }) {
 
         return fabricTextElement;
 
+      case "InputField":
+        const fabricElement = new FabricInputField(
+          canvasObj,
+          centerX - element.width / 2, // Set text's initial display at canvas center
+          centerY - element.height / 2,
+          element.width,
+          element.height,
+          element.placeholder,
+          element.bgColor,
+          element.borderColor,
+          element.borderThickness,
+          element.textColor,
+          element.placeholderColor,
+          element.fontSize,
+          element.cursorBlinkSpeed,
+          element.padding,
+          element.fontFamily
+        ).inputGroup;
+
+        fabricElement.set({
+          selectable: true, // Allow dragging
+          hasControls: true, // Show controls for resizing, etc.
+          hasBorders: true, // Show borders
+        });
+
+        return fabricElement;
+
       case "ButtonImage":
         const fabricButtonImageElement = new ButtonImage(
           canvasObj,
@@ -228,7 +256,13 @@ function EditElement({ type, element }) {
           `${API_KEY}api/buttonImages/${elementData._id}`,
           elementData
         );
+      } else if (elementData.type === "InputField") {
+        response = await axios.put(
+          `${API_KEY}api/inputfields/${elementData._id}`,
+          elementData
+        );
       }
+
       const result = await response.data;
       console.log("Element Updated:", result);
       setLoading(false);
@@ -260,7 +294,15 @@ function EditElement({ type, element }) {
     "onHover",
     "onRelease",
     "onClick",
-    "scale"
+    "scale",
+    "cursorBlinkSpeed",
+    "default_text",
+    "padding_left",
+    "padding_right",
+    "padding_top",
+    "padding_bottom",
+    "on_input",
+    "border_style",
   ];
 
   return (
@@ -284,6 +326,18 @@ function EditElement({ type, element }) {
                   onChange={handleImageChange}
                   className="border p-1 rounded w-full"
                 />
+              ) : key === "input_type" ? (
+                <select
+                  name="input_type"
+                  value={elementData.input_type || "text"}
+                  onChange={handleInputChange}
+                  className="p-2 w-[150px] border rounded"
+                >
+                  <option value="text">Text</option>
+                  <option value="number">Number</option>
+                  <option value="email">Email</option>
+                  <option value="password">Password</option>
+                </select>
               ) : key === "fontFamily" ? (
                 <select
                   name="fontFamily"

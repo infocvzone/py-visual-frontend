@@ -303,8 +303,8 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               <label className="block">Default Text</label>
               <input
                 type="text"
-                name="default_text"
-                value={editedElement.default_text || ""}
+                name="text"
+                value={editedElement.text || ""}
                 onChange={handleChange}
                 className="p-2 h-8 w-[120px] border rounded"
               />
