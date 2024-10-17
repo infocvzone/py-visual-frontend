@@ -212,7 +212,7 @@ def create_ui(window):
 def main():
   # Create a window for the calculator
   window = pv.Window(width=${!width ? 700 : width},height=${!height ? 400 : height
-      }, title="PyVisual", background_image=${!bgImage ? "None" : `"assets/background.jpg"`
+      }, title="PyVisual", background_image=${!bgImage ? "None" : `"assets/background/background.jpg"`
       } , background_color="${!color ? "#ffffff" : color}")
   create_ui(window)
   # Display the window
@@ -229,6 +229,7 @@ if __name__ == '__main__':
     const zip = new JSZip();
     const assetsFolder = zip.folder("assets"); // Create folder for assets
     const fontsFolder = assetsFolder.folder("fonts"); // Create folder for fonts
+    const backgroundFolder = assetsFolder.folder("background")
 
     // Fetch available fonts from the database
     let fontsData = [];
@@ -294,7 +295,7 @@ if __name__ == '__main__':
     if (bgImage) {
       try {
         const backgroundImageBlob = await downloadResource(bgImage);
-        assetsFolder.file("background.jpg", backgroundImageBlob);
+        backgroundFolder.file("background.jpg", backgroundImageBlob);
       } catch (error) {
         console.error("Failed to download background image:", error);
       }

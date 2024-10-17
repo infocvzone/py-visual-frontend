@@ -18,7 +18,7 @@ const AddText = () => {
     text: "Text",
     scale: 1.0,
     color: "#000000",
-    fontFamily: "Roboto",
+    fontFamily: "Roboto-Bold",
     fontSize: 20,
     bold: false,
     italic: false,

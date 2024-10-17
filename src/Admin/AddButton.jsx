@@ -12,14 +12,13 @@ const AddButton = () => {
   const [boundingBox, setBoundingBox] = useState({ width: 0, height: 0 });
   const [Fonts, setFont] = useState([]);
   const [elementData, setElementData] = useState({
-    id: Date.now(),
     type: "BasicButton",
     x: 150,
     y: 150,
     width: 150,
     height: 30,
     text: "Submit",
-    fontFamily: "Roboto",
+    fontFamily: "Roboto-Bold",
     fontSize: 16,
     textColor: "#FFFFFF",
     idleColor: "#38b6ff",
@@ -164,8 +163,6 @@ const AddButton = () => {
       "height",
       "borderThickness",
       "fontSize",
-      "x",
-      "y",
     ].includes(name)
       ? parseFloat(value) || 0 // Convert to float, default to 0 if NaN
       : value || ""; // Keep as string or empty string
@@ -180,6 +177,7 @@ const AddButton = () => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
+      console.log(elementData);
       const response = await axios.post(`${API_KEY}api/buttons/`, elementData);
       const result = await response.data;
       console.log("Button saved:", result);
@@ -238,7 +236,7 @@ const AddButton = () => {
                 value={elementData[key]}
                 onChange={handleInputChange}
                 className="border p-1 rounded"
-                readOnly={["id", "type", "x", "y"].includes(key)}
+                readOnly={["type", "x", "y"].includes(key)}
               />
             )}
           </div>
