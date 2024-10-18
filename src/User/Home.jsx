@@ -72,7 +72,7 @@ const Home = () => {
     let globalElementNames = elements
       .map(
         (el, index) =>
-          `${el.type === "BasicButton" ? "Button" : el.type}_${index + 1}`
+          `${(el.type === "BasicButton" || el.type === "ButtonImage") ? "Button" : el.type}_${index + 1}`
       )
       .join(", ");
 
@@ -222,25 +222,13 @@ def create_ui(window):
           params += `, image_path = "${el.imageName}" scale_value = ${el.scale_value}`;
 
         case "ButtonImage":
-          params += `, idle_image = "assets/customButtom/${el.id}-idle.png",
-                         hover_image = "assets/customButtom/${el.id}-hover.png",
-                           clicked_image = "assets/customButtom/${
-                             el.id
-                           }-clicked.png",
-                            scale = ${el.scale}, text="${
-            el.text
-          }", text_anchor='${el.text_anchor}', text_color="${
-            el.textColor
-          }", font="${el.fontFamily}", text_size=${el.fontSize}
-                            on_hover=${
-                              el.onHover === null ? "None" : el.onHover
-                            }, on_click=${
-            el.onClick === null || el.name === "" ? "None" : el.onClick
-          }, on_release=${
-            el.onRelease === null || el.name === "" ? "None" : el.onRelease
-          }, name = ${
-            el.name === null || el.name === "" ? `"CustomButton_${index + 1}"` : `"${el.name}"`
-          }`;
+          params += `, scale = ${el.scale}, text="${el.text}", 
+          idle_image = "assets/customButton/${el.id}-idle.png",
+          hover_image = "assets/customButton/${el.id}-hover.png",
+          clicked_image = "assets/customButton/${el.id}-clicked.png",
+          font="${el.fontFamily}", font_size=${el.fontSize},font_color="${el.textColor}",
+          on_hover=${el.onHover === null ? "None" : el.onHover}, on_click=${el.onClick === null || el.name === "" ? "None" : el.onClick}, on_release=${el.onRelease === null || el.name === "" ? "None" : el.onRelease}, 
+          name = ${el.name === null || el.name === "" ? `"Button_${index + 1}"` : `"${el.name}"`}`;
 
         default:
           break;
@@ -254,7 +242,7 @@ def create_ui(window):
           : el.type === "InputField"
           ? "BasicTextInput"
           : el.type === "ButtonImage"
-          ? "CustomButton"
+          ? "Button"
           : el.type
       }_${index + 1} = pv.${
         el.type === "InputField"

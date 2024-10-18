@@ -24,6 +24,7 @@ const CanvasArea = ({
   const [elementData, setElementData] = useState(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [size, setSize] = useState({ width: 0, height: 0 }); // State for height and width
+  const alignmentLines = useRef([]); // Store alignment lines
 
   // Initialize Fabric canvas
   useEffect(() => {
@@ -39,7 +40,13 @@ const CanvasArea = ({
     setCanvasObj(canvas);
     console.log(Image);
 
-    return () => canvas.dispose();
+    return () => {
+      // Clean up: dispose alignment lines
+      alignmentLines.current.forEach((line) => {
+        canvas.remove(line);
+      });
+      canvas.dispose();
+    };
   }, [Height, Width, Image]);
 
   const onSelectedElement = () => {
@@ -75,6 +82,7 @@ const CanvasArea = ({
               setElementData(element);
               onSelectedElement();
               handleElementSizing(fabricElement, element.id); // Update size when selected
+              updateAlignmentLines(fabricElement); // Update alignment lines on movement
             });
             fabricElement.on("scaling", () => onScaleElement(fabricElement));
             fabricElement.on("selected", () => {
@@ -301,10 +309,10 @@ const CanvasArea = ({
           element.hoverImage,
           element.clickedImage,
           element.scale,
-          element.text,    // Default text
-          element.textColor || "#000000",  // Default text color
-          element.fontFamily || "Arial",  // Default font
-          element.fontSize || 16         // Default font size
+          element.text, // Default text
+          element.textColor || "#000000", // Default text color
+          element.fontFamily || "Arial", // Default font
+          element.fontSize || 16 // Default font size
         ).getFabricElementAsync();
 
       default:
@@ -331,6 +339,178 @@ const CanvasArea = ({
       onUpdateSize({ id, width: width.toFixed(0), height: height.toFixed(0) });
     }
   };
+
+ // Function to update alignment lines
+const updateAlignmentLines = (movingElement) => {
+  const objects = canvasObj
+    .getObjects()
+    .filter((obj) => obj !== movingElement);
+
+  // Clear existing alignment lines
+  clearAlignmentLines();
+
+  objects.forEach((obj) => {
+    // Check for vertical alignment
+    // Left edge of the object with left edge of movingElement
+    if (Math.abs(obj.left - movingElement.left) < 2) {
+      const line = new fabric.Line(
+        [obj.left, 0, obj.left, canvasObj.height],
+        {
+          stroke: "red",
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
+        }
+      );
+      canvasObj.add(line);
+      alignmentLines.current.push(line); // Store the line
+    }
+
+    // Right edge of the object with left edge of movingElement
+    if (Math.abs((obj.left + obj.width) - movingElement.left) < 2) {
+      const line = new fabric.Line(
+        [obj.left + obj.width, 0, obj.left + obj.width, canvasObj.height],
+        {
+          stroke: "red",
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
+        }
+      );
+      canvasObj.add(line);
+      alignmentLines.current.push(line); // Store the line
+    }
+
+    // Left edge of the object with right edge of movingElement
+    if (Math.abs(obj.left - (movingElement.left + movingElement.width)) < 2) {
+      const line = new fabric.Line(
+        [obj.left, 0, obj.left, canvasObj.height],
+        {
+          stroke: "red",
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
+        }
+      );
+      canvasObj.add(line);
+      alignmentLines.current.push(line); // Store the line
+    }
+
+    // Right edge of the object with right edge of movingElement
+    if (Math.abs((obj.left + obj.width) - (movingElement.left + movingElement.width)) < 2) {
+      const line = new fabric.Line(
+        [obj.left + obj.width, 0, obj.left + obj.width, canvasObj.height],
+        {
+          stroke: "red",
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
+        }
+      );
+      canvasObj.add(line);
+      alignmentLines.current.push(line); // Store the line
+    }
+
+    // Check for horizontal alignment
+    // Top edge of the object with top edge of movingElement
+    if (Math.abs(obj.top - movingElement.top) < 2) {
+      const line = new fabric.Line([0, obj.top, canvasObj.width, obj.top], {
+        stroke: "red",
+        strokeWidth: 1,
+        selectable: false,
+        evented: false,
+      });
+      canvasObj.add(line);
+      alignmentLines.current.push(line); // Store the line
+    }
+
+    // Bottom edge of the object with top edge of movingElement
+    if (Math.abs((obj.top + obj.height) - movingElement.top) < 2) {
+      const line = new fabric.Line(
+        [0, obj.top + obj.height, canvasObj.width, obj.top + obj.height],
+        {
+          stroke: "red",
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
+        }
+      );
+      canvasObj.add(line);
+      alignmentLines.current.push(line); // Store the line
+    }
+
+    // Top edge of the object with bottom edge of movingElement
+    if (Math.abs(obj.top - (movingElement.top + movingElement.height)) < 2) {
+      const line = new fabric.Line(
+        [0, obj.top, canvasObj.width, obj.top],
+        {
+          stroke: "red",
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
+        }
+      );
+      canvasObj.add(line);
+      alignmentLines.current.push(line); // Store the line
+    }
+
+    // Bottom edge of the object with bottom edge of movingElement
+    if (Math.abs((obj.top + obj.height) - (movingElement.top + movingElement.height)) < 2) {
+      const line = new fabric.Line(
+        [0, obj.top + obj.height, canvasObj.width, obj.top + obj.height],
+        {
+          stroke: "red",
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
+        }
+      );
+      canvasObj.add(line);
+      alignmentLines.current.push(line); // Store the line
+    }
+
+    // Top edge of the moving element with the bottom edge of another object
+    if (Math.abs((movingElement.top + movingElement.height) - obj.top) < 2) {
+      const line = new fabric.Line(
+        [0, movingElement.top + movingElement.height, canvasObj.width, movingElement.top + movingElement.height],
+        {
+          stroke: "red",
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
+        }
+      );
+      canvasObj.add(line);
+      alignmentLines.current.push(line); // Store the line
+    }
+
+    // Bottom edge of the moving element with the top edge of another object
+    if (Math.abs(movingElement.top - (obj.top + obj.height)) < 2) {
+      const line = new fabric.Line(
+        [0, movingElement.top, canvasObj.width, movingElement.top],
+        {
+          stroke: "red",
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
+        }
+      );
+      canvasObj.add(line);
+      alignmentLines.current.push(line); // Store the line
+    }
+  });
+
+  canvasObj.renderAll();
+};
+
+// Clear alignment lines
+const clearAlignmentLines = () => {
+  alignmentLines.current.forEach((line) => {
+    canvasObj.remove(line);
+  });
+  alignmentLines.current = []; // Clear the reference
+};
+
 
   return (
     <div className="flex items-center justify-center p-4 relative">
