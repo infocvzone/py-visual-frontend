@@ -55,13 +55,7 @@ function EditElement({ type, element }) {
     fetchFonts();
   }, []); // Added empty dependency array to run only once on mount
 
-  useEffect(() => {
-    WebFont.load({
-      google: {
-        families: [elementData.fontFamily],
-      },
-    });
-  }, []);
+  
 
   const loadFont = (fontName) => {
     WebFont.load({
@@ -176,15 +170,19 @@ function EditElement({ type, element }) {
         return fabricElement;
 
       case "ButtonImage":
-        const fabricButtonImageElement = new ButtonImage(
+        return new ButtonImage(
           canvasObj,
           element.x,
           element.y,
-          [element.idleImage, element.hoverImage, element.clickedImage],
-          element.scale
+          element.idleImage, 
+          element.hoverImage, 
+          element.clickedImage,
+          element.scale,
+          element.text,
+          element.textColor,
+          element.fontFamily,
+          element.fontSize,
         ).getFabricElementAsync();
-
-        return fabricButtonImageElement;
 
       default:
         return null;

@@ -727,7 +727,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
 
       case "ButtonImage":
         return (
-          <>
+          <div className="flex flex-wrap gap-2">
             <div className="">
               <label className="block">Scale:</label>
               <input
@@ -735,10 +735,98 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="scale"
                 value={editedElement.scale || 1}
                 onChange={handleChange}
-                className="p-2 border rounded"
+                className="p-2 h-8 w-[60px] border rounded"
               />
             </div>
-          </>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Text</label>
+              <input
+                type="text"
+                name="text"
+                value={editedElement.text || ""}
+                onChange={handleChange}
+                className="p-2 h-8 w-[100px] border rounded"
+              />
+            </div>
+
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Font</label>
+              <input
+                type="number"
+                name="fontSize"
+                value={editedElement.fontSize || 12}
+                onChange={handleChange}
+                className="p-2 h-8 w-[60px] border rounded"
+              />
+            </div>
+            <div className="">
+              <label className="block">Font Family</label>
+              <select
+                name="fontFamily"
+                value={editedElement.fontFamily}
+                onChange={handleChange}
+                className="border p-1 rounded"
+              >
+                {/* Map the fetched fonts to options */}
+                {Fonts.map((font, index) => (
+                  <option key={index} value={font.name}>
+                    {font.name}{" "}
+                    {/* Assuming 'family' is the property holding the font name */}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Text</label>
+              <input
+                type="color"
+                name="textColor"
+                value={editedElement.textColor || "#00000"}
+                onChange={handleChange}
+                className="p-2 h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">On_hover</label>
+              <input
+                type="text"
+                name="onHover"
+                value={editedElement.onHover}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">On_Click</label>
+              <input
+                type="text"
+                name="onClick"
+                value={editedElement.onClick}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">On_Release</label>
+              <input
+                type="text"
+                name="onRelease"
+                value={editedElement.onRelease}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Name</label>
+              <input
+                type="text"
+                name="name"
+                value={editedElement.name}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+          </div>
         );
       case "Checkbox":
         return (

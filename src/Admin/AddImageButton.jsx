@@ -12,16 +12,19 @@ const AddButtonImage = () => {
     const canvasRef = useRef(null);
     const [canvasObj, setCanvasObj] = useState(null);
     const [elementData, setElementData] = useState({
-        id: Date.now(),
         x: 100,
         y: 100,
         scale: 1.5,
         idleImage: idle,
         hoverImage: clicked,
         clickedImage: hover,
+        text: "Submit",
+        text_ancher: "center",
+        textColor: "#000000",
+        fontFamily: "Roboto-Bold",
+        fontSize: 16
     });
 
-    // Initialize Fabric canvas
     useEffect(() => {
         const canvasEl = canvasRef.current;
         if (!canvasEl) return;
@@ -40,21 +43,20 @@ const AddButtonImage = () => {
         };
     }, []);
 
-    // Function to create and add the fabric element
     const addElementToCanvas = async () => {
         if (!canvasObj) return;
-        canvasObj.clear(); // Clear canvas before adding new elements
+        canvasObj.clear();
 
-        const fabricElement = await createFabricElement(elementData); // Wait for the promise to resolve
+        const fabricElement = await createFabricElement(elementData);
         if (fabricElement) {
             canvasObj.add(fabricElement);
-            canvasObj.renderAll(); // Ensure canvas is rendered after adding the element
+            canvasObj.renderAll();
         }
     };
 
     useEffect(() => {
         addElementToCanvas();
-    }, [canvasObj, elementData]); // Trigger when canvasObj or elementData changes
+    }, [canvasObj, elementData]);
 
     const createFabricElement = async (element) => {
         if (!canvasObj) return null;
@@ -63,14 +65,19 @@ const AddButtonImage = () => {
             canvasObj,
             element.x,
             element.y,
-            [element.idleImage, element.hoverImage, element.clickedImage],
-            element.scale
+            element.idleImage,
+            element.hoverImage,
+            element.clickedImage,
+            element.scale,
+            element.text,
+            element.textColor,
+            element.fontFamily,
+            element.fontSize,
         );
 
-        return await fabricElement.getFabricElementAsync(); // Ensure the element is added correctly
+        return await fabricElement.getFabricElementAsync();
     };
 
-    // Handle image file uploads and convert them to Base64
     const handleFileChange = async (e, type) => {
         const file = e.target.files[0];
         if (file) {
@@ -79,33 +86,30 @@ const AddButtonImage = () => {
                 const base64String = reader.result;
                 setElementData((prev) => ({
                     ...prev,
-                    [type]: base64String, // Set base64 image to the respective type
+                    [type]: base64String,
                 }));
             };
             reader.readAsDataURL(file);
         }
     };
 
-    // Handle input changes for non-image fields like scale
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setElementData((prev) => ({
             ...prev,
-            [name]: name === 'scale' ? parseFloat(value) : value, // Ensure scale is a number
+            [name]: ['scale', 'fontSize', 'x', 'y'].includes(name) ? parseFloat(value) : value,
         }));
     };
 
-    // Handle submit to send data to API
     const handleSubmit = async () => {
         try {
             console.log(elementData);
             const response = await axios.post(`${API_KEY}api/buttonImages/`, elementData);
-            const result = await response.data;
+            const result = response.data;
             console.log('Button Image saved:', result);
             Swal.fire({
                 title: "Button Image Added Successfully",
-                showCancelButton: false,
-                confirmButtonText: "ok",
+                confirmButtonText: "OK",
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.reload();
@@ -118,10 +122,34 @@ const AddButtonImage = () => {
 
     return (
         <div className="flex border rounded shadow-sm gap-4 items-center justify-between p-4">
-            <div className=' w-[30%] h-[400px] p-4 overflow-auto'>
+            <div className='w-[30%] h-[400px] p-4 overflow-auto'>
                 <h2 className="text-lg font-bold">Button Images Properties</h2>
 
-                {/* Scale Input */}
+                {/** X Position */}
+                <div className="mb-4">
+                    <label className="block">X Position:</label>
+                    <input
+                        type="number"
+                        name="x"
+                        value={elementData.x}
+                        onChange={handleInputChange}
+                        className="border p-1 rounded"
+                    />
+                </div>
+
+                {/** Y Position */}
+                <div className="mb-4">
+                    <label className="block">Y Position:</label>
+                    <input
+                        type="number"
+                        name="y"
+                        value={elementData.y}
+                        onChange={handleInputChange}
+                        className="border p-1 rounded"
+                    />
+                </div>
+
+                {/** Scale */}
                 <div className="mb-4">
                     <label className="block">Scale:</label>
                     <input
@@ -137,7 +165,55 @@ const AddButtonImage = () => {
                     <span>{elementData.scale}</span>
                 </div>
 
-                {/* Idle Image Input */}
+                {/** Text */}
+                <div className="mb-4">
+                    <label className="block">Button Text:</label>
+                    <input
+                        type="text"
+                        name="text"
+                        value={elementData.text}
+                        onChange={handleInputChange}
+                        className="border p-1 rounded"
+                    />
+                </div>
+
+                {/** Text Color */}
+                <div className="mb-4">
+                    <label className="block">Text Color:</label>
+                    <input
+                        type="color"
+                        name="textColor"
+                        value={elementData.textColor}
+                        onChange={handleInputChange}
+                        className="border p-1 rounded"
+                    />
+                </div>
+
+                {/** Font Family */}
+                <div className="mb-4">
+                    <label className="block">Font Family:</label>
+                    <input
+                        type="text"
+                        name="fontFamily"
+                        value={elementData.fontFamily}
+                        onChange={handleInputChange}
+                        className="border p-1 rounded"
+                    />
+                </div>
+
+                {/** Font Size */}
+                <div className="mb-4">
+                    <label className="block">Font Size:</label>
+                    <input
+                        type="number"
+                        name="fontSize"
+                        value={elementData.fontSize}
+                        onChange={handleInputChange}
+                        className="border p-1 rounded"
+                    />
+                </div>
+
+                {/** Idle Image */}
                 <div className="mb-4">
                     <label className="block">Idle Image:</label>
                     <input
@@ -148,7 +224,7 @@ const AddButtonImage = () => {
                     />
                 </div>
 
-                {/* Hover Image Input */}
+                {/** Hover Image */}
                 <div className="mb-4">
                     <label className="block">Hover Image:</label>
                     <input
@@ -159,7 +235,7 @@ const AddButtonImage = () => {
                     />
                 </div>
 
-                {/* Clicked Image Input */}
+                {/** Clicked Image */}
                 <div className="mb-4">
                     <label className="block">Clicked Image:</label>
                     <input
@@ -170,13 +246,11 @@ const AddButtonImage = () => {
                     />
                 </div>
 
-                {/* Submit Button */}
                 <button onClick={handleSubmit} className="bg-blue-500 text-white px-4 py-2 rounded mt-4">
                     Submit
                 </button>
             </div>
 
-            {/* Canvas to Display Image */}
             <div>
                 <canvas ref={canvasRef} id="canvas" className="border shadow-lg" />
             </div>

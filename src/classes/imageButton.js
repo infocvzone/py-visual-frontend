@@ -1,20 +1,29 @@
 class ButtonImage {
-  constructor(canvas, x, y, images = [], scale = 1.0) {
+  constructor(
+    canvas, x, y, 
+    idleImage, hoverImage, clickedImage, 
+    scale = 1.0, 
+    text = "", textColor = "#000000", textFont = "Roboto", textSize = 14
+  ) {
     this.canvas = canvas;
     this.x = x;
     this.y = y;
     this.scale = scale;
 
-    // Default images for idle, hover, and clicked states
-    this.idleImage = images[0];
-    this.hoverImage = images[1];
-    this.clickedImage = images[2];
+    this.idleImage = idleImage;
+    this.hoverImage = hoverImage;
+    this.clickedImage = clickedImage;
 
-    // Button states
-    this.state = "idle"; // Start in the idle state
+    this.state = "idle"; // Start in idle state
 
-    // Group that holds all images
-    this.imageGroup = null;
+    // Text properties
+    this.text = text;
+    this.textColor = textColor;
+    this.textFont = textFont;
+    this.textSize = textSize;
+
+    this.imageGroup = null; // Group that holds images and text
+    this.textElement = this.createText(); // Create fabric.Text object
 
     // Load the images and set up event listeners
     this.loadImages().then(() => {
@@ -22,61 +31,58 @@ class ButtonImage {
     });
   }
 
+  // Create a fabric.Text object
+  createText() {
+    return new fabric.Text(this.text, {
+      fontSize: this.textSize,
+      fill: this.textColor,
+      fontFamily: this.textFont,
+      originX: "center",
+      originY: "center",
+      selectable: false,
+      evented: false,
+    });
+  }
+
   // Function to load and scale images
   loadImages() {
     return new Promise((resolve, reject) => {
-      fabric.Image.fromURL(
-        this.idleImage,
-        (idleImg) => {
-          fabric.Image.fromURL(this.hoverImage, (hoverImg) => {
-            fabric.Image.fromURL(this.clickedImage, (clickedImg) => {
-              // Set images with desired width and height
-              this.idleImage = this.normalizeImage(idleImg, 150, 150);
-              this.hoverImage = this.normalizeImage(hoverImg, 150, 150);
-              this.clickedImage = this.normalizeImage(clickedImg, 150, 150);
+      fabric.Image.fromURL(this.idleImage, (idleImg) => {
+        fabric.Image.fromURL(this.hoverImage, (hoverImg) => {
+          fabric.Image.fromURL(this.clickedImage, (clickedImg) => {
+            this.idleImage = this.normalizeImage(idleImg, 150, 150);
+            this.hoverImage = this.normalizeImage(hoverImg, 150, 150);
+            this.clickedImage = this.normalizeImage(clickedImg, 150, 150);
 
-              // Group all images into a fabric.Group
-              this.imageGroup = new fabric.Group(
-                [this.idleImage, this.hoverImage, this.clickedImage],
-                {
-                  left: this.x,
-                  top: this.y,
-                  selectable: true,
-                  evented: true,
-                }
-              );
+            // Group images and text
+            this.imageGroup = new fabric.Group(
+              [this.idleImage, this.hoverImage, this.clickedImage, this.textElement],
+              { left: this.x, top: this.y, selectable: true, evented: true }
+            );
 
-              // Add the group to the canvas
-              resolve(); // Resolve the promise when images are loaded
-            });
+            resolve(); // Resolve when images are loaded
           });
-        },
-        { crossOrigin: "anonymous" }
-      ); // Optional: handle CORS for external images
+        });
+      }, { crossOrigin: "anonymous" });
     });
   }
 
   normalizeImage(image, maxWidth, maxHeight) {
-    // Calculate the scaling factor to maintain aspect ratio
     const aspectRatio = image.width / image.height;
 
-    let width = maxWidth * this.scale; // Desired width scaled
-    let height = maxHeight * this.scale; // Desired height scaled
+    let width = maxWidth * this.scale;
+    let height = maxHeight * this.scale;
 
-    // Adjust width and height based on the aspect ratio
     if (width / height > aspectRatio) {
-      // If the calculated width is too wide, scale based on height
       width = height * aspectRatio;
     } else {
-      // If the calculated height is too tall, scale based on width
       height = width / aspectRatio;
     }
 
-    // Set the image properties
     image.set({
       scaleX: this.scale,
       scaleY: this.scale,
-      originX: "center", // Center the images within the group
+      originX: "center",
       originY: "center",
     });
 
@@ -84,17 +90,15 @@ class ButtonImage {
     return image;
   }
 
-  // Set the image position based on x and y
   setImagePosition(image) {
     image.set({
-      left: 0, // Set to 0 to position within the group context
-      top: 0, // Position within the group context
-      selectable: false, // Prevent individual dragging
-      evented: false, // Disable individual event handling
+      left: 0,
+      top: 0,
+      selectable: false,
+      evented: false,
     });
   }
 
-  // Function to handle events for hover and click states
   setupEventListeners(canvas) {
     canvas.on("mouse:move", (event) => {
       const pointer = canvas.getPointer(event.e);
@@ -124,7 +128,6 @@ class ButtonImage {
     });
   }
 
-  // Check if the mouse is within the button's bounds
   isWithinBounds(mouseX, mouseY) {
     return (
       mouseX >= this.imageGroup.left &&
@@ -134,7 +137,6 @@ class ButtonImage {
     );
   }
 
-  // Update the button state by changing the displayed image
   updateState() {
     if (this.state === "clicked") {
       this.idleImage.set({ opacity: 0 });
@@ -150,10 +152,18 @@ class ButtonImage {
       this.clickedImage.set({ opacity: 0 });
     }
 
-    this.canvas.renderAll(); // Re-render the canvas after state change
+    this.canvas.renderAll(); // Re-render after state change
   }
 
-  // Ensure images are loaded before calling this method
+  updateText(newText, newColor) {
+    this.textElement.set({
+      text: newText,
+      fill: newColor,
+    });
+    this.imageGroup.addWithUpdate(this.textElement); // Ensure text stays centered
+    this.canvas.renderAll();
+  }
+
   getFabricElementAsync() {
     return new Promise((resolve, reject) => {
       this.loadImages()

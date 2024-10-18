@@ -295,10 +295,16 @@ const CanvasArea = ({
       case "ButtonImage":
         return new ButtonImage(
           canvasObj,
-          element.x, // x position
-          element.y, // y position
-          [element.idleImage, element.hoverImage, element.clickedImage],
-          element.scale // scale
+          element.x,
+          element.y,
+          element.idleImage,
+          element.hoverImage,
+          element.clickedImage,
+          element.scale,
+          element.text,    // Default text
+          element.textColor || "#000000",  // Default text color
+          element.fontFamily || "Arial",  // Default font
+          element.fontSize || 16         // Default font size
         ).getFabricElementAsync();
 
       default:
@@ -346,6 +352,8 @@ const CanvasArea = ({
         <div className="absolute top-2 left-2 p-2 bg-blue-100 border border-blue-300 rounded">
           <p>X: {position.x}</p>
           <p>Y: {position.y}</p>
+          <p>width: {size.width}</p>
+          <p>height: {size.height}</p>
         </div>
       )}
     </div>
