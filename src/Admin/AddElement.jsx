@@ -4,6 +4,9 @@ import AddText from "./AddText";
 import AddButtonImage from "./AddImageButton";
 import ImageUploader from "./AddBgImages";
 import AddInputField from "./AddInputField";
+import AddLine from "./Addline";
+import AddCircle from "./AddCircle";
+import AddRect from "./AddRectangle";
 
 const AddElement = () => {
   const [selectedElement, setSelectedElement] = useState("");
@@ -64,14 +67,47 @@ const AddElement = () => {
           />
           Background Images
         </label>
+        <label className="mr-4">
+          <input
+            type="radio"
+            value="Line"
+            checked={selectedElement === "Line"}
+            onChange={(e) => setSelectedElement(e.target.value)}
+            className="mr-2"
+          />
+          Line
+        </label>
+        <label className="mr-4">
+          <input
+            type="radio"
+            value="Circle"
+            checked={selectedElement === "Circle"}
+            onChange={(e) => setSelectedElement(e.target.value)}
+            className="mr-2"
+          />
+          Circle
+        </label>
+        <label className="mr-4">
+          <input
+            type="radio"
+            value="Rect"
+            checked={selectedElement === "Rect"}
+            onChange={(e) => setSelectedElement(e.target.value)}
+            className="mr-2"
+          />
+          Rectangle
+        </label>
       </div>
 
       {/* Conditionally render the selected component */}
       {selectedElement === "button" && <AddButton />}
       {selectedElement === "text" && <AddText />}
       {selectedElement === "buttonImage" && <AddButtonImage />}
-      {selectedElement === "bgImage" && <ImageUploader/>}
-      {selectedElement === "InputField" && <AddInputField/>}
+      {selectedElement === "bgImage" && <ImageUploader />}
+      {selectedElement === "InputField" && <AddInputField />}
+      {selectedElement === "Line" && <AddLine />}
+      {selectedElement === "Circle" && <AddCircle />}
+      {selectedElement === "Rect" && <AddRect />}
     </div>
   );
 };

@@ -317,6 +317,30 @@ const CanvasArea = ({
           element.fontSize || 16 // Default font size
         ).getFabricElementAsync();
 
+      case "Line":
+        return new fabric.Line(
+          [element.x1, element.y1, element.x2, element.y2],
+          {
+            stroke: element.Color, // Stroke color
+            strokeWidth: element.strokeWidth, // Line width
+          }
+        );
+      case "Circle":
+        return new fabric.Circle({
+          left: element.x, // X coordinate
+          top: element.y, // Y coordinate
+          radius: element.radius, // Radius of the circle
+          fill: element.Color, // Fill color
+        });
+      case "Rect":
+        return new fabric.Rect({
+          left: element.x, // X coordinate
+          top: element.y, // Y coordinate
+          fill: element.Color, // Fill color
+          width: element.width, // Width of the rectangle
+          height: element.height, // Height of the rectangle
+        });
+
       default:
         return null;
     }
@@ -477,7 +501,6 @@ const CanvasArea = ({
         canvasObj.add(line);
         alignmentLines.current.push(line); // Store the line
       }
-
     });
 
     canvasObj.renderAll();

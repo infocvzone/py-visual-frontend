@@ -15,6 +15,9 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
   const [inputfield, setInputfield] = useState([]);
   const [textData, setTextData] = useState([]);
   const [ImageData, setImageData] = useState([]);
+  const [LineData, setLineData] = useState([]);
+  const [CircleData, setCircleData] = useState([]);
+  const [RectData, setRectData] = useState([]);
   const [buttonimageData, setButtonImageData] = useState([]); // New state for images
   const [loading, setLoading] = useState(true);
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -63,7 +66,31 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
       try {
         const response = await axios.get(`${API_KEY}api/images`);
         setImageData(response.data); // Fetch and store image data
-        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+
+    const fetchLineData = async () => {
+      try {
+        const response = await axios.get(`${API_KEY}api/line`);
+        setLineData(response.data); // Fetch and store image data
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+    const fetchCircleData = async () => {
+      try {
+        const response = await axios.get(`${API_KEY}api/circle`);
+        setCircleData(response.data); // Fetch and store image data
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+    const fetchRectData = async () => {
+      try {
+        const response = await axios.get(`${API_KEY}api/rect`);
+        setRectData(response.data); // Fetch and store image data
       } catch (error) {
         console.error("Error fetching images:", error);
       }
@@ -74,6 +101,9 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
     fetchImageData(); // Fetch images
     fetchInputfieldData();
     fetchBgImagesData();
+    fetchLineData();
+    fetchCircleData();
+    fetchRectData();
   }, []);
 
   const toggleCategory = (category) => {
@@ -198,6 +228,19 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
               </h1>
             </button>
           </div>
+          {/* Line Button */}
+          <div className="flex items-center">
+            <button onClick={() => toggleCategory("Line")}>
+              <img
+                src={ImageSvg}
+                alt="Line"
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                  activeCategory === "Line" ? "border-blue-400" : "border-black"
+                }`}
+              />
+              <h1 className="text-xs mt-1 text-center text-black">Shapes</h1>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -295,6 +338,31 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
                       fontFamily={input.fontFamily}
                     />
                   </button>
+                ))}
+              </div>
+            )}
+            {activeCategory === "Line" && (
+              <div className="grid grid-cols-2 gap-1">
+                {LineData.map((line) => (
+                  <button
+                    key={line._id}
+                    className="w-full border h-[80px] bg-white p-2 shadow-lg rounded-lg"
+                    onClick={() => onAddElement("Line", line)}
+                  ></button>
+                ))}
+                {CircleData.map((circle) => (
+                  <button
+                    key={circle._id}
+                    className="w-full border h-[80px] bg-white p-2 shadow-lg rounded-lg"
+                    onClick={() => onAddElement("Circle", circle)}
+                  ></button>
+                ))}
+                {RectData.map((rect) => (
+                  <button
+                    key={rect._id}
+                    className="w-full border h-[80px] bg-white p-2 shadow-lg rounded-lg"
+                    onClick={() => onAddElement("Rect", rect)}
+                  ></button>
                 ))}
               </div>
             )}

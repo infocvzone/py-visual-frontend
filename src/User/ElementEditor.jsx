@@ -51,7 +51,16 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
     if (name === "fontFamily") {
       loadFont(value);
     }
-    if (name === "borderThickness" || name === "width" || name === "height") {
+    if (
+      name === "borderThickness" ||
+      name === "width" ||
+      name === "height" ||
+      name === "x1" ||
+      name === "y1" ||
+      name === "x2" ||
+      name === "y2" ||
+      name === "strokeWidth"
+    ) {
       updatedValue = parseFloat(value);
     }
     const updatedElement = {
@@ -901,6 +910,132 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 value={editedElement.bgColor || "#ffffff"}
                 onChange={handleChange}
                 className="p-2 border rounded"
+              />
+            </div>
+          </>
+        );
+
+      case "Line":
+        return (
+          <>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">X1</label>
+              <input
+                type="number"
+                name="x1"
+                value={editedElement.x1 || 100}
+                onChange={handleChange}
+                className="p-2 h-8 w-[80px] border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Y1</label>
+              <input
+                type="number"
+                name="y1"
+                value={editedElement.y1 || 100}
+                onChange={handleChange}
+                className="p-2 h-8 w-[80px] border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">X2</label>
+              <input
+                type="number"
+                name="x2"
+                value={editedElement.x2 || 300}
+                onChange={handleChange}
+                className="p-2 h-8 w-[80px] border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Y1</label>
+              <input
+                type="number"
+                name="y1"
+                value={editedElement.y1 || 100}
+                onChange={handleChange}
+                className="p-2 h-8 w-[80px] border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Width</label>
+              <input
+                type="number"
+                name="strokeWidth"
+                value={editedElement.strokeWidth || 2}
+                onChange={handleChange}
+                className="p-2 h-8 w-[80px] border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Color</label>
+              <input
+                type="color"
+                name="Color"
+                value={editedElement.Color || "#0f0f0f"}
+                onChange={handleChange}
+                className="p-2 h-8 border rounded"
+              />
+            </div>
+          </>
+        );
+      case "Circle":
+        return (
+          <>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Radius</label>
+              <input
+                type="number"
+                name="radius"
+                value={editedElement.radius || 15}
+                onChange={handleChange}
+                className="p-2 h-8 w-[80px] border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Color</label>
+              <input
+                type="color"
+                name="Color"
+                value={editedElement.Color || "#0f0f0f"}
+                onChange={handleChange}
+                className="p-2 h-8 border rounded"
+              />
+            </div>
+          </>
+        );
+      case "Rect":
+        return (
+          <>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Width</label>
+              <input
+                type="number"
+                name="width"
+                value={editedElement.width || 250}
+                onChange={handleChange}
+                className="p-2 h-8 w-[80px] border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Height</label>
+              <input
+                type="number"
+                name="height"
+                value={editedElement.height || 100}
+                onChange={handleChange}
+                className="p-2 h-8 w-[80px] border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Color</label>
+              <input
+                type="color"
+                name="Color"
+                value={editedElement.Color || "#0f0f0f"}
+                onChange={handleChange}
+                className="p-2 h-8 border rounded"
               />
             </div>
           </>
