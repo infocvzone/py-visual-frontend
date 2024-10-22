@@ -94,6 +94,7 @@ const CanvasArea = ({
               handleElementSizing(fabricElement, element.id); // Update size when selected
               drawAlignmentLines();
             });
+            fabricElement.on("moved", removeAlignmentLines);
           }
         } catch (error) {
           console.error("Error creating fabric element:", error);
