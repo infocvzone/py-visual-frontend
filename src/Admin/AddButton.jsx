@@ -15,6 +15,7 @@ const AddButton = () => {
     type: "BasicButton",
     x: 150,
     y: 150,
+    name:"Button",
     width: 150,
     height: 30,
     text: "Submit",

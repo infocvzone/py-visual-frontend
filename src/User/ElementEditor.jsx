@@ -765,7 +765,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="fontFamily"
                 value={editedElement.fontFamily}
                 onChange={handleChange}
-                className="border p-1 rounded"
+                className="border p-1 rounded w-[120px]"
               >
                 {/* Map the fetched fonts to options */}
                 {Fonts.map((font, index) => (
@@ -820,8 +820,8 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               <label className="block">Name</label>
               <input
                 type="text"
-                name="name"
-                value={editedElement.name}
+                name="Name"
+                value={editedElement.Name}
                 onChange={handleChange}
                 className="p-2 w-[120px] h-8 border rounded"
               />

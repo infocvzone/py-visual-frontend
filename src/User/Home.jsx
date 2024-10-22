@@ -65,14 +65,18 @@ const Home = () => {
   };
 
   // Function to generate Python code based on current elements
-  const handleGenerateCode = () => {
+  const handleGenerateCode = async () => {
     setCodeDisplay(!codeDisplay);
 
     // Collect all element names for the global declaration
     let globalElementNames = elements
       .map(
         (el, index) =>
-          `${(el.type === "BasicButton" || el.type === "ButtonImage") ? "Button" : el.type}_${index + 1}`
+          `${
+            el.type === "BasicButton" || el.type === "ButtonImage"
+              ? "Button"
+              : el.type
+          }_${index + 1}`
       )
       .join(", ");
 
@@ -223,12 +227,22 @@ def create_ui(window):
 
         case "ButtonImage":
           params += `, scale = ${el.scale}, text="${el.text}", 
-          idle_image = "assets/customButton/${el.id}-idle.png",
-          hover_image = "assets/customButton/${el.id}-hover.png",
-          clicked_image = "assets/customButton/${el.id}-clicked.png",
-          font="${el.fontFamily}", font_size=${el.fontSize},font_color="${el.textColor}",
-          on_hover=${el.onHover === null ? "None" : el.onHover}, on_click=${el.onClick === null || el.name === "" ? "None" : el.onClick}, on_release=${el.onRelease === null || el.name === "" ? "None" : el.onRelease}, 
-          name = ${el.name === null || el.name === "" ? `"Button_${index + 1}"` : `"${el.name}"`}`;
+          idle_image = "assets/customButton/${el.Name}/${el.id}-idle.png",
+          hover_image = "assets/customButton/${el.Name}/${el.id}-hover.png",
+          clicked_image = "assets/customButton/${el.Name}/${el.id}-clicked.png",
+          font="assets/fonts/${el.fontFamily}/${
+            el.fontFamily
+          }.ttf", font_size=${el.fontSize},font_color="${el.textColor}",
+          on_hover=${el.onHover === null ? "None" : el.onHover}, on_click=${
+            el.onClick === null || el.name === "" ? "None" : el.onClick
+          }, on_release=${
+            el.onRelease === null || el.name === "" ? "None" : el.onRelease
+          }, 
+          name = ${
+            el.name === null || el.name === ""
+              ? `"Button_${index + 1}"`
+              : `"${el.name}"`
+          }`;
 
         default:
           break;
@@ -280,6 +294,9 @@ if __name__ == '__main__':
     const backgroundFolder = assetsFolder.folder("background");
     const customButton = assetsFolder.folder("customButton");
 
+    await handleGenerateCode();
+    setCodeDisplay(false);
+
     // Fetch available fonts from the database
     let fontsData = [];
     try {
@@ -297,24 +314,23 @@ if __name__ == '__main__':
       return await res.blob();
     };
 
-    // Generate the main.py file
-    zip.file("main.py", generatedCode);
-
     // Loop through elements and handle ButtonImage types
     for (const element of elements) {
       if (element.type === "ButtonImage") {
+        let Folder = element.Name;
+        Folder = customButton.folder(`${element.Name}`);
         // Convert the Base64 images into blobs and save them in the assets folder
         if (element.idleImage) {
           const idleImageBlob = base64ToBlob(element.idleImage);
-          customButton.file(`${element.id}-idle.png`, idleImageBlob);
+          Folder.file(`${element.id}-idle.png`, idleImageBlob);
         }
         if (element.hoverImage) {
           const hoverImageBlob = base64ToBlob(element.hoverImage);
-          customButton.file(`${element.id}-hover.png`, hoverImageBlob);
+          Folder.file(`${element.id}-hover.png`, hoverImageBlob);
         }
         if (element.clickedImage) {
           const clickImageBlob = base64ToBlob(element.clickedImage);
-          customButton.file(`${element.id}-clicked.png`, clickImageBlob);
+          Folder.file(`${element.id}-clicked.png`, clickImageBlob);
         }
       }
 
@@ -349,6 +365,9 @@ if __name__ == '__main__':
         console.error("Failed to download background image:", error);
       }
     }
+
+    // Generate the main.py file
+    zip.file("main.py", generatedCode);
 
     // Generate the ZIP file
     zip.generateAsync({ type: "blob" }).then((content) => {
