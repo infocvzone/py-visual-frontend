@@ -25,6 +25,7 @@ const CanvasArea = ({
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [size, setSize] = useState({ width: 0, height: 0 }); // State for height and width
   const alignmentLines = useRef([]); // Store alignment lines
+  const [AlignmentLines, setAlignmentLines] = useState([]);
 
   // Initialize Fabric canvas
   useEffect(() => {
@@ -82,7 +83,6 @@ const CanvasArea = ({
               setElementData(element);
               onSelectedElement();
               handleElementSizing(fabricElement, element.id); // Update size when selected
-              updateAlignmentLines(fabricElement); // Update alignment lines on movement
             });
             fabricElement.on("scaling", () => onScaleElement(fabricElement));
             fabricElement.on("selected", () => {
@@ -92,6 +92,7 @@ const CanvasArea = ({
               setElementData(element);
               onSelectedElement();
               handleElementSizing(fabricElement, element.id); // Update size when selected
+              drawAlignmentLines();
             });
           }
         } catch (error) {
@@ -476,40 +477,6 @@ const CanvasArea = ({
         alignmentLines.current.push(line); // Store the line
       }
 
-      // Top edge of the moving element with the bottom edge of another object
-      if (Math.abs(movingElement.top + movingElement.height - obj.top) <= 0) {
-        const line = new fabric.Line(
-          [
-            0,
-            movingElement.top + movingElement.height,
-            canvasObj.width,
-            movingElement.top + movingElement.height,
-          ],
-          {
-            stroke: "red",
-            strokeWidth: 1,
-            selectable: false,
-            evented: false,
-          }
-        );
-        canvasObj.add(line);
-        alignmentLines.current.push(line); // Store the line
-      }
-
-      // Bottom edge of the moving element with the top edge of another object
-      if (Math.abs(movingElement.top - (obj.top + obj.height)) <= 0) {
-        const line = new fabric.Line(
-          [0, movingElement.top, canvasObj.width, movingElement.top],
-          {
-            stroke: "red",
-            strokeWidth: 1,
-            selectable: false,
-            evented: false,
-          }
-        );
-        canvasObj.add(line);
-        alignmentLines.current.push(line); // Store the line
-      }
     });
 
     canvasObj.renderAll();
@@ -521,6 +488,38 @@ const CanvasArea = ({
       canvasObj.remove(line);
     });
     alignmentLines.current = []; // Clear the reference
+  };
+
+  // Draw alignment lines (center of the canvas)
+  const drawAlignmentLines = () => {
+    const verticalLine = new fabric.Line(
+      [canvasObj.width / 2, 0, canvasObj.width / 2, canvasObj.height],
+      {
+        stroke: "rgba(0, 0, 0, 0.5)",
+        strokeDashArray: [5, 5],
+        selectable: false,
+        evented: false,
+      }
+    );
+    const horizontalLine = new fabric.Line(
+      [0, canvasObj.height / 2, canvasObj.width, canvasObj.height / 2],
+      {
+        stroke: "rgba(0, 0, 0, 0.5)",
+        strokeDashArray: [5, 5],
+        selectable: false,
+        evented: false,
+      }
+    );
+    setAlignmentLines([verticalLine, horizontalLine]);
+    canvasObj.add(verticalLine, horizontalLine);
+    canvasObj.renderAll();
+  };
+
+  // Remove alignment lines from the canvas
+  const removeAlignmentLines = () => {
+    AlignmentLines((line) => canvasObj.remove(line));
+    setAlignmentLines([]);
+    canvasObj.renderAll();
   };
 
   return (
