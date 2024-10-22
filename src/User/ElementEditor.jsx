@@ -949,11 +949,11 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               />
             </div>
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Y1</label>
+              <label className="block">Y2</label>
               <input
                 type="number"
-                name="y1"
-                value={editedElement.y1 || 100}
+                name="y2"
+                value={editedElement.y2 || 100}
                 onChange={handleChange}
                 className="p-2 h-8 w-[80px] border rounded"
               />
