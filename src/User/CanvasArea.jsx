@@ -21,6 +21,7 @@ const CanvasArea = ({
   Image,
   bgColor,
 }) => {
+  
   const canvasRef = useRef(null);
   const [canvasObj, setCanvasObj] = useState(null);
   const [selected, setSelected] = useState(null);

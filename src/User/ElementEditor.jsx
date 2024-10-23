@@ -6,6 +6,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
   const [editedElement, setEditedElement] = useState(null);
   const [Fonts, setFont] = useState([]);
 
+  
   useEffect(() => {
     const fetchFonts = async () => {
       try {
