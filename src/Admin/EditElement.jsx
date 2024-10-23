@@ -55,8 +55,6 @@ function EditElement({ type, element }) {
     fetchFonts();
   }, []); // Added empty dependency array to run only once on mount
 
-  
-
   const loadFont = (fontName) => {
     WebFont.load({
       google: {
@@ -174,14 +172,14 @@ function EditElement({ type, element }) {
           canvasObj,
           element.x,
           element.y,
-          element.idleImage, 
-          element.hoverImage, 
+          element.idleImage,
+          element.hoverImage,
           element.clickedImage,
           element.scale,
           element.text,
           element.textColor,
           element.fontFamily,
-          element.fontSize,
+          element.fontSize
         ).getFabricElementAsync();
 
       default:
@@ -302,14 +300,73 @@ function EditElement({ type, element }) {
     "padding_bottom",
     "on_input",
     "border_style",
+    "text_anchor",
   ];
+
+  // Handle element deletion
+  const handleDelete = async () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          let deleteResponse = null;
+          if (elementData.type === "BasicButton") {
+            deleteResponse = await axios.delete(
+              `${API_KEY}api/buttons/${elementData._id}`
+            );
+          } else if (elementData.type === "Text") {
+            deleteResponse = await axios.delete(
+              `${API_KEY}api/texts/${elementData._id}`
+            );
+          } else if (elementData.type === "ButtonImage") {
+            deleteResponse = await axios.delete(
+              `${API_KEY}api/buttonImages/${elementData._id}`
+            );
+          } else if (elementData.type === "InputField") {
+            deleteResponse = await axios.delete(
+              `${API_KEY}api/inputfields/${elementData._id}`
+            );
+          }
+          console.log("Element Deleted:", deleteResponse.data);
+          Swal.fire(
+            "Deleted!",
+            "Your element has been deleted.",
+            "success"
+          ).then(() => {
+            navigate("/admin");
+          });
+        } catch (error) {
+          console.error("Error deleting element:", error);
+          Swal.fire(
+            "Error!",
+            "There was an issue deleting the element.",
+            "error"
+          );
+        }
+      }
+    });
+  };
 
   return (
     <div className="flex border rounded shadow-sm">
       <div className="w-[30%] h-[400px] p-4 overflow-auto">
         <h2 className="text-lg font-bold">Properties</h2>
         {Object.keys(elementData)
-          .filter((key) => !excludedFields.includes(key)) // Exclude specific fields
+          .filter((key) => {
+            // Always include 'scale' if element type is 'ButtonImage'
+            if (elementData.type === "ButtonImage" && key === "scale") {
+              return true;
+            }
+            // Otherwise, exclude fields that are in the excludedFields array
+            return !excludedFields.includes(key);
+          }) // Exclude specific fields
           .map((key) => (
             <div key={key} className="mb-2">
               <label className="block">{key}:</label>
@@ -383,12 +440,20 @@ function EditElement({ type, element }) {
             </div>
           ))}
         {!loading ? (
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-          >
-            Update
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleSubmit}
+              className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+            >
+              Update
+            </button>
+            <button
+              className="bg-red-500 text-white px-4 py-2 rounded-md mt-4 hover:bg-red-700"
+              onClick={handleDelete}
+            >
+              Delete Element
+            </button>
+          </div>
         ) : (
           <img src={load} alt="loading" className="w-[50px] h-[50px]" />
         )}

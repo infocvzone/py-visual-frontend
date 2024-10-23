@@ -13,6 +13,7 @@ const CanvasArea = ({
   setSelectedElement,
   onAddElement,
   onRemoveElement,
+  setPOSITION,
   positions,
   Height,
   Width,
@@ -20,6 +21,7 @@ const CanvasArea = ({
   Image,
   bgColor,
 }) => {
+  
   const canvasRef = useRef(null);
   const [canvasObj, setCanvasObj] = useState(null);
   const [selected, setSelected] = useState(null);
@@ -53,8 +55,54 @@ const CanvasArea = ({
 
   const onSelectedElement = () => {
     selectedIndex(elementData);
-    console.log(elementData);
   };
+
+  // Update canvas with new elements
+  useEffect(() => {
+    if (canvasObj) {
+      canvasObj.clear();
+      const keys = Object.keys(positions);
+      elements.forEach(async (element) => {
+        for (let i = 0; i < keys.length; i++) {
+          if (keys[i].toString() === element.id.toString()) {
+            const key = keys[i];
+            let obj = positions[key];
+            element.x = Number(obj.x);
+            element.y = Number(obj.y);
+            break;
+          }
+        }
+        try {
+          const fabricElement = await createFabricElement(element);
+          if (fabricElement) {
+            canvasObj.add(fabricElement);
+            fabricElement.on("moving", () => {
+              setSelected(fabricElement);
+              setSelectedElement(fabricElement);
+              handleElementMovement(fabricElement, element.id);
+              setElementData(element);
+              onSelectedElement();
+              handleElementSizing(fabricElement, element.id); // Update size when selected
+            });
+            fabricElement.on("scaling", () => onScaleElement(fabricElement));
+            fabricElement.on("selected", () => {
+              drawAlignmentLines();
+              console.log("Element selected", fabricElement);
+              setSelected(fabricElement);
+              setSelectedElement(fabricElement);
+              handleElementMovement(fabricElement, element.id);
+              setElementData(element);
+              onSelectedElement();
+              handleElementSizing(fabricElement, element.id); // Update size when selected
+            });
+            fabricElement.on("moved", removeAlignmentLines);
+          }
+        } catch (error) {
+          console.error("Error creating fabric element:", error);
+        }
+      });
+    }
+  }, [elements, canvasObj, elementData]);
 
   // Listen for Ctrl + C and Ctrl + V (or Cmd + C and Cmd + V on Mac)
   useEffect(() => {
@@ -89,7 +137,37 @@ const CanvasArea = ({
         onRemoveElement(elementData.id); // Send selected element's ID to remove
         console.log("Element deleted:", elementData.id);
       }
-      
+      // Arrow key handling to move elements
+      if (elementData && e.shiftKey) {
+        let updatedPosition = positions[elementData.id];
+        // Ensure x and y are numbers before performing operations
+        let x = parseInt(updatedPosition.x, 10); // Convert x to a number (integer)
+        let y = parseInt(updatedPosition.y, 10); // Convert y to a number (integer)
+
+        switch (e.key) {
+          case "ArrowUp":
+            y -= 1; // Move element up by 10 units
+            break;
+          case "ArrowDown":
+            y += 1; // Move element down by 10 units
+            break;
+          case "ArrowLeft":
+            x -= 1; // Move element left by 10 units
+            break;
+          case "ArrowRight":
+            x += 1; // Move element right by 10 units
+            break;
+          default:
+            return;
+        }
+
+        // Update the position in the parent component via setPositions
+        setPOSITION({
+          ...positions,
+          [elementData.id]: { ...updatedPosition, x, y }, // Update position in parent
+        });
+        console.log("Element moved:", positions);
+      }
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -97,55 +175,7 @@ const CanvasArea = ({
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [selected, copiedElement, elements, onAddElement, onRemoveElement]);
-
-  // Update canvas with new elements
-  useEffect(() => {
-    if (canvasObj) {
-      canvasObj.clear();
-      const keys = Object.keys(positions);
-      console.log(elements);
-      elements.forEach(async (element) => {
-        for (let i = 0; i < keys.length; i++) {
-          if (keys[i].toString() === element.id.toString()) {
-            const key = keys[i];
-            let obj = positions[key];
-            element.x = Number(obj.x);
-            element.y = Number(obj.y);
-            break;
-          }
-        }
-        try {
-          const fabricElement = await createFabricElement(element);
-          if (fabricElement) {
-            console.log(fabricElement);
-            canvasObj.add(fabricElement);
-            fabricElement.on("moving", () => {
-              setSelected(fabricElement);
-              setSelectedElement(fabricElement);
-              handleElementMovement(fabricElement, element.id);
-              setElementData(element);
-              onSelectedElement();
-              handleElementSizing(fabricElement, element.id); // Update size when selected
-            });
-            fabricElement.on("scaling", () => onScaleElement(fabricElement));
-            fabricElement.on("selected", () => {
-              setSelected(fabricElement);
-              setSelectedElement(fabricElement);
-              handleElementMovement(fabricElement, element.id);
-              setElementData(element);
-              onSelectedElement();
-              handleElementSizing(fabricElement, element.id); // Update size when selected
-              drawAlignmentLines();
-            });
-            fabricElement.on("moved", removeAlignmentLines);
-          }
-        } catch (error) {
-          console.error("Error creating fabric element:", error);
-        }
-      });
-    }
-  }, [elements, canvasObj, elementData]);
+  }, [copiedElement, elements, onAddElement, onRemoveElement]);
 
   // Create Fabric element based on type
   const createFabricElement = (element) => {
