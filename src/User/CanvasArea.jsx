@@ -11,6 +11,7 @@ const CanvasArea = ({
   onUpdateSize,
   onScaleElement,
   setSelectedElement,
+  onAddElement,
   positions,
   Height,
   Width,
@@ -24,6 +25,7 @@ const CanvasArea = ({
   const [elementData, setElementData] = useState(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [size, setSize] = useState({ width: 0, height: 0 }); // State for height and width
+  const [copiedElement, setCopiedElement] = useState(null);
   const alignmentLines = useRef([]); // Store alignment lines
   const [AlignmentLines, setAlignmentLines] = useState([]);
 
@@ -39,8 +41,6 @@ const CanvasArea = ({
       selection: false,
     });
     setCanvasObj(canvas);
-    console.log(Image);
-
     return () => {
       // Clean up: dispose alignment lines
       alignmentLines.current.forEach((line) => {
@@ -54,6 +54,41 @@ const CanvasArea = ({
     selectedIndex(elementData);
     console.log(elementData);
   };
+
+ // Listen for Ctrl + C and Ctrl + V (or Cmd + C and Cmd + V on Mac)
+useEffect(() => {
+  const handleKeyDown = (e) => {
+    const isCopy = (e.ctrlKey || e.metaKey) && e.key === "c"; // Check for both Ctrl and Cmd
+    const isPaste = (e.ctrlKey || e.metaKey) && e.key === "v";
+    if (isCopy && elementData) {
+      // Ctrl + C or Cmd + C (Copy)
+      const copiedData = elements.find((el) => el.id === elementData.id);
+      if (copiedData) {
+        setCopiedElement(copiedData); // Store the copied element
+        console.log("Element copied:", copiedData);
+      }
+    }
+
+    if (isPaste && copiedElement) {
+      // Ctrl + V or Cmd + V (Paste)
+      const newElement = {
+        ...copiedElement,
+        id: Date.now(), // Create a new unique ID for the copied element
+        x: copiedElement.x + 10, // Offset position slightly
+        y: copiedElement.y + 10, // Offset position slightly
+      };
+
+      onAddElement(newElement.type, newElement); // Send new element to parent to append in elements array
+      console.log("Element pasted:", newElement);
+    }
+  };
+
+  document.addEventListener("keydown", handleKeyDown);
+
+  return () => {
+    document.removeEventListener("keydown", handleKeyDown);
+  };
+}, [selected, copiedElement, elements, onAddElement]);
 
   // Update canvas with new elements
   useEffect(() => {

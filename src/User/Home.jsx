@@ -423,6 +423,7 @@ if __name__ == '__main__':
             onUpdateSize={handleUpdateSize}
             onScaleElement={handleScaleElement} // Pass down the scale element handler
             setSelectedElement={setSelectedElement} // Pass down the selected element setter
+            onAddElement={handleAddElement}
             positions={positions}
             Height={height}
             Width={width}
