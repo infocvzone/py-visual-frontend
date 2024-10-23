@@ -56,6 +56,13 @@ const Home = () => {
     }));
   };
 
+  // Function to handle element removal
+  const removeElement = (id) => {
+    const updatedElements = elements.filter((el) => el.id !== id); // Filter out the element
+    setElements(updatedElements); // Update the state
+    setSelectedElement(null);
+  };
+
   // Function to scale an element
   const handleScaleElement = (fabricElement) => {
     const updatedElements = elements.map((el) =>
@@ -227,9 +234,9 @@ def create_ui(window):
 
         case "ButtonImage":
           params += `, scale = ${el.scale}, text="${el.text}", 
-          idle_image = "assets/customButton/${el.Name}/${el.id}-idle.png",
-          hover_image = "assets/customButton/${el.Name}/${el.id}-hover.png",
-          clicked_image = "assets/customButton/${el.Name}/${el.id}-clicked.png",
+          idle_image = "assets/Buttons/Button_${index+1}/idle.png",
+          hover_image = "assets/Buttons/Button_${index+1}/hover.png",
+          clicked_image = "assets/Buttons/Button_${index+1}/clicked.png",
           font="assets/fonts/${el.fontFamily}/${
             el.fontFamily
           }.ttf", font_size=${el.fontSize},font_color="${el.textColor}",
@@ -292,7 +299,7 @@ if __name__ == '__main__':
     const assetsFolder = zip.folder("assets"); // Create folder for assets
     const fontsFolder = assetsFolder.folder("fonts"); // Create folder for fonts
     const backgroundFolder = assetsFolder.folder("background");
-    const customButton = assetsFolder.folder("customButton");
+    const Buttons = assetsFolder.folder("Buttons");
 
     await handleGenerateCode();
     setCodeDisplay(false);
@@ -314,23 +321,25 @@ if __name__ == '__main__':
       return await res.blob();
     };
 
+    let index = 0;
     // Loop through elements and handle ButtonImage types
     for (const element of elements) {
+      index +=1;
       if (element.type === "ButtonImage") {
         let Folder = element.Name;
-        Folder = customButton.folder(`${element.Name}`);
+        Folder = Buttons.folder(`Button_${index}`);
         // Convert the Base64 images into blobs and save them in the assets folder
         if (element.idleImage) {
           const idleImageBlob = base64ToBlob(element.idleImage);
-          Folder.file(`${element.id}-idle.png`, idleImageBlob);
+          Folder.file(`idle.png`, idleImageBlob);
         }
         if (element.hoverImage) {
           const hoverImageBlob = base64ToBlob(element.hoverImage);
-          Folder.file(`${element.id}-hover.png`, hoverImageBlob);
+          Folder.file(`hover.png`, hoverImageBlob);
         }
         if (element.clickedImage) {
           const clickImageBlob = base64ToBlob(element.clickedImage);
-          Folder.file(`${element.id}-clicked.png`, clickImageBlob);
+          Folder.file(`clicked.png`, clickImageBlob);
         }
       }
 
@@ -424,6 +433,8 @@ if __name__ == '__main__':
             onScaleElement={handleScaleElement} // Pass down the scale element handler
             setSelectedElement={setSelectedElement} // Pass down the selected element setter
             onAddElement={handleAddElement}
+            onRemoveElement={removeElement}
+            setPOSITION={setPositions}
             positions={positions}
             Height={height}
             Width={width}

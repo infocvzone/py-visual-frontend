@@ -12,6 +12,8 @@ const CanvasArea = ({
   onScaleElement,
   setSelectedElement,
   onAddElement,
+  onRemoveElement,
+  setPOSITION,
   positions,
   Height,
   Width,
@@ -38,7 +40,7 @@ const CanvasArea = ({
       width: Width || 700,
       height: Height || 400,
       backgroundColor: "#f3f3f3",
-      selection: false,
+      selection: true,
     });
     setCanvasObj(canvas);
     return () => {
@@ -52,50 +54,13 @@ const CanvasArea = ({
 
   const onSelectedElement = () => {
     selectedIndex(elementData);
-    console.log(elementData);
   };
-
- // Listen for Ctrl + C and Ctrl + V (or Cmd + C and Cmd + V on Mac)
-useEffect(() => {
-  const handleKeyDown = (e) => {
-    const isCopy = (e.ctrlKey || e.metaKey) && e.key === "c"; // Check for both Ctrl and Cmd
-    const isPaste = (e.ctrlKey || e.metaKey) && e.key === "v";
-    if (isCopy && elementData) {
-      // Ctrl + C or Cmd + C (Copy)
-      const copiedData = elements.find((el) => el.id === elementData.id);
-      if (copiedData) {
-        setCopiedElement(copiedData); // Store the copied element
-        console.log("Element copied:", copiedData);
-      }
-    }
-
-    if (isPaste && copiedElement) {
-      // Ctrl + V or Cmd + V (Paste)
-      const newElement = {
-        ...copiedElement,
-        id: Date.now(), // Create a new unique ID for the copied element
-        x: copiedElement.x + 10, // Offset position slightly
-        y: copiedElement.y + 10, // Offset position slightly
-      };
-
-      onAddElement(newElement.type, newElement); // Send new element to parent to append in elements array
-      console.log("Element pasted:", newElement);
-    }
-  };
-
-  document.addEventListener("keydown", handleKeyDown);
-
-  return () => {
-    document.removeEventListener("keydown", handleKeyDown);
-  };
-}, [selected, copiedElement, elements, onAddElement]);
 
   // Update canvas with new elements
   useEffect(() => {
     if (canvasObj) {
       canvasObj.clear();
       const keys = Object.keys(positions);
-      console.log(elements);
       elements.forEach(async (element) => {
         for (let i = 0; i < keys.length; i++) {
           if (keys[i].toString() === element.id.toString()) {
@@ -109,7 +74,6 @@ useEffect(() => {
         try {
           const fabricElement = await createFabricElement(element);
           if (fabricElement) {
-            console.log(fabricElement);
             canvasObj.add(fabricElement);
             fabricElement.on("moving", () => {
               setSelected(fabricElement);
@@ -121,13 +85,14 @@ useEffect(() => {
             });
             fabricElement.on("scaling", () => onScaleElement(fabricElement));
             fabricElement.on("selected", () => {
+              drawAlignmentLines();
+              console.log("Element selected", fabricElement);
               setSelected(fabricElement);
               setSelectedElement(fabricElement);
               handleElementMovement(fabricElement, element.id);
               setElementData(element);
               onSelectedElement();
               handleElementSizing(fabricElement, element.id); // Update size when selected
-              drawAlignmentLines();
             });
             fabricElement.on("moved", removeAlignmentLines);
           }
@@ -136,7 +101,80 @@ useEffect(() => {
         }
       });
     }
-  }, [elements, canvasObj, elementData]);
+  }, [elements, canvasObj, elementData, positions]);
+
+  // Listen for Ctrl + C and Ctrl + V (or Cmd + C and Cmd + V on Mac)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const isCopy = (e.ctrlKey || e.metaKey) && e.key === "c"; // Check for both Ctrl and Cmd
+      const isPaste = (e.ctrlKey || e.metaKey) && e.key === "v";
+      const isDelete = (e.ctrlKey || e.metaKey) && e.key === "d";
+      if (isCopy && elementData) {
+        // Ctrl + C or Cmd + C (Copy)
+        const copiedData = elements.find((el) => el.id === elementData.id);
+        if (copiedData) {
+          setCopiedElement(copiedData); // Store the copied element
+          console.log("Element copied:", copiedData);
+        }
+      }
+
+      if (isPaste && copiedElement) {
+        // Ctrl + V or Cmd + V (Paste)
+        const newElement = {
+          ...copiedElement,
+          id: Date.now(), // Create a new unique ID for the copied element
+          x: copiedElement.x + 10, // Offset position slightly
+          y: copiedElement.y + 10, // Offset position slightly
+        };
+
+        onAddElement(newElement.type, newElement); // Send new element to parent to append in elements array
+        console.log("Element pasted:", newElement);
+      }
+
+      if (isDelete && elementData) {
+        // Ctrl + D or Cmd + D (Delete)
+        onRemoveElement(elementData.id); // Send selected element's ID to remove
+        console.log("Element deleted:", elementData.id);
+      }
+      // Arrow key handling to move elements
+      if (elementData && e.shiftKey) {
+        let updatedPosition = positions[elementData.id];
+        // Ensure x and y are numbers before performing operations
+        let x = parseInt(updatedPosition.x, 10); // Convert x to a number (integer)
+        let y = parseInt(updatedPosition.y, 10); // Convert y to a number (integer)
+
+        switch (e.key) {
+          case "ArrowUp":
+            y -= 1; // Move element up by 10 units
+            break;
+          case "ArrowDown":
+            y += 1; // Move element down by 10 units
+            break;
+          case "ArrowLeft":
+            x -= 1; // Move element left by 10 units
+            break;
+          case "ArrowRight":
+            x += 1; // Move element right by 10 units
+            break;
+          default:
+            return;
+        }
+
+        // Update the position in the parent component via setPositions
+        setPOSITION({
+          ...positions,
+          [elementData.id]: { ...updatedPosition, x, y }, // Update position in parent
+        });
+        console.log("Element moved:", positions);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [copiedElement, elements, onAddElement, onRemoveElement]);
 
   // Create Fabric element based on type
   const createFabricElement = (element) => {
