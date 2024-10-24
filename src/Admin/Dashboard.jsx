@@ -13,6 +13,9 @@ function Dashboard() {
   const [textData, setTextData] = useState([]); // To store fetched text data
   const [buttonImmageData, setButtonImageData] = useState([]);
   const [InputFieldData, setInputFieldData] = useState([]);
+  const [RectData, setRectData] = useState([]);
+  const [CircleData, setCircleData] = useState([]);
+  const [LineData, setLineData] = useState([]);
   const [loading, setLoading] = useState(true); // To handle loading state
   const navigate = useNavigate();
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -63,11 +66,45 @@ function Dashboard() {
       }
     };
 
+    const fetchRectData = async () => {
+      try {
+        const response = await axios.get(`${API_KEY}api/rect/`); // Replace with your actual API endpoint for text
+        setRectData(response.data); // Set fetched text data
+      } catch (error) {
+        console.error("Error fetching text data:", error);
+      } finally {
+        setLoading(false); // Stop loading spinner
+      }
+    };
+    const fetchCircleData = async () => {
+      try {
+        const response = await axios.get(`${API_KEY}api/circle/`); // Replace with your actual API endpoint for text
+        setCircleData(response.data); // Set fetched text data
+      } catch (error) {
+        console.error("Error fetching text data:", error);
+      } finally {
+        setLoading(false); // Stop loading spinner
+      }
+    };
+    const fetchLineData = async () => {
+      try {
+        const response = await axios.get(`${API_KEY}api/line/`); // Replace with your actual API endpoint for text
+        setLineData(response.data); // Set fetched text data
+      } catch (error) {
+        console.error("Error fetching text data:", error);
+      } finally {
+        setLoading(false); // Stop loading spinner
+      }
+    };
+
     // Call both APIs
     fetchButtonData();
     fetchTextData();
     fetchButtonImageData();
     fetchInputFieldData();
+    fetchRectData();
+    fetchCircleData();
+    fetchLineData();
   }, []);
 
   const onAddElement = (type, element) => {
@@ -166,6 +203,73 @@ function Dashboard() {
                 fontSize={input.fontSize}
                 fontFamily={input.fontFamily}
               />
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="flex-grow p-6 ml-64 mt-6">
+        <h1 className="text-4xl font-bold text-blue-900 mb-6">Shapes</h1>
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {RectData.map((rect) => (
+            <button
+              key={rect._id} // Use _id from the API response
+              className=" border p-3 rounded-lg shadow-lg transition-all transform hover:scale-105 bg-gray-100"
+              onClick={() => onAddElement("Rect", rect)}
+            >
+              <svg className="flex items-center justify-center w-full h-full">
+                {/* Rectangle */}
+                <rect
+                  width={rect.width}
+                  height={rect.height}
+                  fill={rect.Color}
+                />
+              </svg>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="flex-grow p-6 ml-64 mt-6">
+        <h1 className="text-4xl font-bold text-blue-900 mb-6">Circle</h1>
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {CircleData.map((circle) => (
+            <button
+              key={circle._id} // Use _id from the API response
+              className=" border p-3 rounded-lg shadow-lg transition-all transform hover:scale-105 bg-gray-100"
+              onClick={() => onAddElement("Circle", circle)}
+            >
+              <svg className="flex items-center justify-center">
+                {/* Rectangle */}
+                <circle
+                  cx={circle.x}
+                  cy="70"
+                  r={circle.radius}
+                  fill={circle.Color}
+                />
+              </svg>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="flex-grow p-6 ml-64 mt-6">
+        <h1 className="text-4xl font-bold text-blue-900 mb-6">Circle</h1>
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {LineData.map((line) => (
+            <button
+              key={line._id} // Use _id from the API response
+              className=" border p-3 rounded-lg shadow-lg transition-all transform hover:scale-105 bg-gray-100"
+              onClick={() => onAddElement("Line", line)}
+            >
+              <svg className="flex items-center justify-center">
+                {/* Line */}
+                <line
+                  x1={line.x1}
+                  y1={line.y1}
+                  x2={line.x2}
+                  y2={line.y2}
+                  stroke={line.Color}
+                  strokeWidth={line.strokeWidth}
+                />
+              </svg>
             </button>
           ))}
         </div>

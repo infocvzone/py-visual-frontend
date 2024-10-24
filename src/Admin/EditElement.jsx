@@ -181,6 +181,29 @@ function EditElement({ type, element }) {
           element.fontFamily,
           element.fontSize
         ).getFabricElementAsync();
+      case "Line":
+        return new fabric.Line(
+          [element.x1, element.y1, element.x2, element.y2],
+          {
+            stroke: element.Color, // Stroke color
+            strokeWidth: element.strokeWidth, // Line width
+          }
+        );
+      case "Circle":
+        return new fabric.Circle({
+          left: element.x, // X coordinate
+          top: element.y, // Y coordinate
+          radius: element.radius, // Radius of the circle
+          fill: element.Color, // Fill color
+        });
+      case "Rect":
+        return new fabric.Rect({
+          left: element.x, // X coordinate
+          top: element.y, // Y coordinate
+          fill: element.Color, // Fill color
+          width: element.width, // Width of the rectangle
+          height: element.height, // Height of the rectangle
+        });
 
       default:
         return null;
@@ -207,6 +230,7 @@ function EditElement({ type, element }) {
             "y",
             "fontSize",
             "padding",
+            "strokeWidth",
           ].includes(name)
         ? parseFloat(value) || 0
         : value || ""; // This ensures it will never be null
@@ -256,6 +280,24 @@ function EditElement({ type, element }) {
       } else if (elementData.type === "InputField") {
         response = await axios.put(
           `${API_KEY}api/inputfields/${elementData._id}`,
+          elementData
+        );
+      }
+      else if (elementData.type === "Circle") {
+        response = await axios.put(
+          `${API_KEY}api/circle/${elementData._id}`,
+          elementData
+        );
+      }
+      else if (elementData.type === "Rect") {
+        response = await axios.put(
+          `${API_KEY}api/rect/${elementData._id}`,
+          elementData
+        );
+      }
+      else if (elementData.type === "Line") {
+        response = await axios.put(
+          `${API_KEY}api/line/${elementData._id}`,
           elementData
         );
       }
@@ -332,6 +374,18 @@ function EditElement({ type, element }) {
           } else if (elementData.type === "InputField") {
             deleteResponse = await axios.delete(
               `${API_KEY}api/inputfields/${elementData._id}`
+            );
+          } else if (elementData.type === "Circle") {
+            deleteResponse = await axios.delete(
+              `${API_KEY}api/circle/${elementData._id}`
+            );
+          } else if (elementData.type === "Rect") {
+            deleteResponse = await axios.delete(
+              `${API_KEY}api/rect/${elementData._id}`
+            );
+          } else if (elementData.type === "Line") {
+            deleteResponse = await axios.delete(
+              `${API_KEY}api/line/${elementData._id}`
             );
           }
           console.log("Element Deleted:", deleteResponse.data);

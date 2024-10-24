@@ -34,7 +34,7 @@ const Home = () => {
     setElements((prev) => [...prev, updatedElement]);
     setPositions((prev) => ({
       ...prev,
-      [updatedElement.id]: { x: 100, y: 100 }, // Initialize position for the new element
+      [updatedElement.id]: { x: Number(element.x), y: Number(element.y) }, // Initialize position for the new element
     }));
 
     setHeights((prev) => ({
@@ -262,8 +262,8 @@ def create_ui(window):
     #Element ${index + 1}\n   ${
         el.type === "BasicButton"
           ? "Button"
-          : el.type === "InputField"
-          ? "BasicTextInput"
+          : el.type === "BasicTextInput"
+          ? "InputField"
           : el.type === "ButtonImage"
           ? "Button"
           : el.type
