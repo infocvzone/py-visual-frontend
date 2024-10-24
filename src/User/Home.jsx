@@ -9,8 +9,6 @@ import FileSaver from "file-saver";
 import axios from "axios";
 import { API_KEY } from "../constant";
 
-
-
 // Home component definition
 const Home = () => {
   // State for holding UI elements, their positions, the selected element, and generated code
@@ -92,7 +90,11 @@ const Home = () => {
     let pythonCode = `
 def create_ui(window):
 
-  global ${globalElementNames}  # Declaring all UI elements globally
+  ${
+    elements.length > 0
+      ? `global ${globalElementNames}  # Declaring all UI elements globally`
+      : `pass`
+  } 
 `; // Initial code string
 
     elements.forEach((el, index) => {
@@ -236,9 +238,9 @@ def create_ui(window):
 
         case "ButtonImage":
           params += `, scale = ${el.scale}, text="${el.text}", 
-          idle_image = "assets/Buttons/Button_${index+1}/idle.png",
-          hover_image = "assets/Buttons/Button_${index+1}/hover.png",
-          clicked_image = "assets/Buttons/Button_${index+1}/clicked.png",
+          idle_image = "assets/Buttons/Button_${index + 1}/idle.png",
+          hover_image = "assets/Buttons/Button_${index + 1}/hover.png",
+          clicked_image = "assets/Buttons/Button_${index + 1}/clicked.png",
           font="assets/fonts/${el.fontFamily}/${
             el.fontFamily
           }.ttf", font_size=${el.fontSize},font_color="${el.textColor}",
@@ -326,7 +328,7 @@ if __name__ == '__main__':
     let index = 0;
     // Loop through elements and handle ButtonImage types
     for (const element of elements) {
-      index +=1;
+      index += 1;
       if (element.type === "ButtonImage") {
         let Folder = element.Name;
         Folder = Buttons.folder(`Button_${index}`);
