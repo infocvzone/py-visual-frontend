@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { API_KEY } from "../constant";
+import Swal from "sweetalert2";
 
 const AssetManagement = () => {
   const [images, setImages] = useState([]);
@@ -37,6 +38,15 @@ const AssetManagement = () => {
       .delete(`${API_KEY}api/images/${id}`)
       .then(() => {
         setImages(images.filter((image) => image._id !== id));
+        Swal.fire({
+          title: "Image Deleted Successfully",
+          showCancelButton: false,
+          confirmButtonText: "ok",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload();
+          }
+        });
       })
       .catch((error) => {
         console.error("Error deleting image:", error);
@@ -50,6 +60,15 @@ const AssetManagement = () => {
       .delete(`${API_KEY}api/fonts/${id}`)
       .then(() => {
         setFonts(fonts.filter((font) => font._id !== id));
+        Swal.fire({
+          title: "Font Deleted Successfully",
+          showCancelButton: false,
+          confirmButtonText: "ok",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload();
+          }
+        });
       })
       .catch((error) => {
         console.error("Error deleting font:", error);

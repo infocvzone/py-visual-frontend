@@ -31,6 +31,39 @@ const CodeDisplay = ({ code, setCodeDisplay }) => {
 
   return (
     <div className="fixed top-16 right-2 w-[70%] lg:w-[60%] p-4 bg-white shadow-lg border rounded-lg overflow-hidden my-4">
+      <button onClick={()=> setCodeDisplay(false)}>
+        <svg
+          width="24px"
+          height="24px"
+          viewBox="0 0 24.00 24.00"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          stroke="#22c55e"
+        >
+          <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+          <g
+            id="SVGRepo_tracerCarrier"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          ></g>
+          <g id="SVGRepo_iconCarrier">
+            {" "}
+            <path
+              d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5"
+              stroke=""
+              strokeWidth="2.4"
+              strokeLinecap="round"
+            ></path>{" "}
+            <path
+              d="M7 3.33782C8.47087 2.48697 10.1786 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 10.1786 2.48697 8.47087 3.33782 7"
+              stroke=""
+              strokeWidth="2.4"
+              strokeLinecap="round"
+            ></path>{" "}
+          </g>
+        </svg>
+      </button>
+
       {copySuccess && (
         <div className="text-green-400 text-sm mb-2">{copySuccess}</div>
       )}
@@ -58,11 +91,11 @@ const CodeDisplay = ({ code, setCodeDisplay }) => {
             strokeWidth="1.5"
           ></path>
         </svg>
-        Copy Code
+        Copy
       </button>
 
       {/* Scrollable preformatted block for displaying the code */}
-      <div className="max-h-[450px] overflow-auto mt-8 rounded-lg bg-[#edf9fc] p-4">
+      <div className="max-h-[450px] overflow-auto mt-2 rounded-lg bg-[#edf9fc] p-4">
         <pre>
           <code ref={codeRef} className="language-python text-xs">
             {code}

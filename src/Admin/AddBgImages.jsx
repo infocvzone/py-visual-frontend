@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { API_KEY } from "../constant";
+import Swal from "sweetalert2";
 
 const ImageUploader = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -40,6 +41,15 @@ const ImageUploader = () => {
 
       setMessage("Image uploaded successfully!");
       console.log(response.data); // Handle response data as needed
+      Swal.fire({
+        title: "Image Added Successfully",
+        showCancelButton: false,
+        confirmButtonText: "ok",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.reload();
+        }
+      });
     } catch (error) {
       console.error("Upload error:", error);
       setMessage("Image upload failed.");
