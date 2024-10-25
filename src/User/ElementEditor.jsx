@@ -144,13 +144,13 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Font</label>
+              <label className="block">Font Size</label>
               <input
                 type="number"
                 name="fontSize"
                 value={editedElement.fontSize || 12}
                 onChange={handleChange}
-                className="p-2 h-8 w-12 border rounded"
+                className="p-2 h-8 w-[60px] border rounded"
               />
             </div>
             <div className="flex flex-col items-center justify-center">
@@ -160,7 +160,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="width"
                 value={editedElement.width || 150}
                 onChange={handleChange}
-                className="p-2 h-8 w-12 border rounded"
+                className="p-2 h-8 w-[60px] border rounded"
               />
             </div>
             <div className="flex flex-col items-center justify-center">
@@ -170,7 +170,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="height"
                 value={editedElement.height || 30}
                 onChange={handleChange}
-                className="p-2 h-8 w-12 border rounded"
+                className="p-2 h-8 w-[60px] border rounded"
               />
             </div>
             <div className="">
@@ -197,7 +197,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="borderThickness"
                 value={editedElement.borderThickness || ""}
                 onChange={handleChange}
-                className="p-2 h-8 w-12 border rounded"
+                className="p-2 h-8 w-[60px] border rounded"
               />
             </div>
 
@@ -208,7 +208,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="idleColor"
                 value={editedElement.idleColor || "#00000"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded"
+                className="p-2 h-8 border rounded-full"
               />
             </div>
             <div className="flex flex-col items-center justify-center">
@@ -218,7 +218,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="hoverColor"
                 value={editedElement.hoverColor || "#00000"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded"
+                className="p-2 h-8 border rounded-full"
               />
             </div>
             <div className="flex flex-col items-center justify-center">
@@ -228,7 +228,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="clickedColor"
                 value={editedElement.clickedColor || "#00000"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded"
+                className="p-2 h-8 border rounded-full"
               />
             </div>
             <div className="flex flex-col items-center justify-center">
@@ -238,17 +238,17 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="textColor"
                 value={editedElement.textColor || "#00000"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded"
+                className="p-2 h-8 border rounded-full"
               />
             </div>
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Border</label>
+              <label className="block">Stroke</label>
               <input
                 type="color"
                 name="borderColor"
                 value={editedElement.borderColor || "#00000"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded"
+                className="p-2 h-8 border rounded-full"
               />
             </div>
             <div className="flex flex-col items-center justify-center">
@@ -327,7 +327,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="input_type"
                 value={editedElement.input_type || "text"}
                 onChange={handleChange}
-                className="p-2 h-8 w-[120px] border rounded"
+                className="px-1 h-8 w-[140px] border rounded"
               >
                 <option value="text">Text</option>
                 <option value="number">Number</option>
@@ -344,7 +344,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="width"
                 value={editedElement.width || 300}
                 onChange={handleChange}
-                className="p-2 h-8 w-[120px] border rounded"
+                className="p-2 h-8 w-[80px] border rounded"
               />
             </div>
 
@@ -356,31 +356,31 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="height"
                 value={editedElement.height || 40}
                 onChange={handleChange}
-                className="p-2 h-8 w-[120px] border rounded"
+                className="p-2 h-8 w-[80px] border rounded"
               />
             </div>
 
             {/* Background Color */}
             <div className="">
-              <label className="block">Background Color</label>
+              <label className="block">Background</label>
               <input
                 type="color"
                 name="bgColor"
                 value={editedElement.bgColor || "#ffffff"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded"
+                className="p-2 h-8 border rounded-full"
               />
             </div>
 
             {/* Border Color */}
             <div className="">
-              <label className="block">Border Color</label>
+              <label className="block">Stroke</label>
               <input
                 type="color"
                 name="borderColor"
                 value={editedElement.borderColor || "#c8c8c8"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded"
+                className="p-2 h-8 border rounded-full"
               />
             </div>
 
@@ -392,7 +392,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="borderThickness"
                 value={editedElement.borderThickness || 1}
                 onChange={handleChange}
-                className="p-2 h-8 w-[120px] border rounded"
+                className="p-2 h-8 w-[80px] border rounded"
               />
             </div>
 
@@ -404,7 +404,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="textColor"
                 value={editedElement.textColor || "#323232"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded"
+                className="p-2 h-8 border rounded-full"
               />
             </div>
 
@@ -428,7 +428,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="fontSize"
                 value={editedElement.fontSize || 15}
                 onChange={handleChange}
-                className="p-2 h-8 w-[120px] border rounded"
+                className="p-2 h-8 w-[80px] border rounded"
               />
             </div>
 
@@ -439,7 +439,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="fontFamily"
                 value={editedElement.fontFamily}
                 onChange={handleChange}
-                className="border p-1 rounded"
+                className="border w-[120px] p-1 rounded"
               >
                 {/* Map the fetched fonts to options */}
                 {Fonts.map((font, index) => (
@@ -557,18 +557,18 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="color"
                 value={editedElement.color || ""}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded"
+                className="p-2 h-8 border rounded-full"
               />
             </div>
 
             <div className="">
-              <label className="block">Font</label>
+              <label className="block">Font Size</label>
               <input
                 type="number"
                 name="fontSize"
                 value={editedElement.fontSize || 20}
                 onChange={handleChange}
-                className="p-1 w-[60px] h-8 border rounded"
+                className="p-1 w-[70px] h-8 border rounded"
               />
             </div>
 
@@ -578,7 +578,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="fontFamily"
                 value={editedElement.fontFamily}
                 onChange={handleChange}
-                className="border p-1 rounded"
+                className="border w-[120px] p-1 rounded"
               >
                 {/* Map the fetched fonts to options */}
                 {Fonts.map((font, index) => (
@@ -760,7 +760,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Font</label>
+              <label className="block">Font Size</label>
               <input
                 type="number"
                 name="fontSize"
@@ -775,7 +775,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="fontFamily"
                 value={editedElement.fontFamily}
                 onChange={handleChange}
-                className="border p-1 rounded w-[120px]"
+                className="border w-[120px] p-1 rounded w-[120px]"
               >
                 {/* Map the fetched fonts to options */}
                 {Fonts.map((font, index) => (
@@ -787,13 +787,13 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               </select>
             </div>
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Text</label>
+              <label className="block">Color</label>
               <input
                 type="color"
                 name="textColor"
                 value={editedElement.textColor || "#00000"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded"
+                className="p-2 h-8 border rounded-full"
               />
             </div>
             <div className="flex flex-col items-center justify-center">
@@ -976,7 +976,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="Color"
                 value={editedElement.Color || "#0f0f0f"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded"
+                className="p-2 h-8 border rounded-full"
               />
             </div>
           </>
@@ -1001,7 +1001,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="Color"
                 value={editedElement.Color || "#0f0f0f"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded"
+                className="p-2 h-8 border rounded-full"
               />
             </div>
           </>
@@ -1036,7 +1036,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 name="Color"
                 value={editedElement.Color || "#0f0f0f"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded"
+                className="p-2 h-8 border rounded-full"
               />
             </div>
           </>

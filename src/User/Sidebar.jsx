@@ -254,7 +254,7 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
                 {buttonData.map((button) => (
                   <button
                     key={button._id}
-                    className="border h-[80px] bg-white p-2 shadow-lg rounded-lg"
+                    className="border bg-white p-2 shadow-lg rounded-lg"
                     onClick={() => onAddElement("BasicButton", button)}
                   >
                     <ButtonComponent
@@ -263,8 +263,8 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
                       hoverColor={button.hoverColor}
                       clickedColor={button.clickedColor}
                       textColor={button.textColor}
-                      width={130}
-                      height={40}
+                      width={button.width}
+                      height={button.height}
                       border_thickness={button.borderThickness}
                       borderColor={button.borderColor}
                       fontFamily={button.fontFamily}
