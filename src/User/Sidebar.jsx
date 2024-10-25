@@ -342,27 +342,59 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
               </div>
             )}
             {activeCategory === "Line" && (
-              <div className="grid grid-cols-2 gap-1">
-                {LineData.map((line) => (
+              <div className="grid grid-cols-1 gap-1">
+                {RectData.map((rect) => (
                   <button
-                    key={line._id}
-                    className="w-full border h-[80px] bg-white p-2 shadow-lg rounded-lg"
-                    onClick={() => onAddElement("Line", line)}
-                  ></button>
+                    key={rect._id}
+                    className="w-full border bg-white p-2 shadow-lg rounded-lg"
+                    onClick={() => onAddElement("Rect", rect)}
+                  >
+                    <svg className="flex items-center justify-center w-full h-full">
+                      {/* Rectangle */}
+                      <rect
+                        width={rect.width}
+                        height={rect.height}
+                        fill={rect.Color}
+                      />
+                    </svg>
+                  </button>
                 ))}
                 {CircleData.map((circle) => (
                   <button
                     key={circle._id}
-                    className="w-full border h-[80px] bg-white p-2 shadow-lg rounded-lg"
+                    className="w-full border bg-white p-2 shadow-lg rounded-lg"
                     onClick={() => onAddElement("Circle", circle)}
-                  ></button>
+                  >
+                    <svg className="flex items-center justify-center">
+                      {/* Rectangle */}
+                      <circle
+                        cx={circle.x}
+                        cy="70"
+                        r={circle.radius}
+                        fill={circle.Color}
+                      />
+                    </svg>
+                  </button>
                 ))}
-                {RectData.map((rect) => (
+
+                {LineData.map((line) => (
                   <button
-                    key={rect._id}
-                    className="w-full border h-[80px] bg-white p-2 shadow-lg rounded-lg"
-                    onClick={() => onAddElement("Rect", rect)}
-                  ></button>
+                    key={line._id}
+                    className="w-full border bg-white p-2 shadow-lg rounded-lg"
+                    onClick={() => onAddElement("Line", line)}
+                  >
+                    <svg className="flex items-center justify-center">
+                      {/* Line */}
+                      <line
+                        x1={line.x1}
+                        y1={line.y1}
+                        x2={line.x2}
+                        y2={line.y2}
+                        stroke={line.Color}
+                        strokeWidth={line.strokeWidth}
+                      />
+                    </svg>
+                  </button>
                 ))}
               </div>
             )}

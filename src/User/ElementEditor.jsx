@@ -538,7 +538,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
         );
       case "Text":
         return (
-          <>
+          <div className="flex flex-wrap gap-2">
             <div className="">
               <label className="block">Text</label>
               <input
@@ -650,7 +650,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 className="h-4 w-4 border rounded"
               />
             </div>
-          </>
+          </div>
         );
       case "Toggle":
         return (
