@@ -42,7 +42,6 @@ const CanvasArea = ({
       selection: false,
     });
     setCanvasObj(canvas);
-    console.log(Image);
 
     return () => {
       // Clean up: dispose alignment lines
@@ -51,10 +50,17 @@ const CanvasArea = ({
       });
       canvas.dispose();
     };
-  }, [Height, Width, Image]);
+  }, [Height, Width]);
 
   const onSelectedElement = () => {
     selectedIndex(elementData);
+  };
+
+  const handleScaling = (id, fabricElement) => {
+    requestAnimationFrame(() => {
+      const rect = fabricElement.getBoundingRect();
+      onScaleElement(id, rect.width, rect.height);
+    });
   };
 
   // Update canvas with new elements
@@ -80,9 +86,7 @@ const CanvasArea = ({
               handleElementMovement(fabricElement, element.id);
               requestAnimationFrame(() => updateAlignmentLines(fabricElement));
             });
-            fabricElement.on("scaling", () => {
-              onScaleElement(fabricElement);
-            });
+
             fabricElement.on("selected", () => {
               setSelected(fabricElement);
               setSelectedElement(fabricElement);
@@ -91,7 +95,9 @@ const CanvasArea = ({
               onSelectedElement();
               handleElementSizing(fabricElement, element.id); // Update size when selected
             });
-            fabricElement.on("mouseup", () => {clearAlignmentLines()});
+            fabricElement.on("mouseup", () => {
+              clearAlignmentLines();
+            });
           }
         } catch (error) {
           console.error("Error creating fabric element:", error);
@@ -431,7 +437,7 @@ const CanvasArea = ({
     // Only update size if it has changed
     if (size.width !== width.toFixed(0) || size.height !== height.toFixed(0)) {
       setSize({ width: width.toFixed(0), height: height.toFixed(0) });
-      console.log(id + " - " + height);
+      //console.log(id + " - " + height);
     }
     onUpdateSize({ id, width: width.toFixed(0), height: height.toFixed(0) });
   };

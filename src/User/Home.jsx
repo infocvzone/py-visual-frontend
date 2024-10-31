@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import CanvasArea from "./CanvasArea";
 import CodeDisplay from "./CodeDisplay";
@@ -8,20 +8,34 @@ import JSZip from "jszip";
 import FileSaver from "file-saver";
 import axios from "axios";
 import { API_KEY } from "../constant";
+import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import { useLocation } from "react-router-dom";
 
 // Home component definition
 const Home = () => {
   // State for holding UI elements, their positions, the selected element, and generated code
+  const location = useLocation();
+  const { projectData } = location.state;
+
   const [elements, setElements] = useState([]);
   const [positions, setPositions] = useState([]);
   const [heights, setHeights] = useState([]);
   const [selectedElement, setSelectedElement] = useState(null);
   const [generatedCode, setGeneratedCode] = useState("");
   const [codeDisplay, setCodeDisplay] = useState(false);
-  const [height, setHeight] = useState();
-  const [width, setWidth] = useState();
+  const [height, setHeight] = useState(400);
+  const [width, setWidth] = useState(700);
   const [color, setColor] = useState();
+  const [ProjectName, SetProjectName] = useState("");
   const [bgImage, setBgImage] = useState(null);
+  const user = useSelector((state) => state.auth.user);
+
+  useEffect(() => {
+    if (projectData !== false) {
+      createProject(projectData);
+    }
+  }, []);
 
   // Function to add a new element
   const handleAddElement = (type, element) => {
@@ -64,11 +78,54 @@ const Home = () => {
   };
 
   // Function to scale an element
-  const handleScaleElement = (fabricElement) => {
+  const handleScaleElement = (id, width, height) => {
+    console.log(width + " - " + height);
     const updatedElements = elements.map((el) =>
-      el.id === fabricElement.id ? { ...el, scale: fabricElement.scaleX } : el
+      el.id === id ? { ...el, width: width, height: height } : el
     );
     setElements(updatedElements);
+  };
+
+  // Function to create a new project
+  const createProject = async (project) => {
+    // Set height and width first
+    setPositions(project.positions);
+    setElements(project.elements);
+    setColor(project.color);
+    setBgImage(project.bgImage);
+    SetProjectName(project.name);
+    // Use setTimeout to delay the setting of other state values by 1 second
+    setTimeout(() => {
+      setHeight(project.height);
+      setWidth(project.width);
+    }, 500); // Delay in milliseconds (1000ms = 1 second)
+  };
+
+  // Function to save the current project
+  const saveProject = async (projectName) => {
+    if (projectName === "") {
+      Swal.fire({
+        title: "Error!",
+        text: "Please provide Project Name",
+        icon: "error",
+      });
+      return;
+    }
+    try {
+      const response = await axios.put(`${API_KEY}api/projects/`, {
+        name: projectName, // replace with dynamic project name if needed
+        user: user._id,
+        color: color,
+        bgImage: bgImage,
+        width: width,
+        height: height,
+        elements: elements,
+        positions: positions,
+      });
+      console.log("Project saved:", response.data);
+    } catch (error) {
+      console.error("Error saving project:", error);
+    }
   };
 
   // Function to generate Python code based on current elements
@@ -92,7 +149,7 @@ def create_ui(window):
 
   ${
     elements.length > 0
-      ? `global ${globalElementNames}  # Declaring all UI elements globally`
+      ? ` global ${globalElementNames}  # Declaring all UI elements globally`
       : `pass`
   } 
 `; // Initial code string
@@ -404,6 +461,10 @@ if __name__ == '__main__':
       <Header
         onGenerateCode={handleGenerateCode} // Pass down the generate code handler
         onDownloadProject={handleDownloadProject}
+        onSaveProject={saveProject}
+        ProjectName={ProjectName}
+        Height={height}
+        Width={width}
         onWindowSizeChange={(width, height, color) => {
           setHeight(height);
           setWidth(width);
@@ -415,6 +476,7 @@ if __name__ == '__main__':
         {/* Main container for layout */}
         <Sidebar
           onAddElement={handleAddElement} // Pass down the add element handler
+          onCreateProject={createProject}
           onBgImageChange={(image) => {
             setBgImage(image);
           }}

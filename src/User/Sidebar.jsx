@@ -3,12 +3,19 @@ import axios from "axios";
 import ButtonSvg from "../assets/categories/button-svg.svg";
 import ButtonComponent from "../components/buttonComponet";
 import TextSvg from "../assets/categories/text-svg.svg";
+import LogoutSvg from "../assets/log-out.svg";
+import ProjectsSvg from "../assets/projects.svg";
 import TextComponent from "../components/textComponent";
 import ImageSvg from "../assets/categories/image-svg.svg";
 import { API_KEY } from "../constant";
 import InputComponent from "../components/InputComponent";
+import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import { Userlogout } from "../Redux/authSlice";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-const Sidebar = ({ onAddElement, onBgImageChange }) => {
+const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
   const hiddenFileInput = React.useRef(null);
   const [activeCategory, setActiveCategory] = useState(null);
   const [buttonData, setButtonData] = useState([]);
@@ -21,6 +28,10 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
   const [buttonimageData, setButtonImageData] = useState([]); // New state for images
   const [loading, setLoading] = useState(true);
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [Project, setProjects] = useState([]);
+  const user = useSelector((state) => state.auth.user);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchButtonData = async () => {
@@ -96,6 +107,17 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
       }
     };
 
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(
+          `${API_KEY}api/projects/user/${user._id}`
+        );
+        setProjects(response.data); // Fetch and store image data
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+
     fetchButtonData();
     fetchTextData();
     fetchImageData(); // Fetch images
@@ -104,6 +126,7 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
     fetchLineData();
     fetchCircleData();
     fetchRectData();
+    fetchProjects();
   }, []);
 
   const toggleCategory = (category) => {
@@ -113,6 +136,21 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
   const handleClick = () => {
     hiddenFileInput.current.click(); // Trigger the hidden input when the button is clicked
   };
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Do you want to logout?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes",
+    }).then(async (result) => {
+      dispatch(Userlogout());
+      navigate("/login");
+    })
+  };
+
 
   const handleImageChange = (image) => {
     onBgImageChange(image);
@@ -142,40 +180,35 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
   }
 
   return (
-    <div className={`flex max-w-1/3`}>
+    <div className={`flex max-w-1/3 `}>
       <div
-        className={`p-4 border-r w-[85px] ${
-          activeCategory === null ? "bg-white" : "bg-[#f6f7f8]"
-        } flex flex-col justify-start h-screen`}
+        className={`p-4 border-r w-[85px] ${activeCategory === null ? "bg-white" : "bg-[#f6f7f8]"
+          } flex flex-col justify-between h-screen`}
       >
-        {/* Styled button to upload file 
-                <button
-                    onClick={handleClick}
-                    className="bg-green-500 hover:bg-green-700 text-white text-xs mb-4 font-bold py-2 px-1 rounded shadow-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 transition duration-50"
-                >
-                    Upload
-                </button>*/}
-
-        {/* Hidden file input */}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          ref={hiddenFileInput}
-          className="hidden" // Hide the default file input
-        />
         <div className="space-y-4">
+          {/* Text category */}
+          <div className="flex items-center">
+            <button onClick={() => toggleCategory("projects")}>
+              <img
+                src={ProjectsSvg}
+                alt="projects"
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${activeCategory === "Text" ? "border-blue-400" : "border-black"
+                  }`}
+              />
+              <h1 className="text-xs mt-1 text-center text-black">Projects</h1>
+            </button>
+          </div>
+
           {/* Button category */}
           <div className="flex items-center">
             <button onClick={() => toggleCategory("BasicButton")}>
               <img
                 src={ButtonSvg}
                 alt="Button"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
-                  activeCategory === "Button"
-                    ? "border-blue-400"
-                    : "border-black"
-                }`}
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${activeCategory === "Button"
+                  ? "border-blue-400"
+                  : "border-black"
+                  }`}
               />
               <h1 className="text-xs mt-1 text-center text-black">Button</h1>
             </button>
@@ -187,9 +220,8 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
               <img
                 src={TextSvg}
                 alt="Text"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
-                  activeCategory === "Text" ? "border-blue-400" : "border-black"
-                }`}
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${activeCategory === "Text" ? "border-blue-400" : "border-black"
+                  }`}
               />
               <h1 className="text-xs mt-1 text-center text-black">Text</h1>
             </button>
@@ -201,11 +233,10 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
               <img
                 src={ImageSvg}
                 alt="InputField"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
-                  activeCategory === "InputField"
-                    ? "border-blue-400"
-                    : "border-black"
-                }`}
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${activeCategory === "InputField"
+                  ? "border-blue-400"
+                  : "border-black"
+                  }`}
               />
               <h1 className="text-xs mt-1 text-center text-black">Input</h1>
             </button>
@@ -217,11 +248,10 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
               <img
                 src={ImageSvg}
                 alt="background"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
-                  activeCategory === "background"
-                    ? "border-blue-400"
-                    : "border-black"
-                }`}
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${activeCategory === "background"
+                  ? "border-blue-400"
+                  : "border-black"
+                  }`}
               />
               <h1 className="text-xs mt-1 text-center text-black">
                 Background
@@ -234,13 +264,24 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
               <img
                 src={ImageSvg}
                 alt="Line"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
-                  activeCategory === "Line" ? "border-blue-400" : "border-black"
-                }`}
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${activeCategory === "Line" ? "border-blue-400" : "border-black"
+                  }`}
               />
               <h1 className="text-xs mt-1 text-center text-black">Shapes</h1>
             </button>
           </div>
+        </div>
+        {/* Line Button */}
+        <div className="flex items-center">
+          <button onClick={() => handleLogout()}>
+            <img
+              src={LogoutSvg}
+              alt="Line"
+              className={`w-10 h-8 border p-1 rounded-lg shadow-md ${activeCategory === "Line" ? "border-blue-400" : "border-black"
+                }`}
+            />
+            <h1 className="text-xs mt-1 text-center text-black">Logout</h1>
+          </button>
         </div>
       </div>
 
@@ -249,6 +290,21 @@ const Sidebar = ({ onAddElement, onBgImageChange }) => {
         <div className="p-4 w-full bg-white h-1/2 mt-2 ml-1 rounded-lg border shadow-xl overflow-y-auto">
           <div className="space-y-4">
             {/* Show elements for the active category */}
+
+            {activeCategory === "projects" && (
+              <div className="grid grid-cols-1 gap-2">
+                {Project.map((project) => (
+                  <button
+                    key={project._id}
+                    className="w-full border h-[80px] bg-white p-2 shadow-lg rounded-lg"
+                    onClick={() => onCreateProject(project)}
+                  >
+                    {project.name}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {activeCategory === "BasicButton" && (
               <div className="grid grid-cols-2 gap-1">
                 {buttonData.map((button) => (

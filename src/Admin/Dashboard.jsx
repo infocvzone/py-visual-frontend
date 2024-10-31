@@ -251,7 +251,7 @@ function Dashboard() {
         </div>
       </div>
       <div className="flex-grow p-6 ml-64 mt-6">
-        <h1 className="text-4xl font-bold text-blue-900 mb-6">Circle</h1>
+        <h1 className="text-4xl font-bold text-blue-900 mb-6">Line</h1>
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {LineData.map((line) => (
             <button
