@@ -49,6 +49,8 @@ function App() {
             element={
               !isAdmin && isAuthenticated ? (
                 <Projects />
+              ) : isAdmin ? (
+                <Navigate to="/admin" />
               ) : (
                 <Navigate to="/login" />
               )
