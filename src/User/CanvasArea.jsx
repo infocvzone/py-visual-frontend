@@ -442,124 +442,124 @@ const CanvasArea = ({
     onUpdateSize({ id, width: width.toFixed(0), height: height.toFixed(0) });
   };
 
-  // Function to update alignment lines
   const updateAlignmentLines = (movingElement) => {
     const objects = canvasObj
       .getObjects()
       .filter((obj) => obj !== movingElement);
     clearAlignmentLines();
 
+    const movingLeft = movingElement.left;
+    const movingTop = movingElement.top;
+    const movingRight = movingLeft + movingElement.width;
+    const movingBottom = movingTop + movingElement.height;
+
+    const alignmentThreshold = 2;
+
+    const addLine = (line) => {
+      canvasObj.add(line);
+      alignmentLines.current.push(line);
+    };
+
     objects.forEach((obj) => {
-      if (Math.abs(obj.left - movingElement.left) <= 0) {
-        const line = new fabric.Line(
-          [obj.left, 0, obj.left, canvasObj.height],
-          {
+      const objLeft = obj.left;
+      const objTop = obj.top;
+      const objRight = objLeft + obj.width;
+      const objBottom = objTop + obj.height;
+
+      // Check vertical alignment
+      if (Math.abs(objLeft - movingLeft) <= alignmentThreshold) {
+        movingElement.left = objLeft; // Snap to align left
+        addLine(
+          new fabric.Line([objLeft, 0, objLeft, canvasObj.height], {
             stroke: "red",
             strokeWidth: 1,
             selectable: false,
             evented: false,
-          }
+          })
         );
-        canvasObj.add(line);
-        alignmentLines.current.push(line);
       }
-      if (Math.abs(obj.left + obj.width - movingElement.left) <= 0) {
-        const line = new fabric.Line(
-          [obj.left + obj.width, 0, obj.left + obj.width, canvasObj.height],
-          {
+      if (Math.abs(objRight - movingLeft) <= alignmentThreshold) {
+        movingElement.left = objRight; // Snap to align right
+        addLine(
+          new fabric.Line([objRight, 0, objRight, canvasObj.height], {
             stroke: "red",
             strokeWidth: 1,
             selectable: false,
             evented: false,
-          }
+          })
         );
-        canvasObj.add(line);
-        alignmentLines.current.push(line);
       }
-      if (
-        Math.abs(obj.left - (movingElement.left + movingElement.width)) <= 0
-      ) {
-        const line = new fabric.Line(
-          [obj.left, 0, obj.left, canvasObj.height],
-          {
+      if (Math.abs(objLeft - movingRight) <= alignmentThreshold) {
+        movingElement.left = objLeft - movingElement.width; // Snap moving element right to obj left
+        addLine(
+          new fabric.Line([objLeft, 0, objLeft, canvasObj.height], {
             stroke: "red",
             strokeWidth: 1,
             selectable: false,
             evented: false,
-          }
+          })
         );
-        canvasObj.add(line);
-        alignmentLines.current.push(line);
       }
-      if (
-        Math.abs(
-          obj.left + obj.width - (movingElement.left + movingElement.width)
-        ) <= 0
-      ) {
-        const line = new fabric.Line(
-          [obj.left + obj.width, 0, obj.left + obj.width, canvasObj.height],
-          {
+      if (Math.abs(objRight - movingRight) <= alignmentThreshold) {
+        movingElement.left = objRight - movingElement.width; // Snap to align right
+        addLine(
+          new fabric.Line([objRight, 0, objRight, canvasObj.height], {
             stroke: "red",
             strokeWidth: 1,
             selectable: false,
             evented: false,
-          }
+          })
         );
-        canvasObj.add(line);
-        alignmentLines.current.push(line);
       }
-      if (Math.abs(obj.top - movingElement.top) <= 0) {
-        const line = new fabric.Line([0, obj.top, canvasObj.width, obj.top], {
-          stroke: "red",
-          strokeWidth: 1,
-          selectable: false,
-          evented: false,
-        });
-        canvasObj.add(line);
-        alignmentLines.current.push(line);
-      }
-      if (Math.abs(obj.top + obj.height - movingElement.top) <= 0) {
-        const line = new fabric.Line(
-          [0, obj.top + obj.height, canvasObj.width, obj.top + obj.height],
-          {
+
+      // Check horizontal alignment
+      if (Math.abs(objTop - movingTop) <= alignmentThreshold) {
+        movingElement.top = objTop; // Snap to align top
+        addLine(
+          new fabric.Line([0, objTop, canvasObj.width, objTop], {
             stroke: "red",
             strokeWidth: 1,
             selectable: false,
             evented: false,
-          }
+          })
         );
-        canvasObj.add(line);
-        alignmentLines.current.push(line);
       }
-      if (Math.abs(obj.top - (movingElement.top + movingElement.height)) <= 0) {
-        const line = new fabric.Line([0, obj.top, canvasObj.width, obj.top], {
-          stroke: "red",
-          strokeWidth: 1,
-          selectable: false,
-          evented: false,
-        });
-        canvasObj.add(line);
-        alignmentLines.current.push(line);
-      }
-      if (
-        Math.abs(
-          obj.top + obj.height - (movingElement.top + movingElement.height)
-        ) <= 0
-      ) {
-        const line = new fabric.Line(
-          [0, obj.top + obj.height, canvasObj.width, obj.top + obj.height],
-          {
+      if (Math.abs(objBottom - movingTop) <= alignmentThreshold) {
+        movingElement.top = objBottom; // Snap to align bottom
+        addLine(
+          new fabric.Line([0, objBottom, canvasObj.width, objBottom], {
             stroke: "red",
             strokeWidth: 1,
             selectable: false,
             evented: false,
-          }
+          })
         );
-        canvasObj.add(line);
-        alignmentLines.current.push(line);
+      }
+      if (Math.abs(objTop - movingBottom) <= alignmentThreshold) {
+        movingElement.top = objTop - movingElement.height; // Snap moving element bottom to obj top
+        addLine(
+          new fabric.Line([0, objTop, canvasObj.width, objTop], {
+            stroke: "red",
+            strokeWidth: 1,
+            selectable: false,
+            evented: false,
+          })
+        );
+      }
+      if (Math.abs(objBottom - movingBottom) <= alignmentThreshold) {
+        movingElement.top = objBottom - movingElement.height; // Snap to align bottom
+        addLine(
+          new fabric.Line([0, objBottom, canvasObj.width, objBottom], {
+            stroke: "red",
+            strokeWidth: 1,
+            selectable: false,
+            evented: false,
+          })
+        );
       }
     });
 
+    // Render the changes on the canvas
     canvasObj.renderAll();
   };
 

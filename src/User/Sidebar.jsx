@@ -186,18 +186,6 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
           } flex flex-col justify-between h-screen`}
       >
         <div className="space-y-4">
-          {/* Text category */}
-          <div className="flex items-center">
-            <button onClick={() => toggleCategory("projects")}>
-              <img
-                src={ProjectsSvg}
-                alt="projects"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${activeCategory === "Text" ? "border-blue-400" : "border-black"
-                  }`}
-              />
-              <h1 className="text-xs mt-1 text-center text-black">Projects</h1>
-            </button>
-          </div>
 
           {/* Button category */}
           <div className="flex items-center">
