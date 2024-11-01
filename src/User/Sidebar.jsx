@@ -22,6 +22,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
   const [inputfield, setInputfield] = useState([]);
   const [textData, setTextData] = useState([]);
   const [ImageData, setImageData] = useState([]);
+  const [ImagesData, setImagesData] = useState([]);
   const [LineData, setLineData] = useState([]);
   const [CircleData, setCircleData] = useState([]);
   const [RectData, setRectData] = useState([]);
@@ -117,6 +118,16 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
         console.error("Error fetching images:", error);
       }
     };
+    const fetchImages = async () => {
+      try {
+        const response = await axios.get(
+          `${API_KEY}api/picture`
+        );
+        setImagesData(response.data); // Fetch and store image data
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
 
     fetchButtonData();
     fetchTextData();
@@ -127,6 +138,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
     fetchCircleData();
     fetchRectData();
     fetchProjects();
+    fetchImages();
   }, []);
 
   const toggleCategory = (category) => {
@@ -148,9 +160,8 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
     }).then(async (result) => {
       dispatch(Userlogout());
       navigate("/login");
-    })
+    });
   };
-
 
   const handleImageChange = (image) => {
     onBgImageChange(image);
@@ -182,21 +193,22 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
   return (
     <div className={`flex max-w-1/3 `}>
       <div
-        className={`p-4 border-r w-[85px] ${activeCategory === null ? "bg-white" : "bg-[#f6f7f8]"
-          } flex flex-col justify-between h-screen`}
+        className={`p-4 border-r w-[85px] ${
+          activeCategory === null ? "bg-white" : "bg-[#f6f7f8]"
+        } flex flex-col justify-between h-screen`}
       >
         <div className="space-y-4">
-
           {/* Button category */}
           <div className="flex items-center">
             <button onClick={() => toggleCategory("BasicButton")}>
               <img
                 src={ButtonSvg}
                 alt="Button"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${activeCategory === "Button"
-                  ? "border-blue-400"
-                  : "border-black"
-                  }`}
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                  activeCategory === "Button"
+                    ? "border-blue-400"
+                    : "border-black"
+                }`}
               />
               <h1 className="text-xs mt-1 text-center text-black">Button</h1>
             </button>
@@ -208,8 +220,9 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
               <img
                 src={TextSvg}
                 alt="Text"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${activeCategory === "Text" ? "border-blue-400" : "border-black"
-                  }`}
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                  activeCategory === "Text" ? "border-blue-400" : "border-black"
+                }`}
               />
               <h1 className="text-xs mt-1 text-center text-black">Text</h1>
             </button>
@@ -221,10 +234,11 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
               <img
                 src={ImageSvg}
                 alt="InputField"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${activeCategory === "InputField"
-                  ? "border-blue-400"
-                  : "border-black"
-                  }`}
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                  activeCategory === "InputField"
+                    ? "border-blue-400"
+                    : "border-black"
+                }`}
               />
               <h1 className="text-xs mt-1 text-center text-black">Input</h1>
             </button>
@@ -236,14 +250,30 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
               <img
                 src={ImageSvg}
                 alt="background"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${activeCategory === "background"
-                  ? "border-blue-400"
-                  : "border-black"
-                  }`}
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                  activeCategory === "background"
+                    ? "border-blue-400"
+                    : "border-black"
+                }`}
               />
               <h1 className="text-xs mt-1 text-center text-black">
                 Background
               </h1>
+            </button>
+          </div>
+          {/* buttonImage Button */}
+          <div className="flex items-center">
+            <button onClick={() => toggleCategory("Image")}>
+              <img
+                src={ImageSvg}
+                alt="Image"
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                  activeCategory === "Image"
+                    ? "border-blue-400"
+                    : "border-black"
+                }`}
+              />
+              <h1 className="text-xs mt-1 text-center text-black">Images</h1>
             </button>
           </div>
           {/* Line Button */}
@@ -252,8 +282,9 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
               <img
                 src={ImageSvg}
                 alt="Line"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${activeCategory === "Line" ? "border-blue-400" : "border-black"
-                  }`}
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                  activeCategory === "Line" ? "border-blue-400" : "border-black"
+                }`}
               />
               <h1 className="text-xs mt-1 text-center text-black">Shapes</h1>
             </button>
@@ -265,8 +296,9 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
             <img
               src={LogoutSvg}
               alt="Line"
-              className={`w-10 h-8 border p-1 rounded-lg shadow-md ${activeCategory === "Line" ? "border-blue-400" : "border-black"
-                }`}
+              className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                activeCategory === "Line" ? "border-blue-400" : "border-black"
+              }`}
             />
             <h1 className="text-xs mt-1 text-center text-black">Logout</h1>
           </button>
@@ -466,6 +498,19 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
                       alt={image.name}
                       className="w-[150px] h-[120px]"
                     />
+                  </button>
+                ))}
+              </div>
+            )}
+            {activeCategory === "Image" && (
+              <div className="grid grid-cols-2 gap-1">
+                {ImagesData.map((image) => (
+                  <button
+                    key={image._id}
+                    className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
+                    onClick={() => onAddElement("Image", image)}
+                  >
+                    <img src={image.url} className="w-[100px] h-[100px]" />
                   </button>
                 ))}
               </div>

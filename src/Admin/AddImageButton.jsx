@@ -15,12 +15,12 @@ const AddButtonImage = () => {
   const [elementData, setElementData] = useState({
     x: 100,
     y: 100,
-    scale: 1.5,
+    scale: 1.0,
     Name: "ButtonImage",
     idleImage: idle,
     hoverImage: clicked,
     clickedImage: hover,
-    text: "Submit",
+    text: "",
     text_ancher: "center",
     textColor: "#000000",
     fontFamily: "Roboto-Bold",
@@ -197,7 +197,7 @@ const AddButtonImage = () => {
             type="range"
             name="scale"
             min="0.1"
-            max="3"
+            max="1.0"
             step="0.1"
             value={elementData.scale}
             onChange={handleInputChange}

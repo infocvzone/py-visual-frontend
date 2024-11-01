@@ -68,6 +68,7 @@ const CanvasArea = ({
     if (canvasObj) {
       canvasObj.clear();
       const keys = Object.keys(positions);
+      console.log(elements);
       elements.forEach(async (element) => {
         for (let i = 0; i < keys.length; i++) {
           if (keys[i].toString() === element.id.toString()) {
@@ -80,6 +81,7 @@ const CanvasArea = ({
         }
         try {
           const fabricElement = await createFabricElement(element);
+          console.log(fabricElement);
           if (fabricElement) {
             canvasObj.add(fabricElement);
             fabricElement.on("moving", () => {
@@ -354,7 +356,7 @@ const CanvasArea = ({
       case "Image":
         return new Promise((resolve, reject) => {
           fabric.Image.fromURL(
-            element.imageUrl,
+            element.url,
             (img) => {
               if (!img) {
                 return reject(new Error("Failed to load image"));
@@ -368,7 +370,7 @@ const CanvasArea = ({
                 originY: "center",
                 selectable: true,
                 hasControls: true,
-                hasBorders: true,
+                
               });
               canvasObj.add(img);
               canvasObj.renderAll();

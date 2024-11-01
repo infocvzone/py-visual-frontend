@@ -291,7 +291,8 @@ def create_ui(window):
                          text_offset=${el.textOffset}, show_text=${el.showText}`;
           break;
         case "Image":
-          params += `, image_path = "${el.imageName}" scale_value = ${el.scale_value}`;
+          params += `, image_path="assets/Images/image_${index + 1}", scale=${el.scale_value}, overlay_color=None, hidden=${el.hiden === false ? 'False' : 'True' }`;
+          break;
 
         case "ButtonImage":
           params += `, scale = ${el.scale}, text="${el.text}", 
@@ -301,10 +302,12 @@ def create_ui(window):
           font="assets/fonts/${el.fontFamily}/${
             el.fontFamily
           }.ttf", font_size=${el.fontSize},font_color="${el.textColor}",
-          on_hover=${el.onHover === null ? "None" : el.onHover}, on_click=${
-            el.onClick === null || el.name === "" ? "None" : el.onClick
+          on_hover=${
+            el.onHover === null || el.onHover === "" ? "None" : el.onHover
+          }, on_click=${
+            el.onClick === null || el.onClick === "" ? "None" : el.onClick
           }, on_release=${
-            el.onRelease === null || el.name === "" ? "None" : el.onRelease
+            el.onRelease === null || el.onRelease === "" ? "None" : el.onRelease
           }, 
           name = ${
             el.name === null || el.name === ""
@@ -361,6 +364,7 @@ if __name__ == '__main__':
     const fontsFolder = assetsFolder.folder("fonts"); // Create folder for fonts
     const backgroundFolder = assetsFolder.folder("background");
     const Buttons = assetsFolder.folder("Buttons");
+    const Images = assetsFolder.folder("Images");
 
     await handleGenerateCode();
     setCodeDisplay(false);
@@ -422,6 +426,14 @@ if __name__ == '__main__':
               error
             );
           }
+        }
+      }
+      if (element.type === "Image") {
+        try {
+          const image = await downloadResource(element.url);
+          Images.file(`image_${index}`, image);
+        } catch (error) {
+          console.error("Failed to download background image:", error);
         }
       }
     }

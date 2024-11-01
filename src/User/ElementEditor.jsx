@@ -6,7 +6,6 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
   const [editedElement, setEditedElement] = useState(null);
   const [Fonts, setFont] = useState([]);
 
-  
   useEffect(() => {
     const fetchFonts = async () => {
       try {
@@ -31,6 +30,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
   // Update the local state when the selected element changes
   useEffect(() => {
     if (selectedElement) {
+      console.log(selectedElement);
       setEditedElement({
         ...selectedElement,
       });
@@ -710,29 +710,37 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
         );
       case "Image":
         return (
-          <>
-            <div className="">
+          <div className="flex flex-wrap gap-2">
+            <div>
+              {/* Scale Range Input */}
               <label className="block">Scale:</label>
               <input
-                type="number"
+                type="range"
                 name="scale_value"
+                min="0.1"
+                max="1.0"
+                step="0.1"
                 value={editedElement.scale_value || 1}
                 onChange={handleChange}
+                className="p-2 border rounded w-full mb-4"
+              />
+            </div>
+            <div>
+              {/* Hidden Checkbox */}
+              <label className="block">Hidden:</label>
+              <input
+                type="checkbox"
+                name="hiden"
+                checked={editedElement.hiden || false}
+                onChange={(e) =>
+                  handleChange({
+                    target: { name: "hiden", value: e.target.checked },
+                  })
+                }
                 className="p-2 border rounded"
               />
             </div>
-
-            {/* New Image Selection Button 
-                        <div className="">
-                            <label className="block">Select Image:</label>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleImageUpload}
-                                className="p-2 border rounded"
-                            />
-                        </div>*/}
-          </>
+          </div>
         );
 
       case "ButtonImage":
@@ -801,7 +809,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               <input
                 type="text"
                 name="onHover"
-                value={editedElement.onHover}
+                value={editedElement.onHover || ""}
                 onChange={handleChange}
                 className="p-2 w-[120px] h-8 border rounded"
               />
@@ -811,7 +819,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               <input
                 type="text"
                 name="onClick"
-                value={editedElement.onClick}
+                value={editedElement.onClick || ""}
                 onChange={handleChange}
                 className="p-2 w-[120px] h-8 border rounded"
               />
@@ -821,7 +829,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               <input
                 type="text"
                 name="onRelease"
-                value={editedElement.onRelease}
+                value={editedElement.onRelease || ""}
                 onChange={handleChange}
                 className="p-2 w-[120px] h-8 border rounded"
               />
@@ -831,7 +839,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               <input
                 type="text"
                 name="Name"
-                value={editedElement.Name}
+                value={editedElement.Name || ""}
                 onChange={handleChange}
                 className="p-2 w-[120px] h-8 border rounded"
               />

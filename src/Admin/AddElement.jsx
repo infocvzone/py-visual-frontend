@@ -7,6 +7,7 @@ import AddInputField from "./AddInputField";
 import AddLine from "./Addline";
 import AddCircle from "./AddCircle";
 import AddRect from "./AddRectangle";
+import ImagesUploader from "./AddImages";
 
 const AddElement = () => {
   const [selectedElement, setSelectedElement] = useState("");
@@ -70,6 +71,16 @@ const AddElement = () => {
         <label className="mr-4">
           <input
             type="radio"
+            value="Images"
+            checked={selectedElement === "Images"}
+            onChange={(e) => setSelectedElement(e.target.value)}
+            className="mr-2"
+          />
+          Images
+        </label>
+        <label className="mr-4">
+          <input
+            type="radio"
             value="Line"
             checked={selectedElement === "Line"}
             onChange={(e) => setSelectedElement(e.target.value)}
@@ -108,6 +119,7 @@ const AddElement = () => {
       {selectedElement === "Line" && <AddLine />}
       {selectedElement === "Circle" && <AddCircle />}
       {selectedElement === "Rect" && <AddRect />}
+      {selectedElement === "Images" && <ImagesUploader/>}
     </div>
   );
 };
