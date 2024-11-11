@@ -128,6 +128,20 @@ const Home = () => {
     }
   };
 
+  // Function to convert hex to RGB
+  const hexToRgb = (hex) => {
+    // Remove the '#' if present
+    hex = hex.replace(/^#/, "");
+
+    // Parse the hex into RGB components
+    let bigint = parseInt(hex, 16);
+    let r = (bigint >> 16) & 255;
+    let g = (bigint >> 8) & 255;
+    let b = bigint & 255;
+
+    return `(${r}, ${g}, ${b}, 1)`;
+  };
+
   // Function to generate Python code based on current elements
   const handleGenerateCode = async () => {
     setCodeDisplay(!codeDisplay);
@@ -189,7 +203,7 @@ def create_ui(window):
         case "InputField":
           params += `, width=${el.width}, height=${
             el.height
-          }, background_color='${el.bgColor}', input_type='${el.input_type}',
+          }, background_color=${hexToRgb(el.bgColor)}, input_type='${el.input_type}',
           placeholder='${el.placeholder}', default_text="${el.text}", 
           text_padding_left=${el.padding_left}, text_padding_right=${
             el.padding_right
@@ -198,8 +212,8 @@ def create_ui(window):
           },
           font="assets/fonts/${el.fontFamily}/${
             el.fontFamily
-          }.ttf", font_size=${el.fontSize}, font_color="${el.textColor}",
-          border_color='${el.borderColor}', border_thickness=${
+          }.ttf", font_size=${el.fontSize}, font_color=${hexToRgb(el.textColor)},
+          border_color=${hexToRgb(el.borderColor)}, border_thickness=${
             el.borderThickness
           }, 
           border_style= ["${el.border_style[0]}", "${el.border_style[1]}", "${

@@ -84,9 +84,10 @@ const CanvasArea = ({
           console.log(fabricElement);
           if (fabricElement) {
             canvasObj.add(fabricElement);
+            handleElementSizing(fabricElement, element.id); // Update size when selected
             fabricElement.on("moving", () => {
               handleElementMovement(fabricElement, element.id);
-              requestAnimationFrame(() => updateAlignmentLines(fabricElement));
+              debounce(requestAnimationFrame(() => updateAlignmentLines(fabricElement)), 300);
             });
 
             fabricElement.on("selected", () => {
@@ -113,7 +114,7 @@ const CanvasArea = ({
     const handleKeyDown = (e) => {
       const isCopy = (e.ctrlKey || e.metaKey) && e.key === "c"; // Check for both Ctrl and Cmd
       const isPaste = (e.ctrlKey || e.metaKey) && e.key === "v";
-      const isDelete = (e.ctrlKey || e.metaKey) && e.key === "d";
+      const isDelete = (e.ctrlKey || e.metaKey) && e.key === "Backspace";
       if (isCopy && elementData) {
         // Ctrl + C or Cmd + C (Copy)
         const copiedData = elements.find((el) => el.id === elementData.id);
@@ -366,11 +367,9 @@ const CanvasArea = ({
                 top: element.y,
                 scaleX: element.scale_value || 1,
                 scaleY: element.scale_value || 1,
-                originX: "center",
-                originY: "center",
+
                 selectable: true,
                 hasControls: true,
-                
               });
               canvasObj.add(img);
               canvasObj.renderAll();
@@ -454,8 +453,10 @@ const CanvasArea = ({
     const movingTop = movingElement.top;
     const movingRight = movingLeft + movingElement.width;
     const movingBottom = movingTop + movingElement.height;
+    const movingCenterX = movingLeft + movingElement.width / 2;
+    const movingCenterY = movingTop + movingElement.height / 2;
 
-    const alignmentThreshold = 2;
+    const alignmentThreshold = 0.5;
 
     const addLine = (line) => {
       canvasObj.add(line);
@@ -467,6 +468,8 @@ const CanvasArea = ({
       const objTop = obj.top;
       const objRight = objLeft + obj.width;
       const objBottom = objTop + obj.height;
+      const objCenterX = objLeft + obj.width / 2;
+      const objCenterY = objTop + obj.height / 2;
 
       // Check vertical alignment
       if (Math.abs(objLeft - movingLeft) <= alignmentThreshold) {
@@ -559,6 +562,44 @@ const CanvasArea = ({
           })
         );
       }
+
+      // Center alignment check
+      if (Math.abs(objCenterX - movingCenterX) <= alignmentThreshold) {
+        addLine(
+          new fabric.Line([objCenterX, 0, objCenterX, canvasObj.height], {
+            stroke: "blue",
+            strokeWidth: 1,
+            selectable: false,
+            evented: false,
+          })
+        );
+        addLine(
+          new fabric.Line([movingCenterX, 0, movingCenterX, canvasObj.height], {
+            stroke: "blue",
+            strokeWidth: 1,
+            selectable: false,
+            evented: false,
+          })
+        );
+      }
+      if (Math.abs(objCenterY - movingCenterY) <= alignmentThreshold) {
+        addLine(
+          new fabric.Line([0, objCenterY, canvasObj.width, objCenterY], {
+            stroke: "blue",
+            strokeWidth: 1,
+            selectable: false,
+            evented: false,
+          })
+        );
+        addLine(
+          new fabric.Line([0, movingCenterY, canvasObj.width, movingCenterY], {
+            stroke: "blue",
+            strokeWidth: 1,
+            selectable: false,
+            evented: false,
+          })
+        );
+      }
     });
 
     // Render the changes on the canvas
@@ -568,6 +609,15 @@ const CanvasArea = ({
   const clearAlignmentLines = () => {
     alignmentLines.current.forEach((line) => canvasObj.remove(line));
     alignmentLines.current = [];
+  };
+
+  // Debounce function to limit API calls
+  const debounce = (func, delay) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), delay);
+    };
   };
 
   return (
@@ -590,8 +640,8 @@ const CanvasArea = ({
         <div className="absolute top-2 left-2 p-2 bg-blue-100 border border-blue-300 rounded">
           <p>X: {position.x}</p>
           <p>Y: {position.y}</p>
-          <p>width: {size.width}</p>
-          <p>height: {size.height}</p>
+          {/*<p>width: {size.width}</p>
+          <p>height: {size.height}</p>*/}
         </div>
       )}
     </div>
