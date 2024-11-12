@@ -29,6 +29,7 @@ const CanvasArea = ({
   const [size, setSize] = useState({ width: 0, height: 0 }); // State for height and width
   const [copiedElement, setCopiedElement] = useState(null);
   const alignmentLines = useRef([]); // Store alignment lines
+  const [isTracking, setTracking] = useState(false);
 
   // Initialize Fabric canvas
   useEffect(() => {
@@ -64,50 +65,61 @@ const CanvasArea = ({
   };
 
   // Update canvas with new elements
-  useEffect(() => {
-    if (canvasObj) {
-      canvasObj.clear();
-      const keys = Object.keys(positions);
-      console.log(elements);
-      elements.forEach(async (element) => {
-        for (let i = 0; i < keys.length; i++) {
-          if (keys[i].toString() === element.id.toString()) {
-            const key = keys[i];
-            let obj = positions[key];
-            element.x = Number(obj.x);
-            element.y = Number(obj.y);
-            break;
+  useEffect(
+    () => {
+      if (canvasObj) {
+        canvasObj.clear();
+        const keys = Object.keys(positions);
+        console.log(elements);
+        elements.forEach(async (element) => {
+          for (let i = 0; i < keys.length; i++) {
+            if (keys[i].toString() === element.id.toString()) {
+              const key = keys[i];
+              let obj = positions[key];
+              element.x = Number(obj.x);
+              element.y = Number(obj.y);
+              break;
+            }
           }
-        }
-        try {
-          const fabricElement = await createFabricElement(element);
-          console.log(fabricElement);
-          if (fabricElement) {
-            canvasObj.add(fabricElement);
-            handleElementSizing(fabricElement, element.id); // Update size when selected
-            fabricElement.on("moving", () => {
-              handleElementMovement(fabricElement, element.id);
-              debounce(requestAnimationFrame(() => updateAlignmentLines(fabricElement)), 300);
-            });
-
-            fabricElement.on("selected", () => {
-              setSelected(fabricElement);
-              setSelectedElement(fabricElement);
-              handleElementMovement(fabricElement, element.id);
-              setElementData(element);
-              onSelectedElement();
+          try {
+            const fabricElement = await createFabricElement(element);
+            console.log(fabricElement);
+            if (fabricElement) {
+              canvasObj.add(fabricElement);
+              setTracking(false);
               handleElementSizing(fabricElement, element.id); // Update size when selected
-            });
-            fabricElement.on("mouseup", () => {
-              clearAlignmentLines();
-            });
+              fabricElement.on("moving", () => {
+                handleElementMovement(fabricElement, element.id);
+                debounce(
+                  requestAnimationFrame(() =>
+                    updateAlignmentLines(fabricElement)
+                  ),
+                  300
+                );
+              });
+
+              fabricElement.on("selected", () => {
+                setSelected(fabricElement);
+                setSelectedElement(fabricElement);
+                handleElementMovement(fabricElement, element.id);
+                setElementData(element);
+                onSelectedElement();
+                handleElementSizing(fabricElement, element.id); // Update size when selected
+              });
+              fabricElement.on("mouseup", () => {
+                clearAlignmentLines();
+              });
+            }
+          } catch (error) {
+            console.error("Error creating fabric element:", error);
           }
-        } catch (error) {
-          console.error("Error creating fabric element:", error);
-        }
-      });
-    }
-  }, [elements, canvasObj, elementData]);
+        });
+      }
+    },
+    isTracking
+      ? [elements, canvasObj, elementData, positions]
+      : [elements, canvasObj, elementData]
+  );
 
   // Listen for Ctrl + C and Ctrl + V (or Cmd + C and Cmd + V on Mac)
   useEffect(() => {
@@ -151,15 +163,19 @@ const CanvasArea = ({
 
         switch (e.key) {
           case "ArrowUp":
+            setTracking(true);
             y -= 1; // Move element up by 10 units
             break;
           case "ArrowDown":
+            setTracking(true);
             y += 1; // Move element down by 10 units
             break;
           case "ArrowLeft":
+            setTracking(true);
             x -= 1; // Move element left by 10 units
             break;
           case "ArrowRight":
+            setTracking(true);
             x += 1; // Move element right by 10 units
             break;
           default:
@@ -180,7 +196,7 @@ const CanvasArea = ({
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [copiedElement, elements, onAddElement, onRemoveElement, positions]);
+  }, [copiedElement, elements, onAddElement, onRemoveElement]);
 
   // Create Fabric element based on type
   const createFabricElement = (element) => {
@@ -463,6 +479,36 @@ const CanvasArea = ({
       alignmentLines.current.push(line);
     };
 
+    // Draw vertical and horizontal dotted center lines on the canvas
+    const canvasCenterX = canvasObj.width / 2;
+    const canvasCenterY = canvasObj.height / 2;
+
+    const centerVerticalLine = new fabric.Line(
+      [canvasCenterX, 0, canvasCenterX, canvasObj.height],
+      {
+        stroke: "green",
+        strokeWidth: 1,
+        selectable: false,
+        evented: false,
+        strokeDashArray: [5, 5], // Dotted line pattern
+      }
+    );
+
+    const centerHorizontalLine = new fabric.Line(
+      [0, canvasCenterY, canvasObj.width, canvasCenterY],
+      {
+        stroke: "green",
+        strokeWidth: 1,
+        selectable: false,
+        evented: false,
+        strokeDashArray: [5, 5], // Dotted line pattern
+      }
+    );
+
+    addLine(centerVerticalLine);
+    addLine(centerHorizontalLine);
+
+    // Aligning logic for other objects
     objects.forEach((obj) => {
       const objLeft = obj.left;
       const objTop = obj.top;
@@ -605,7 +651,6 @@ const CanvasArea = ({
     // Render the changes on the canvas
     canvasObj.renderAll();
   };
-
   const clearAlignmentLines = () => {
     alignmentLines.current.forEach((line) => canvasObj.remove(line));
     alignmentLines.current = [];

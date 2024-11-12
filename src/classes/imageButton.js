@@ -131,7 +131,7 @@ class ButtonImage {
   isWithinBounds(mouseX, mouseY) {
     return (
       mouseX >= this.imageGroup.left &&
-      mouseX <= this.imageGroup.left + 100 * this.scale &&
+      mouseX <= this.imageGroup.left + 70 * this.scale &&
       mouseY >= this.imageGroup.top &&
       mouseY <= this.imageGroup.top + 70 * this.scale
     );

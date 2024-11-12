@@ -4,7 +4,9 @@ import ButtonSvg from "../assets/categories/button-svg.svg";
 import ButtonComponent from "../components/buttonComponet";
 import TextSvg from "../assets/categories/text-svg.svg";
 import LogoutSvg from "../assets/log-out.svg";
-import ProjectsSvg from "../assets/projects.svg";
+import InputSvg from "../assets/categories/input-svg.svg";
+import ShapesSvg from "../assets/categories/shapes.svg";
+import BackgroundSvg from "../assets/categories/background.svg";
 import TextComponent from "../components/textComponent";
 import ImageSvg from "../assets/categories/image-svg.svg";
 import { API_KEY } from "../constant";
@@ -232,7 +234,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
           <div className="flex items-center">
             <button onClick={() => toggleCategory("InputField")}>
               <img
-                src={ImageSvg}
+                src={InputSvg}
                 alt="InputField"
                 className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
                   activeCategory === "InputField"
@@ -248,7 +250,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
           <div className="flex items-center">
             <button onClick={() => toggleCategory("background")}>
               <img
-                src={ImageSvg}
+                src={BackgroundSvg}
                 alt="background"
                 className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
                   activeCategory === "background"
@@ -280,7 +282,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
           <div className="flex items-center">
             <button onClick={() => toggleCategory("Line")}>
               <img
-                src={ImageSvg}
+                src={ShapesSvg}
                 alt="Line"
                 className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
                   activeCategory === "Line" ? "border-blue-400" : "border-black"
