@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 
 const AssetManagement = () => {
   const [images, setImages] = useState([]);
+  const [Picture, setPicture] = useState([]);
   const [fonts, setFonts] = useState([]);
   const [editingFontId, setEditingFontId] = useState(null);
   const [fontUpdateInput, setFontUpdateInput] = useState("");
@@ -16,6 +17,16 @@ const AssetManagement = () => {
       .get(`${API_KEY}api/images`)
       .then((response) => {
         setImages(response.data); // Assuming response.data is the array of image data
+      })
+      .catch((error) => {
+        console.error("Error fetching images:", error);
+      });
+
+    // Fetch images
+    axios
+      .get(`${API_KEY}api/picture`)
+      .then((response) => {
+        setPicture(response.data); // Assuming response.data is the array of image data
       })
       .catch((error) => {
         console.error("Error fetching images:", error);
@@ -53,9 +64,30 @@ const AssetManagement = () => {
       });
   };
 
+  // Delete image by ID
+  const handleDeletePicture = (id) => {
+    axios
+      .delete(`${API_KEY}api/picture/${id}`)
+      .then(() => {
+        setPicture(Picture.filter((image) => image._id !== id));
+        Swal.fire({
+          title: "Image Deleted Successfully",
+          showCancelButton: false,
+          confirmButtonText: "ok",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload();
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Error deleting image:", error);
+      });
+  };
+
   // Delete font by ID
   const handleDeleteFont = (id) => {
-    console.log(id)
+    console.log(id);
     axios
       .delete(`${API_KEY}api/fonts/${id}`)
       .then(() => {
@@ -108,7 +140,9 @@ const AssetManagement = () => {
     <div className="asset-management p-6 bg-gray-100 min-h-screen">
       {/* Display Images */}
       <div className="images-section mb-8">
-        <h2 className="text-2xl font-bold mb-4">Images</h2>
+        <h2 className="text-2xl text-blue-900 font-bold mb-4">
+          Background Images
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {images.map((image) => (
             <div
@@ -130,10 +164,36 @@ const AssetManagement = () => {
           ))}
         </div>
       </div>
+      {/* Display Images */}
+      <div className="images-section mb-8">
+        <h2 className="text-2xl text-blue-900 font-bold mb-4">
+          Images
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {Picture.map((image) => (
+            <div
+              key={image._id}
+              className="image-item bg-white p-4 shadow rounded-lg"
+            >
+              <img
+                src={image.url}
+                alt="Image"
+                className="w-full h-32 object-cover rounded mb-2"
+              />
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full"
+                onClick={() => handleDeletePicture(image._id)}
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Display Fonts */}
       <div className="fonts-section">
-        <h2 className="text-2xl font-bold mb-4">Fonts</h2>
+        <h2 className="text-2xl text-blue-900 font-bold mb-4">Fonts</h2>
         <table className="min-w-full bg-white shadow rounded-lg">
           <thead className="bg-gray-200">
             <tr>
