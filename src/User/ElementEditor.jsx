@@ -256,7 +256,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               <input
                 type="text"
                 name="onHover"
-                value={editedElement.onHover}
+                value={editedElement.onHover || ""}
                 onChange={handleChange}
                 className="p-2 w-[120px] h-8 border rounded"
               />
@@ -266,7 +266,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               <input
                 type="text"
                 name="onClick"
-                value={editedElement.onClick}
+                value={editedElement.onClick || ""}
                 onChange={handleChange}
                 className="p-2 w-[120px] h-8 border rounded"
               />
@@ -276,17 +276,27 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               <input
                 type="text"
                 name="onRelease"
-                value={editedElement.onRelease}
+                value={editedElement.onRelease || ""}
                 onChange={handleChange}
                 className="p-2 w-[120px] h-8 border rounded"
               />
             </div>
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Name</label>
+              <label className="block">Tag</label>
               <input
                 type="text"
                 name="name"
-                value={editedElement.name}
+                value={editedElement.name || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
                 onChange={handleChange}
                 className="p-2 w-[120px] h-8 border rounded"
               />
@@ -534,6 +544,26 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 className="p-2 h-8 w-[120px] border rounded"
               />
             </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Tag</label>
+              <input
+                type="text"
+                name="name"
+                value={editedElement.name || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
           </div>
         );
       case "Text":
@@ -650,6 +680,26 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 className="h-4 w-4 border rounded"
               />
             </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Tag</label>
+              <input
+                type="text"
+                name="name"
+                value={editedElement.name || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
           </div>
         );
       case "Toggle":
@@ -738,6 +788,26 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   })
                 }
                 className="p-2 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Tag</label>
+              <input
+                type="text"
+                name="name"
+                value={editedElement.name || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
               />
             </div>
           </div>
@@ -835,11 +905,21 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               />
             </div>
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Name</label>
+              <label className="block">Tag</label>
               <input
                 type="text"
-                name="Name"
-                value={editedElement.Name || ""}
+                name="name"
+                value={editedElement.name || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
                 onChange={handleChange}
                 className="p-2 w-[120px] h-8 border rounded"
               />

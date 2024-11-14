@@ -151,9 +151,7 @@ const Home = () => {
       .map(
         (el, index) =>
           `${
-            el.type === "BasicButton" || el.type === "ButtonImage"
-              ? "Button"
-              : el.type
+            el.variableName
           }_${index + 1}`
       )
       .join(", ");
@@ -196,14 +194,20 @@ def create_ui(window):
             el.onClick === null ? "None" : el.onClick
           }, on_release=${
             el.onRelease === null ? "None" : el.onRelease
-          }, name = "Button_${index + 1}"
+          }, tag = ${
+            el.name === null || el.name === ""
+              ? `"${el.variableName}_${index + 1}"`
+              : `"${el.name}"`
+          }
                 `;
           break;
 
         case "InputField":
           params += `, width=${el.width}, height=${
             el.height
-          }, background_color=${hexToRgb(el.bgColor)}, input_type='${el.input_type}',
+          }, background_color=${hexToRgb(el.bgColor)}, input_type='${
+            el.input_type
+          }',
           placeholder='${el.placeholder}', default_text="${el.text}", 
           text_padding_left=${el.padding_left}, text_padding_right=${
             el.padding_right
@@ -212,7 +216,9 @@ def create_ui(window):
           },
           font="assets/fonts/${el.fontFamily}/${
             el.fontFamily
-          }.ttf", font_size=${el.fontSize}, font_color=${hexToRgb(el.textColor)},
+          }.ttf", font_size=${el.fontSize}, font_color=${hexToRgb(
+            el.textColor
+          )},
           border_color=${hexToRgb(el.borderColor)}, border_thickness=${
             el.borderThickness
           }, 
@@ -220,6 +226,10 @@ def create_ui(window):
             el.border_style[2]
           }", "${el.border_style[3]}"], on_input=${
             !el.on_input ? "None" : `"${el.on_input}"`
+          }, tag = ${
+            el.name === null || el.name === ""
+              ? `"${el.variableName}_${index + 1}"`
+              : `"${el.name}"`
           }`;
 
           break;
@@ -231,7 +241,11 @@ def create_ui(window):
           let Strike = el.strikethrough === true ? "True" : "False";
           params += `, text='${el.text}',
                 font="assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf", font_color='${el.color}', font_size=${el.fontSize},
-                bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}`;
+                bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}, tag = ${
+                  el.name === null || el.name === ""
+                    ? `"${el.variableName}_${index + 1}"`
+                    : `"${el.name}"`
+                }`;
           break;
 
         case "Toggle":
@@ -305,7 +319,15 @@ def create_ui(window):
                          text_offset=${el.textOffset}, show_text=${el.showText}`;
           break;
         case "Image":
-          params += `, image_path="assets/Images/image_${index + 1}", scale=${el.scale_value}, overlay_color=None, hidden=${el.hiden === false ? 'False' : 'True' }`;
+          params += `, image_path="assets/Images/image_${index + 1}", scale=${
+            el.scale_value
+          }, overlay_color=None, hidden=${
+            el.hiden === false ? "False" : "True"
+          }, tag = ${
+            el.name === null || el.name === ""
+              ? `"${el.variableName}_${index + 1}"`
+              : `"${el.name}"`
+          }`;
           break;
 
         case "ButtonImage":
@@ -323,9 +345,9 @@ def create_ui(window):
           }, on_release=${
             el.onRelease === null || el.onRelease === "" ? "None" : el.onRelease
           }, 
-          name = ${
+          tag = ${
             el.name === null || el.name === ""
-              ? `"Button_${index + 1}"`
+              ? `"${el.variableName}_${index + 1}"`
               : `"${el.name}"`
           }`;
 
@@ -336,13 +358,7 @@ def create_ui(window):
       params += ")";
       pythonCode += ` 
     #Element ${index + 1}\n   ${
-        el.type === "BasicButton"
-          ? "Button"
-          : el.type === "BasicTextInput"
-          ? "InputField"
-          : el.type === "ButtonImage"
-          ? "Button"
-          : el.type
+        el.variableName
       }_${index + 1} = pv.${
         el.type === "InputField"
           ? "BasicTextInput"
