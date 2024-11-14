@@ -1067,6 +1067,26 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 className="p-2 h-8 border rounded-full"
               />
             </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Tag</label>
+              <input
+                type="text"
+                name="tag"
+                value={editedElement.tag || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
           </>
         );
       case "Circle":
@@ -1090,6 +1110,26 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 value={editedElement.Color || "#0f0f0f"}
                 onChange={handleChange}
                 className="p-2 h-8 border rounded-full"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Tag</label>
+              <input
+                type="text"
+                name="tag"
+                value={editedElement.tag || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
               />
             </div>
           </>
@@ -1125,6 +1165,26 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 value={editedElement.Color || "#0f0f0f"}
                 onChange={handleChange}
                 className="p-2 h-8 border rounded-full"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Tag</label>
+              <input
+                type="text"
+                name="tag"
+                value={editedElement.tag || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
               />
             </div>
           </>
