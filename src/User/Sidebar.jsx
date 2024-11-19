@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import ButtonSvg from "../assets/categories/button-svg.svg";
 import ButtonComponent from "../components/buttonComponet";
@@ -7,6 +7,7 @@ import LogoutSvg from "../assets/log-out.svg";
 import InputSvg from "../assets/categories/input-svg.svg";
 import ShapesSvg from "../assets/categories/shapes.svg";
 import BackgroundSvg from "../assets/categories/background.svg";
+import GraphicsSvg from "../assets/categories/image-pen.svg";
 import TextComponent from "../components/textComponent";
 import ImageSvg from "../assets/categories/image-svg.svg";
 import { API_KEY } from "../constant";
@@ -24,7 +25,6 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
   const [inputfield, setInputfield] = useState([]);
   const [textData, setTextData] = useState([]);
   const [ImageData, setImageData] = useState([]);
-  const [ImagesData, setImagesData] = useState([]);
   const [LineData, setLineData] = useState([]);
   const [CircleData, setCircleData] = useState([]);
   const [RectData, setRectData] = useState([]);
@@ -35,6 +35,180 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [ImagesData, setImagesData] = useState([]);
+  const [GraphicsData, setGraphicsData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [Loading, SetLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  const KEY = "47140599-1bb65ee8bbdb1fdf35ec80ea9";
+
+  /*-------------------------------------------------------------------*/
+
+  const fetchImages = useCallback(
+    async (newSearchTerm, nextPage) => {
+      if (Loading || !hasMore) return;
+      SetLoading(true);
+
+      try {
+        const response = await axios.get(
+          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=illustration&page=${nextPage}&per_page=10`
+        );
+        const newImages = response.data.hits;
+
+        if (nextPage === 1) {
+          // Reset images for a new search term
+          setImagesData(newImages);
+        } else {
+          // Append new images for lazy loading
+          setImagesData((prevImages) => [...prevImages, ...newImages]);
+        }
+
+        setHasMore(newImages.length > 0); // Check if there are more images
+        setPage(nextPage + 1);
+      } catch (error) {
+        console.error("Failed to fetch images:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [API_KEY, loading, hasMore]
+  );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const divElement = document.getElementById("image-container");
+      if (
+        divElement &&
+        divElement.scrollTop + divElement.clientHeight >=
+          divElement.scrollHeight - 10
+      ) {
+        fetchImages(searchTerm, page);
+      }
+    };
+
+    const divElement = document.getElementById("image-container");
+    divElement?.addEventListener("scroll", handleScroll);
+
+    return () => divElement?.removeEventListener("scroll", handleScroll);
+  }, [fetchImages, searchTerm, page]);
+
+  /*-------------------------------------------------------------------*/
+
+  const fetchGraphics = useCallback(
+    async (newSearchTerm, nextPage) => {
+      if (Loading || !hasMore) return;
+      SetLoading(true);
+
+      try {
+        const response = await axios.get(
+          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=vector&page=${nextPage}&per_page=10`
+        );
+        const newImages = response.data.hits;
+
+        if (nextPage === 1) {
+          // Reset images for a new search term
+          setGraphicsData(newImages);
+        } else {
+          // Append new images for lazy loading
+          setGraphicsData((prevImages) => [...prevImages, ...newImages]);
+        }
+
+        setHasMore(newImages.length > 0); // Check if there are more images
+        setPage(nextPage + 1);
+      } catch (error) {
+        console.error("Failed to fetch images:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [API_KEY, loading, hasMore]
+  );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const divElement = document.getElementById("graphics-container");
+      if (
+        divElement &&
+        divElement.scrollTop + divElement.clientHeight >=
+          divElement.scrollHeight - 10
+      ) {
+        fetchGraphics(searchTerm, page);
+      }
+    };
+
+    const divElement = document.getElementById("graphics-container");
+    divElement?.addEventListener("scroll", handleScroll);
+
+    return () => divElement?.removeEventListener("scroll", handleScroll);
+  }, [fetchGraphics, searchTerm, page]);
+
+  /*-------------------------------------------------------------------*/
+
+  const fetchBackgroundImages = useCallback(
+    async (newSearchTerm, nextPage) => {
+      if (Loading || !hasMore) return;
+      SetLoading(true);
+
+      try {
+        const response = await axios.get(
+          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=photo&category=backgrounds&page=${nextPage}&per_page=10`
+        );
+        const newImages = response.data.hits;
+
+        if (nextPage === 1) {
+          // Reset images for a new search term
+          setImageData(newImages);
+        } else {
+          // Append new images for lazy loading
+          setImageData((prevImages) => [...prevImages, ...newImages]);
+        }
+
+        setHasMore(newImages.length > 0); // Check if there are more images
+        setPage(nextPage + 1);
+      } catch (error) {
+        console.error("Failed to fetch images:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [API_KEY, loading, hasMore]
+  );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const divElement = document.getElementById("bgimage-container");
+      if (
+        divElement &&
+        divElement.scrollTop + divElement.clientHeight >=
+          divElement.scrollHeight - 10
+      ) {
+        fetchBackgroundImages(searchTerm, page);
+      }
+    };
+
+    const divElement = document.getElementById("bgimage-container");
+    divElement?.addEventListener("scroll", handleScroll);
+
+    return () => divElement?.removeEventListener("scroll", handleScroll);
+  }, [fetchBackgroundImages, searchTerm, page]);
+
+  /*-------------------------------------------------------------------*/
+
+  const handleSearch = () => {
+    if (searchTerm.trim()) {
+      setPage(1);
+      if (activeCategory === "Image") {
+        fetchImages(searchTerm, 1);
+      } else if (activeCategory === "background") {
+        fetchBackgroundImages(searchTerm, 1);
+      } else if (activeCategory === "graphics") {
+        fetchGraphics(searchTerm, 1);
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchButtonData = async () => {
@@ -76,14 +250,6 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
         console.error("Error fetching images:", error);
       }
     };
-    const fetchBgImagesData = async () => {
-      try {
-        const response = await axios.get(`${API_KEY}api/images`);
-        setImageData(response.data); // Fetch and store image data
-      } catch (error) {
-        console.error("Error fetching images:", error);
-      }
-    };
 
     const fetchLineData = async () => {
       try {
@@ -120,27 +286,15 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
         console.error("Error fetching images:", error);
       }
     };
-    const fetchImages = async () => {
-      try {
-        const response = await axios.get(
-          `${API_KEY}api/picture`
-        );
-        setImagesData(response.data); // Fetch and store image data
-      } catch (error) {
-        console.error("Error fetching images:", error);
-      }
-    };
 
     fetchButtonData();
     fetchTextData();
     fetchImageData(); // Fetch images
     fetchInputfieldData();
-    fetchBgImagesData();
     fetchLineData();
     fetchCircleData();
     fetchRectData();
     fetchProjects();
-    fetchImages();
   }, []);
 
   const toggleCategory = (category) => {
@@ -289,6 +443,21 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
                 }`}
               />
               <h1 className="text-xs mt-1 text-center text-black">Shapes</h1>
+            </button>
+          </div>
+          {/* buttonImage Button */}
+          <div className="flex items-center">
+            <button onClick={() => toggleCategory("graphics")}>
+              <img
+                src={GraphicsSvg}
+                alt="Image"
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                  activeCategory === "graphics"
+                    ? "border-blue-400"
+                    : "border-black"
+                }`}
+              />
+              <h1 className="text-xs mt-1 text-center text-black">Graphics</h1>
             </button>
           </div>
         </div>
@@ -478,43 +647,174 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
             )}
 
             {activeCategory === "background" && (
-              <div className="grid grid-cols-2 gap-1">
-                <button
-                  className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
-                  onClick={() => handleImageChange(null)}
-                >
-                  <img
-                    src="https://img.freepik.com/free-photo/white-png-base_23-2151645368.jpg?size=626&ext=jpg&ga=GA1.1.1880011253.1728950400&semt=ais_hybrid-rr-similar"
-                    alt="null"
-                    className="w-[150px] h-[120px] border"
+              <div>
+                {/* Search input and button */}
+                <div className="mb-4 flex justify-center">
+                  <input
+                    type="text"
+                    placeholder="Search for images..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="border p-2 rounded-l-lg"
                   />
-                </button>
-                {ImageData.map((image) => (
                   <button
-                    key={image._id}
+                    onClick={handleSearch}
+                    className="bg-blue-500 text-white p-2 rounded-r-lg hover:bg-blue-600"
+                  >
+                    Search
+                  </button>
+                </div>
+                <div
+                  id="bgimage-container"
+                  className="grid grid-cols-2 gap-1 h-[500px] overflow-auto"
+                >
+                  <button
                     className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
-                    onClick={() => handleImageChange(image.url)}
+                    onClick={() => handleImageChange(null)}
                   >
                     <img
-                      src={image.url}
-                      alt={image.name}
-                      className="w-[150px] h-[120px]"
+                      src="https://img.freepik.com/free-photo/white-png-base_23-2151645368.jpg?size=626&ext=jpg&ga=GA1.1.1880011253.1728950400&semt=ais_hybrid-rr-similar"
+                      alt="null"
+                      className="w-[150px] h-[120px] border"
                     />
                   </button>
-                ))}
+                  {ImageData.map((image, index) => (
+                    <button
+                      key={index}
+                      className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
+                      onClick={() => handleImageChange(image.webformatURL)}
+                    >
+                      <img
+                        src={image.previewURL}
+                        alt={image.tags}
+                        className="w-[150px] h-[120px]"
+                      />
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
             {activeCategory === "Image" && (
-              <div className="grid grid-cols-2 gap-1">
-                {ImagesData.map((image) => (
+              <div>
+                {/* Search input and button */}
+                <div className="mb-4 flex justify-center">
+                  <input
+                    type="text"
+                    placeholder="Search for images..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="border p-2 rounded-l-lg"
+                  />
                   <button
-                    key={image._id}
-                    className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
-                    onClick={() => onAddElement("Image", image)}
+                    onClick={handleSearch}
+                    className="bg-blue-500 text-white p-2 rounded-r-lg hover:bg-blue-600"
                   >
-                    <img src={image.url} className="w-[100px] h-[100px]" />
+                    Search
                   </button>
-                ))}
+                </div>
+
+                {/* Image grid container with lazy loading */}
+                <div
+                  id="image-container"
+                  className="grid grid-cols-2 gap-1 h-[500px] overflow-auto"
+                >
+                  {ImagesData.map((image, index) => (
+                    <button
+                      key={index}
+                      className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
+                      onClick={() => {
+                        // Add the additional properties to the image object
+                        const modifiedImage = {
+                          ...image,
+                          x: 100,
+                          y: 100,
+                          variableName: "Image",
+                          name: null,
+                          hidden: false,
+                          type: "Image",
+                          scale_value: 0.5,
+                          id: Date.now(),
+                        };
+                        // Pass the modified image object to onAddElement
+                        onAddElement("Image", modifiedImage);
+                      }}
+                    >
+                      <img
+                        src={image.previewURL}
+                        alt={image.tags}
+                        className="w-[100px] h-[100px] object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+                {loading && <p className="text-center">Loading...</p>}
+                {!hasMore && (
+                  <p className="text-center text-gray-500">
+                    No more images to load.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {activeCategory === "graphics" && (
+              <div>
+                {/* Search input and button */}
+                <div className="mb-4 flex justify-center">
+                  <input
+                    type="text"
+                    placeholder="Search for images..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="border p-2 rounded-l-lg"
+                  />
+                  <button
+                    onClick={handleSearch}
+                    className="bg-blue-500 text-white p-2 rounded-r-lg hover:bg-blue-600"
+                  >
+                    Search
+                  </button>
+                </div>
+
+                {/* Image grid container with lazy loading */}
+                <div
+                  id="graphics-container"
+                  className="grid grid-cols-2 gap-1 h-[500px] overflow-auto"
+                >
+                  {GraphicsData.map((image, index) => (
+                    <button
+                      key={index}
+                      className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
+                      onClick={() => {
+                        // Add the additional properties to the image object
+                        const modifiedImage = {
+                          ...image,
+                          x: 100,
+                          y: 100,
+                          variableName: "Image",
+                          name: null,
+                          hidden: false,
+                          type: "Image",
+                          scale_value: 0.3,
+                          id: Date.now(),
+                        };
+                        // Pass the modified image object to onAddElement
+                        onAddElement("Image", modifiedImage);
+                      }}
+                    >
+                      <img
+                        src={image.previewURL}
+                        alt={image.tags}
+                        className="w-[100px] h-[100px] object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+                {loading && <p className="text-center">Loading...</p>}
+                {!hasMore && (
+                  <p className="text-center text-gray-500">
+                    No more images to load.
+                  </p>
+                )}
               </div>
             )}
           </div>

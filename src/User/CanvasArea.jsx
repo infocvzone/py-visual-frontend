@@ -14,6 +14,7 @@ const CanvasArea = ({
   onAddElement,
   onRemoveElement,
   setPOSITION,
+  setELEMENTS,
   positions,
   Height,
   Width,
@@ -30,6 +31,7 @@ const CanvasArea = ({
   const [copiedElement, setCopiedElement] = useState(null);
   const alignmentLines = useRef([]); // Store alignment lines
   const [isTracking, setTracking] = useState(false);
+  const undoStack = useRef([]);
 
   // Initialize Fabric canvas
   useEffect(() => {
@@ -44,11 +46,23 @@ const CanvasArea = ({
     });
     setCanvasObj(canvas);
 
+    // Array to store selected elements
+    const handleSelection = (event) => {
+      const selectedObjects = event.selected || [];
+      console.log(selectedObjects);
+    };
+
+    // Attach event listeners for selection
+    canvas.on("selection:created", handleSelection);
+    canvas.on("selection:updated", handleSelection);
+
+    // Clean up event listeners and alignment lines
     return () => {
-      // Clean up: dispose alignment lines
       alignmentLines.current.forEach((line) => {
         canvas.remove(line);
       });
+      canvas.off("selection:created", handleSelection);
+      canvas.off("selection:updated", handleSelection);
       canvas.dispose();
     };
   }, [Height, Width]);
@@ -68,9 +82,12 @@ const CanvasArea = ({
   useEffect(
     () => {
       if (canvasObj) {
+        debounce(
+          requestAnimationFrame(() => undoStack.current.push([...elements])),
+          500
+        );
         canvasObj.clear();
         const keys = Object.keys(positions);
-        console.log(elements);
         elements.forEach(async (element) => {
           for (let i = 0; i < keys.length; i++) {
             if (keys[i].toString() === element.id.toString()) {
@@ -82,8 +99,8 @@ const CanvasArea = ({
             }
           }
           try {
+            console.log(element);
             const fabricElement = await createFabricElement(element);
-            console.log(fabricElement);
             if (fabricElement) {
               canvasObj.add(fabricElement);
               setTracking(false);
@@ -101,10 +118,10 @@ const CanvasArea = ({
               fabricElement.on("selected", () => {
                 setSelected(fabricElement);
                 setSelectedElement(fabricElement);
-                handleElementMovement(fabricElement, element.id);
+               // handleElementMovement(fabricElement, element.id);
                 setElementData(element);
                 onSelectedElement();
-                handleElementSizing(fabricElement, element.id); // Update size when selected
+                //handleElementSizing(fabricElement, element.id); // Update size when selected
               });
               fabricElement.on("mouseup", () => {
                 clearAlignmentLines();
@@ -127,12 +144,23 @@ const CanvasArea = ({
       const isCopy = (e.ctrlKey || e.metaKey) && e.key === "c"; // Check for both Ctrl and Cmd
       const isPaste = (e.ctrlKey || e.metaKey) && e.key === "v";
       const isDelete = (e.ctrlKey || e.metaKey) && e.key === "Backspace";
+      const isUndo = (e.ctrlKey || e.metaKey) && e.key === "z";
       if (isCopy && elementData) {
         // Ctrl + C or Cmd + C (Copy)
         const copiedData = elements.find((el) => el.id === elementData.id);
         if (copiedData) {
           setCopiedElement(copiedData); // Store the copied element
           console.log("Element copied:", copiedData);
+        }
+      }
+
+      if (isUndo) {
+        if (undoStack.current.length > 1) {
+          // Pop the last state and update the elements
+          undoStack.current.pop();
+          const previousState = undoStack.current[undoStack.current.length - 1];
+          console.log(previousState);
+          setELEMENTS(previousState);
         }
       }
 
@@ -373,7 +401,7 @@ const CanvasArea = ({
       case "Image":
         return new Promise((resolve, reject) => {
           fabric.Image.fromURL(
-            element.url,
+            element.webformatURL,
             (img) => {
               if (!img) {
                 return reject(new Error("Failed to load image"));

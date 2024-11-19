@@ -122,7 +122,11 @@ const Home = () => {
         elements: elements,
         positions: positions,
       });
-      console.log("Project saved:", response.data);
+      Swal.fire({
+        title: `Project ${projectName} Saved!`,
+        showCancelButton: false,
+        confirmButtonText: "ok",
+      });
     } catch (error) {
       console.error("Error saving project:", error);
     }
@@ -148,12 +152,7 @@ const Home = () => {
 
     // Collect all element names for the global declaration
     let globalElementNames = elements
-      .map(
-        (el, index) =>
-          `${
-            el.variableName
-          }_${index + 1}`
-      )
+      .map((el, index) => `${el.variableName}_${index + 1}`)
       .join(", ");
 
     let pythonCode = `
@@ -240,12 +239,14 @@ def create_ui(window):
           let Underline = el.underline === true ? "True" : "False";
           let Strike = el.strikethrough === true ? "True" : "False";
           params += `, text='${el.text}',
-                font="assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf", font_color='${el.color}', font_size=${el.fontSize},
+                font="assets/fonts/${el.fontFamily}/${
+            el.fontFamily
+          }.ttf", font_color='${el.color}', font_size=${el.fontSize},
                 bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}, tag = ${
-                  el.name === null || el.name === ""
-                    ? `"${el.variableName}_${index + 1}"`
-                    : `"${el.name}"`
-                }`;
+            el.name === null || el.name === ""
+              ? `"${el.variableName}_${index + 1}"`
+              : `"${el.name}"`
+          }`;
           break;
 
         case "Toggle":
@@ -357,9 +358,7 @@ def create_ui(window):
 
       params += ")";
       pythonCode += ` 
-    #Element ${index + 1}\n   ${
-        el.variableName
-      }_${index + 1} = pv.${
+    #Element ${index + 1}\n   ${el.variableName}_${index + 1} = pv.${
         el.type === "InputField"
           ? "BasicTextInput"
           : el.type === "ButtonImage"
@@ -460,7 +459,7 @@ if __name__ == '__main__':
       }
       if (element.type === "Image") {
         try {
-          const image = await downloadResource(element.url);
+          const image = await downloadResource(element.webformatURL);
           Images.file(`image_${index}`, image);
         } catch (error) {
           console.error("Failed to download background image:", error);
@@ -543,6 +542,7 @@ if __name__ == '__main__':
             onAddElement={handleAddElement}
             onRemoveElement={removeElement}
             setPOSITION={setPositions}
+            setELEMENTS={setElements}
             positions={positions}
             Height={height}
             Width={width}

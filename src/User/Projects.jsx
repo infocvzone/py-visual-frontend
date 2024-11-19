@@ -4,6 +4,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { API_KEY } from "../constant";
 import { useSelector } from "react-redux";
+import { FaTrashAlt } from "react-icons/fa"; // Import delete icon
+import Swal from "sweetalert2";
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
@@ -38,6 +40,33 @@ export default function Projects() {
     navigate("/home", { state: { projectData: false } });
   };
 
+  const deleteProject = async (projectId) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(`${API_KEY}api/projects/${projectId}`);
+          Swal.fire({
+            title: `Project deleted!`,
+            showCancelButton: false,
+            confirmButtonText: "ok",
+          }).then(() => {
+            window.location.reload(); // Refresh page on success
+          });
+        } catch (err) {
+          alert("Failed to delete the project. Please try again later.");
+        }
+      }
+    });
+  };
+
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -51,13 +80,19 @@ export default function Projects() {
         <div className="space-y-4">
           {projects.length > 0 ? (
             projects.map((project) => (
-              <button
-                key={project._id}
-                onClick={() => handleProjectSelect(project)}
-                className="w-full text-left bg-blue-100 p-4 rounded-lg hover:bg-blue-200 transition"
-              >
-                {project.name}
-              </button>
+              <div key={project._id} className="relative">
+                <button
+                  onClick={() => handleProjectSelect(project)}
+                  className="w-full text-left bg-blue-100 p-4 rounded-lg hover:bg-blue-200 transition relative z-10"
+                >
+                  {project.name}
+                </button>
+                <FaTrashAlt
+                  onClick={() => deleteProject(project._id)}
+                  className="absolute top-1/2 transform -translate-y-1/2 right-4 text-red-500 cursor-pointer z-20 hover:text-red-700"
+                  title="Delete Project"
+                />
+              </div>
             ))
           ) : (
             <p className="text-center text-gray-500">No projects found.</p>
