@@ -5,6 +5,7 @@ import { API_KEY } from "../constant";
 const ElementEditor = ({ selectedElement, elements, setElements }) => {
   const [editedElement, setEditedElement] = useState(null);
   const [Fonts, setFont] = useState([]);
+  const [svgFills, setSvgFills] = useState([]);
 
   useEffect(() => {
     const fetchFonts = async () => {
@@ -34,8 +35,49 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       setEditedElement({
         ...selectedElement,
       });
+      // Extract fill values from SVG string and update state
+      if (selectedElement.webformatURL) {
+        extractFillValues(selectedElement.webformatURL);
+      }
     }
   }, [selectedElement]);
+
+  // Function to extract fill values from the SVG string
+  const extractFillValues = (svgString) => {
+    const regex = /fill="([^"]*)"/g; // Regex to find fill attributes
+    let matches = [];
+    let match;
+    while ((match = regex.exec(svgString)) !== null) {
+      matches.push(match[1]); // Push fill values to the array
+    }
+    setSvgFills(matches); // Update state with all fill values
+  };
+
+  // Function to update the fill value in the SVG string
+  const updateSvgFill = (index, newFill) => {
+    if (!editedElement.webformatURL) return;
+
+    let svgString = editedElement.webformatURL;
+    const regex = /fill="([^"]*)"/g;
+    let match;
+    let count = 0;
+    let updatedSvgString = svgString.replace(regex, (matchStr, color) => {
+      if (count === index) {
+        count++;
+        return `fill="${newFill}"`; // Replace the fill with new value
+      }
+      count++;
+      return matchStr; // Keep other fills unchanged
+    });
+
+    // Update the SVG string in editedElement
+    const updatedElement = {
+      ...editedElement,
+      webformatURL: updatedSvgString,
+    };
+    setEditedElement(updatedElement);
+    updateElementsList(updatedElement); // Update elements list
+  };
 
   // Update elements list with the modified element
   const updateElementsList = (updatedElement) => {
@@ -757,6 +799,77 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               />
             </div>
           </>
+        );
+
+      case "Svg":
+        return (
+          <div className="flex flex-wrap gap-2">
+            <div>
+              {/* Loop through all the fill values and display them as color pickers */}
+              <label className="block">SVG Fills:</label>
+              {svgFills.map((fill, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <label>{`Fill ${index + 1}`}</label>
+                  <input
+                    type="color"
+                    value={fill}
+                    onChange={(e) => updateSvgFill(index, e.target.value)}
+                    className="p-2 w-16"
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              {/* Scale Range Input */}
+              <label className="block">Scale:</label>
+              <input
+                type="range"
+                name="scale_value"
+                min="0.1"
+                max="1.0"
+                step="0.1"
+                value={editedElement.scale_value || 1}
+                onChange={handleChange}
+                className="p-2 border rounded w-full mb-4"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              {/* Hidden Checkbox */}
+              <label className="block">Hidden:</label>
+              <input
+                type="checkbox"
+                name="hiden"
+                checked={editedElement.hiden || false}
+                onChange={(e) =>
+                  handleChange({
+                    target: { name: "hiden", value: e.target.checked },
+                  })
+                }
+                className="p-2 border rounded"
+              />
+            </div>
+            {/* Other SVG properties */}
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Tag</label>
+              <input
+                type="text"
+                name="name"
+                value={editedElement.name || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+          </div>
         );
       case "Image":
         return (

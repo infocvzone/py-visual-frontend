@@ -330,6 +330,18 @@ def create_ui(window):
               : `"${el.name}"`
           }`;
           break;
+          case "Svg":
+          params += `, image_path="assets/Images/image_${index + 1}.svg", scale=${
+            el.scale_value
+          }, overlay_color=None, hidden=${
+            el.hiden === false ? "False" : "True"
+          }, tag = ${
+            el.name === null || el.name === ""
+              ? `"${el.variableName}_${index + 1}"`
+              : `"${el.name}"`
+          }`;
+          break;
+        
 
         case "ButtonImage":
           params += `, scale = ${el.scale}, text="${el.text}", 
@@ -363,6 +375,8 @@ def create_ui(window):
           ? "BasicTextInput"
           : el.type === "ButtonImage"
           ? "CustomButton"
+          : el.type === "Svg"
+          ? "Image"
           : el.type
       }${params}\n`;
     });
@@ -465,6 +479,17 @@ if __name__ == '__main__':
           console.error("Failed to download background image:", error);
         }
       }
+      if (element.type === "Svg") {
+        try {
+          // Directly save the SVG string to a file
+          const svgBlob = new Blob([element.webformatURL], {
+            type: "image/svg+xml",
+          });
+          Images.file(`image_${index}.svg`, svgBlob);
+        } catch (error) {
+          console.error("Failed to save SVG:", error);
+        }
+      }
     }
 
     // Download background image if the URL is provided and save it as background.jpg
@@ -485,6 +510,7 @@ if __name__ == '__main__':
       saveAs(content, "project.zip");
     });
   };
+
   // Helper function to convert Base64 to Blob
   const base64ToBlob = (base64) => {
     const byteString = atob(base64.split(",")[1]);

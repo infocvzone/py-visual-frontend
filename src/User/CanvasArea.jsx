@@ -4,6 +4,7 @@ import FabricButton from "../classes/button";
 import FabricText from "../classes/text";
 import ButtonImage from "../classes/imageButton";
 import FabricInputField from "../classes/inputField";
+import svg from "../assets/categories/image-pen.svg";
 
 const CanvasArea = ({
   elements,
@@ -102,6 +103,7 @@ const CanvasArea = ({
             console.log(element);
             const fabricElement = await createFabricElement(element);
             if (fabricElement) {
+              console.log(fabricElement);
               canvasObj.add(fabricElement);
               setTracking(false);
               handleElementSizing(fabricElement, element.id); // Update size when selected
@@ -118,7 +120,7 @@ const CanvasArea = ({
               fabricElement.on("selected", () => {
                 setSelected(fabricElement);
                 setSelectedElement(fabricElement);
-               // handleElementMovement(fabricElement, element.id);
+                // handleElementMovement(fabricElement, element.id);
                 setElementData(element);
                 onSelectedElement();
                 //handleElementSizing(fabricElement, element.id); // Update size when selected
@@ -411,7 +413,6 @@ const CanvasArea = ({
                 top: element.y,
                 scaleX: element.scale_value || 1,
                 scaleY: element.scale_value || 1,
-
                 selectable: true,
                 hasControls: true,
               });
@@ -421,6 +422,48 @@ const CanvasArea = ({
             },
             { crossOrigin: "anonymous" }
           );
+        });
+
+      case "Svg":
+        return new Promise((resolve, reject) => {
+          if (!element.webformatURL) {
+            return reject(new Error("SVG source string is missing"));
+          }
+          // Ensure the SVG string is properly formatted and sanitized
+          const parser = new DOMParser();
+          const svgDocument = parser.parseFromString(
+            element.webformatURL,
+            "image/svg+xml"
+          );
+          console.log(svgDocument.documentElement);
+          const sanitizedSVG = new XMLSerializer().serializeToString(
+            svgDocument.documentElement
+          );
+          //console.log("Sanitized SVG:", sanitizedSVG);
+          try {
+            fabric.loadSVGFromString(`${sanitizedSVG}`, (objects, options) => {
+              try {
+                const svgGroup = fabric.util.groupSVGElements(objects, options);
+                // Set position, scale, and other properties
+                svgGroup.set({
+                  left: element.x,
+                  top: element.y,
+                  scaleX: element.scale_value,
+                  scaleY: element.scale_value,
+                  selectable: true,
+                  hasControls: true,
+                });
+                // Add the SVG group to the canvas
+                canvasObj.add(svgGroup);
+                canvasObj.renderAll();
+                resolve(svgGroup);
+              } catch (innerError) {
+                reject(new Error("Error grouping SVG elements: " + innerError));
+              }
+            });
+          } catch (error) {
+            reject(new Error("SVG parsing error: " + error));
+          }
         });
 
       case "ButtonImage":

@@ -26,6 +26,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
   const [textData, setTextData] = useState([]);
   const [ImageData, setImageData] = useState([]);
   const [LineData, setLineData] = useState([]);
+  const [iconsData, setIconsData] = useState([]);
   const [CircleData, setCircleData] = useState([]);
   const [RectData, setRectData] = useState([]);
   const [buttonimageData, setButtonImageData] = useState([]); // New state for images
@@ -54,7 +55,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
 
       try {
         const response = await axios.get(
-          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=illustration&page=${nextPage}&per_page=10`
+          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=photo&page=${nextPage}&per_page=10`
         );
         const newImages = response.data.hits;
 
@@ -154,7 +155,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
 
       try {
         const response = await axios.get(
-          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=photo&category=backgrounds&page=${nextPage}&per_page=10`
+          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=illustration&category=backgrounds&page=${nextPage}&per_page=10`
         );
         const newImages = response.data.hits;
 
@@ -287,6 +288,15 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
       }
     };
 
+    const fetchIcons = async () => {
+      try {
+        const response = await axios.get(`${API_KEY}api/icons/`);
+        setIconsData(response.data); // Fetch and store image data
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+
     fetchButtonData();
     fetchTextData();
     fetchImageData(); // Fetch images
@@ -295,6 +305,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
     fetchCircleData();
     fetchRectData();
     fetchProjects();
+    fetchIcons();
   }, []);
 
   const toggleCategory = (category) => {
@@ -340,6 +351,21 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
     } catch (error) {
       console.error("Error uploading image:", error);
     }
+  };
+
+  // Function to set SVG size
+  const setSvgSize = (svgString, width, height) => {
+    // Parse the SVG string to modify width and height
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(svgString, "image/svg+xml");
+    const svgElement = svgDoc.documentElement;
+
+    // Set width and height
+    svgElement.setAttribute("width", width);
+    svgElement.setAttribute("height", height);
+
+    // Return the modified SVG string
+    return new XMLSerializer().serializeToString(svgElement);
   };
 
   if (loading) {
@@ -402,7 +428,12 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
 
           {/* buttonImage Button */}
           <div className="flex items-center">
-            <button onClick={() => toggleCategory("background")}>
+            <button
+              onClick={() => {
+                toggleCategory("background");
+                fetchBackgroundImages("backgrounds", 1);
+              }}
+            >
               <img
                 src={BackgroundSvg}
                 alt="background"
@@ -419,7 +450,12 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
           </div>
           {/* buttonImage Button */}
           <div className="flex items-center">
-            <button onClick={() => toggleCategory("Image")}>
+            <button
+              onClick={() => {
+                toggleCategory("Image");
+                fetchImages("photos", 1);
+              }}
+            >
               <img
                 src={ImageSvg}
                 alt="Image"
@@ -447,7 +483,12 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
           </div>
           {/* buttonImage Button */}
           <div className="flex items-center">
-            <button onClick={() => toggleCategory("graphics")}>
+            <button
+              onClick={() => {
+                toggleCategory("graphics");
+                fetchGraphics("graphics", 1);
+              }}
+            >
               <img
                 src={GraphicsSvg}
                 alt="Image"
@@ -458,6 +499,21 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
                 }`}
               />
               <h1 className="text-xs mt-1 text-center text-black">Graphics</h1>
+            </button>
+          </div>
+          {/* buttonImage Button */}
+          <div className="flex items-center">
+            <button onClick={() => toggleCategory("Icons")}>
+              <img
+                src={GraphicsSvg}
+                alt="Icons"
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                  activeCategory === "Icons"
+                    ? "border-blue-400"
+                    : "border-black"
+                }`}
+              />
+              <h1 className="text-xs mt-1 text-center text-black">Icons</h1>
             </button>
           </div>
         </div>
@@ -732,7 +788,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
                           name: null,
                           hidden: false,
                           type: "Image",
-                          scale_value: 0.5,
+                          scale_value: 0.3,
                           id: Date.now(),
                         };
                         // Pass the modified image object to onAddElement
@@ -753,6 +809,43 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
                     No more images to load.
                   </p>
                 )}
+              </div>
+            )}
+
+            {activeCategory === "Icons" && (
+              <div>
+                {/* Image grid container with lazy loading */}
+                <div className="grid grid-cols-2 gap-1 h-[500px] overflow-auto">
+                  {iconsData.map((image, index) => (
+                    <button
+                      key={index}
+                      className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
+                      onClick={() => {
+                        // Add the additional properties to the image object
+                        const modifiedImage = {
+                          x: 100,
+                          y: 100,
+                          variableName: "Image",
+                          webformatURL: image.svg,
+                          name: null,
+                          hiden: false,
+                          type: "Svg",
+                          scale_value: 0.3,
+                          id: Date.now(),
+                        };
+                        // Pass the modified image object to onAddElement
+                        onAddElement("Image", modifiedImage);
+                      }}
+                    >
+                      <div
+                        style={{ width: "100px", height: "100px" }}
+                        dangerouslySetInnerHTML={{
+                          __html: setSvgSize(image.svg, "100", "100"), // Set width and height dynamically
+                        }}
+                      />
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 

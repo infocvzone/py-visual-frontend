@@ -8,6 +8,7 @@ import AddLine from "./Addline";
 import AddCircle from "./AddCircle";
 import AddRect from "./AddRectangle";
 import ImagesUploader from "./AddImages";
+import IconUploader from "./IconUploader";
 
 const AddElement = () => {
   const [selectedElement, setSelectedElement] = useState("");
@@ -108,6 +109,16 @@ const AddElement = () => {
           />
           Rectangle
         </label>
+        <label className="mr-4">
+          <input
+            type="radio"
+            value="Icon"
+            checked={selectedElement === "Icon"}
+            onChange={(e) => setSelectedElement(e.target.value)}
+            className="mr-2"
+          />
+          Icon
+        </label>
       </div>
 
       {/* Conditionally render the selected component */}
@@ -120,6 +131,7 @@ const AddElement = () => {
       {selectedElement === "Circle" && <AddCircle />}
       {selectedElement === "Rect" && <AddRect />}
       {selectedElement === "Images" && <ImagesUploader/>}
+      {selectedElement === "Icon" && <IconUploader/>}
     </div>
   );
 };
