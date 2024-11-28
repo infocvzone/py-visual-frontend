@@ -9,6 +9,8 @@ import AddCircle from "./AddCircle";
 import AddRect from "./AddRectangle";
 import ImagesUploader from "./AddImages";
 import IconUploader from "./IconUploader";
+import ShapesUploader from "./AddShapes";
+import GraphicUploader from "./GraphicsUploader";
 
 const AddElement = () => {
   const [selectedElement, setSelectedElement] = useState("");
@@ -92,6 +94,16 @@ const AddElement = () => {
         <label className="mr-4">
           <input
             type="radio"
+            value="Shapes"
+            checked={selectedElement === "Shapes"}
+            onChange={(e) => setSelectedElement(e.target.value)}
+            className="mr-2"
+          />
+          Shapes
+        </label>
+        <label className="mr-4">
+          <input
+            type="radio"
             value="Circle"
             checked={selectedElement === "Circle"}
             onChange={(e) => setSelectedElement(e.target.value)}
@@ -119,6 +131,16 @@ const AddElement = () => {
           />
           Icon
         </label>
+        <label className="mr-4">
+          <input
+            type="radio"
+            value="Graphics"
+            checked={selectedElement === "Graphics"}
+            onChange={(e) => setSelectedElement(e.target.value)}
+            className="mr-2"
+          />
+          Graphics
+        </label>
       </div>
 
       {/* Conditionally render the selected component */}
@@ -130,8 +152,10 @@ const AddElement = () => {
       {selectedElement === "Line" && <AddLine />}
       {selectedElement === "Circle" && <AddCircle />}
       {selectedElement === "Rect" && <AddRect />}
-      {selectedElement === "Images" && <ImagesUploader/>}
-      {selectedElement === "Icon" && <IconUploader/>}
+      {selectedElement === "Images" && <ImagesUploader />}
+      {selectedElement === "Icon" && <IconUploader />}
+      {selectedElement === "Shapes" && <ShapesUploader />}
+      {selectedElement === "Graphics" && <GraphicUploader/>}
     </div>
   );
 };

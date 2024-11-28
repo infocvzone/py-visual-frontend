@@ -435,7 +435,7 @@ const CanvasArea = ({
             element.webformatURL,
             "image/svg+xml"
           );
-          console.log(svgDocument.documentElement);
+          //console.log(svgDocument.documentElement);
           const sanitizedSVG = new XMLSerializer().serializeToString(
             svgDocument.documentElement
           );

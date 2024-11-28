@@ -6,6 +6,7 @@ import TextSvg from "../assets/categories/text-svg.svg";
 import LogoutSvg from "../assets/log-out.svg";
 import InputSvg from "../assets/categories/input-svg.svg";
 import ShapesSvg from "../assets/categories/shapes.svg";
+import IconSvg from "../assets/categories/icons.svg";
 import BackgroundSvg from "../assets/categories/background.svg";
 import GraphicsSvg from "../assets/categories/image-pen.svg";
 import TextComponent from "../components/textComponent";
@@ -25,10 +26,8 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
   const [inputfield, setInputfield] = useState([]);
   const [textData, setTextData] = useState([]);
   const [ImageData, setImageData] = useState([]);
-  const [LineData, setLineData] = useState([]);
   const [iconsData, setIconsData] = useState([]);
-  const [CircleData, setCircleData] = useState([]);
-  const [RectData, setRectData] = useState([]);
+  const [ShapesData, setShapesData] = useState([]);
   const [buttonimageData, setButtonImageData] = useState([]); // New state for images
   const [loading, setLoading] = useState(true);
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -40,6 +39,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [ImagesData, setImagesData] = useState([]);
   const [GraphicsData, setGraphicsData] = useState([]);
+  const [Graphics, setGraphics] = useState([]);
   const [page, setPage] = useState(1);
   const [Loading, SetLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -110,8 +110,10 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
         const newImages = response.data.hits;
 
         if (nextPage === 1) {
+          let temp = await fetchGraphicsData();
           // Reset images for a new search term
-          setGraphicsData(newImages);
+          setGraphicsData(temp);
+          setGraphicsData((prevImages) => [...prevImages, ...newImages]);
         } else {
           // Append new images for lazy loading
           setGraphicsData((prevImages) => [...prevImages, ...newImages]);
@@ -136,6 +138,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
         divElement.scrollTop + divElement.clientHeight >=
           divElement.scrollHeight - 10
       ) {
+        fetchGraphicsData();
         fetchGraphics(searchTerm, page);
       }
     };
@@ -252,46 +255,18 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
       }
     };
 
-    const fetchLineData = async () => {
-      try {
-        const response = await axios.get(`${API_KEY}api/line`);
-        setLineData(response.data); // Fetch and store image data
-      } catch (error) {
-        console.error("Error fetching images:", error);
-      }
-    };
-    const fetchCircleData = async () => {
-      try {
-        const response = await axios.get(`${API_KEY}api/circle`);
-        setCircleData(response.data); // Fetch and store image data
-      } catch (error) {
-        console.error("Error fetching images:", error);
-      }
-    };
-    const fetchRectData = async () => {
-      try {
-        const response = await axios.get(`${API_KEY}api/rect`);
-        setRectData(response.data); // Fetch and store image data
-      } catch (error) {
-        console.error("Error fetching images:", error);
-      }
-    };
-
-    const fetchProjects = async () => {
-      try {
-        const response = await axios.get(
-          `${API_KEY}api/projects/user/${user._id}`
-        );
-        setProjects(response.data); // Fetch and store image data
-      } catch (error) {
-        console.error("Error fetching images:", error);
-      }
-    };
-
     const fetchIcons = async () => {
       try {
         const response = await axios.get(`${API_KEY}api/icons/`);
         setIconsData(response.data); // Fetch and store image data
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+    const fetchShape = async () => {
+      try {
+        const response = await axios.get(`${API_KEY}api/shape`);
+        setShapesData(response.data); // Fetch and store image data
       } catch (error) {
         console.error("Error fetching images:", error);
       }
@@ -301,12 +276,20 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
     fetchTextData();
     fetchImageData(); // Fetch images
     fetchInputfieldData();
-    fetchLineData();
-    fetchCircleData();
-    fetchRectData();
-    fetchProjects();
     fetchIcons();
+    fetchShape();
   }, []);
+
+  const fetchGraphicsData = async () => {
+    try {
+      const response = await axios.get(`${API_KEY}api/graphic/`);
+      const newImages = response.data;
+      setGraphics(newImages);
+      return newImages;
+    } catch (error) {
+      console.error("Error fetching images:", error);
+    }
+  };
 
   const toggleCategory = (category) => {
     setActiveCategory(activeCategory === category ? null : category);
@@ -340,7 +323,6 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
 
     const formData = new FormData();
     formData.append("image", file);
-
     try {
       await axios.post("http://localhost:3000/api/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -387,7 +369,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
                 src={ButtonSvg}
                 alt="Button"
                 className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
-                  activeCategory === "Button"
+                  activeCategory === "BasicButton"
                     ? "border-blue-400"
                     : "border-black"
                 }`}
@@ -409,7 +391,6 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
               <h1 className="text-xs mt-1 text-center text-black">Text</h1>
             </button>
           </div>
-
           {/* buttonImage Button */}
           <div className="flex items-center">
             <button onClick={() => toggleCategory("InputField")}>
@@ -468,19 +449,6 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
               <h1 className="text-xs mt-1 text-center text-black">Images</h1>
             </button>
           </div>
-          {/* Line Button */}
-          <div className="flex items-center">
-            <button onClick={() => toggleCategory("Line")}>
-              <img
-                src={ShapesSvg}
-                alt="Line"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
-                  activeCategory === "Line" ? "border-blue-400" : "border-black"
-                }`}
-              />
-              <h1 className="text-xs mt-1 text-center text-black">Shapes</h1>
-            </button>
-          </div>
           {/* buttonImage Button */}
           <div className="flex items-center">
             <button
@@ -503,9 +471,24 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
           </div>
           {/* buttonImage Button */}
           <div className="flex items-center">
+            <button onClick={() => toggleCategory("Shapes")}>
+              <img
+                src={ShapesSvg}
+                alt="Shapes"
+                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                  activeCategory === "Shapes"
+                    ? "border-blue-400"
+                    : "border-black"
+                }`}
+              />
+              <h1 className="text-xs mt-1 text-center text-black">Shapes</h1>
+            </button>
+          </div>
+          {/* buttonImage Button */}
+          <div className="flex items-center">
             <button onClick={() => toggleCategory("Icons")}>
               <img
-                src={GraphicsSvg}
+                src={IconSvg}
                 alt="Icons"
                 className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
                   activeCategory === "Icons"
@@ -640,63 +623,6 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
                       fontSize={input.fontSize}
                       fontFamily={input.fontFamily}
                     />
-                  </button>
-                ))}
-              </div>
-            )}
-            {activeCategory === "Line" && (
-              <div className="grid grid-cols-1 gap-1">
-                {RectData.map((rect) => (
-                  <button
-                    key={rect._id}
-                    className="w-full border bg-white p-2 shadow-lg rounded-lg"
-                    onClick={() => onAddElement("Rect", rect)}
-                  >
-                    <svg className="flex items-center justify-center w-full h-full">
-                      {/* Rectangle */}
-                      <rect
-                        width={rect.width}
-                        height={rect.height}
-                        fill={rect.Color}
-                      />
-                    </svg>
-                  </button>
-                ))}
-                {CircleData.map((circle) => (
-                  <button
-                    key={circle._id}
-                    className="w-full border bg-white p-2 shadow-lg rounded-lg"
-                    onClick={() => onAddElement("Circle", circle)}
-                  >
-                    <svg className="flex items-center justify-center">
-                      {/* Rectangle */}
-                      <circle
-                        cx={circle.x}
-                        cy="70"
-                        r={circle.radius}
-                        fill={circle.Color}
-                      />
-                    </svg>
-                  </button>
-                ))}
-
-                {LineData.map((line) => (
-                  <button
-                    key={line._id}
-                    className="w-full border bg-white p-2 shadow-lg rounded-lg"
-                    onClick={() => onAddElement("Line", line)}
-                  >
-                    <svg className="flex items-center justify-center">
-                      {/* Line */}
-                      <line
-                        x1={line.x1}
-                        y1={line.y1}
-                        x2={line.x2}
-                        y2={line.y2}
-                        stroke={line.Color}
-                        strokeWidth={line.strokeWidth}
-                      />
-                    </svg>
                   </button>
                 ))}
               </div>
@@ -849,6 +775,43 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
               </div>
             )}
 
+            {activeCategory === "Shapes" && (
+              <div>
+                {/* Image grid container with lazy loading */}
+                <div className="grid grid-cols-2 gap-1 h-[500px] overflow-auto">
+                  {ShapesData.map((image, index) => (
+                    <button
+                      key={index}
+                      className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
+                      onClick={() => {
+                        // Add the additional properties to the image object
+                        const modifiedImage = {
+                          x: 100,
+                          y: 100,
+                          variableName: "Image",
+                          webformatURL: image.svg,
+                          name: null,
+                          hiden: false,
+                          type: "Svg",
+                          scale_value: 0.5,
+                          id: Date.now(),
+                        };
+                        // Pass the modified image object to onAddElement
+                        onAddElement("Image", modifiedImage);
+                      }}
+                    >
+                      <div
+                        style={{ width: "100px", height: "100px" }}
+                        dangerouslySetInnerHTML={{
+                          __html: setSvgSize(image.svg, "100", "100"), // Set width and height dynamically
+                        }}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {activeCategory === "graphics" && (
               <div>
                 {/* Search input and button */}
@@ -880,13 +843,16 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
                       onClick={() => {
                         // Add the additional properties to the image object
                         const modifiedImage = {
-                          ...image,
                           x: 100,
                           y: 100,
+                          webformatURL:
+                            image.type !== "Image" && image.type !== "Svg"
+                              ? image.webformatURL
+                              : image.svg,
                           variableName: "Image",
                           name: null,
                           hidden: false,
-                          type: "Image",
+                          type: image.type !== "Svg" ? "Image" : image.type,
                           scale_value: 0.3,
                           id: Date.now(),
                         };
@@ -894,11 +860,20 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
                         onAddElement("Image", modifiedImage);
                       }}
                     >
-                      <img
-                        src={image.previewURL}
-                        alt={image.tags}
-                        className="w-[100px] h-[100px] object-cover"
-                      />
+                      {image.type !== "Svg" ? (
+                        <img
+                          src={image.previewURL || image.svg}
+                          alt={image.tags || "Image"}
+                          className="w-[100px] h-[100px] object-cover"
+                        />
+                      ) : (
+                        <div
+                          style={{ width: "100px", height: "100px" }}
+                          dangerouslySetInnerHTML={{
+                            __html: setSvgSize(image.svg, "100", "100"), // Set width and height dynamically
+                          }}
+                        />
+                      )}
                     </button>
                   ))}
                 </div>

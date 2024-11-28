@@ -804,38 +804,41 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       case "Svg":
         return (
           <div className="flex flex-wrap gap-2">
-            <div>
-              {/* Loop through all the fill values and display them as color pickers */}
-              <label className="block">SVG Fills:</label>
-              {svgFills.map((fill, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <label>{`Fill ${index + 1}`}</label>
-                  <input
-                    type="color"
-                    value={fill}
-                    onChange={(e) => updateSvgFill(index, e.target.value)}
-                    className="p-2 w-16"
-                  />
-                </div>
-              ))}
-            </div>
+            {/* Loop through all the fill values and display them as color pickers */}
+            {svgFills.map((fill, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center justify-center"
+              >
+                {/* <label className="block">{`Fill ${index + 1}`}</label> */}
+                <input
+                  type="color"
+                  value={fill}
+                  onChange={(e) => updateSvgFill(index, e.target.value)}
+                  className="p-2 w-8 rounded-full"
+                />
+              </div>
+            ))}
             <div className="flex flex-col items-center justify-center">
               {/* Scale Range Input */}
-              <label className="block">Scale:</label>
+              <label className="block mb-2">
+                Scale:
+              </label>
               <input
                 type="range"
                 name="scale_value"
                 min="0.1"
-                max="1.0"
+                max="10.0"
                 step="0.1"
                 value={editedElement.scale_value || 1}
                 onChange={handleChange}
-                className="p-2 border rounded w-full mb-4"
+                className="w-full h-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
+              {/* Display Scale Value */}
             </div>
             <div className="flex flex-col items-center justify-center">
               {/* Hidden Checkbox */}
-              <label className="block">Hidden:</label>
+              <label className="block mb-2">Hidden:</label>
               <input
                 type="checkbox"
                 name="hiden"

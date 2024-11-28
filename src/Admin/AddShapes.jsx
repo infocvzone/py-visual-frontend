@@ -3,7 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { API_KEY } from "../constant";
 
-const IconUploader = () => {
+const ShapesUploader = () => {
   const [svgs, setSvgs] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [message, setMessage] = useState("");
@@ -56,7 +56,7 @@ const IconUploader = () => {
 
     try {
       const response = await axios.post(
-        `${API_KEY}api/icons`,
+        `${API_KEY}api/shape`,
         { svgs: data },
         {
           headers: { "Content-Type": "application/json" },
@@ -191,4 +191,4 @@ const IconUploader = () => {
   );
 };
 
-export default IconUploader;
+export default ShapesUploader;
