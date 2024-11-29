@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import hljs from "highlight.js"; // Import highlight.js
 import "highlight.js/styles/atom-one-dark.css";
 
-const CodeDisplay = ({ code, setCodeDisplay }) => {
+const CodeDisplay = ({ code, setCodeDisplay, onDownloadProject }) => {
   const [copySuccess, setCopySuccess] = useState(""); // State to show copy success message
   const codeRef = useRef(null); // Ref to the <pre><code> block
 
@@ -31,7 +31,7 @@ const CodeDisplay = ({ code, setCodeDisplay }) => {
 
   return (
     <div className="fixed top-16 right-2 w-[70%] lg:w-[60%] p-4 bg-white shadow-lg border rounded-lg overflow-hidden my-4">
-      <button onClick={()=> setCodeDisplay(false)}>
+      <button onClick={() => setCodeDisplay(false)}>
         <svg
           width="24px"
           height="24px"
@@ -67,6 +67,13 @@ const CodeDisplay = ({ code, setCodeDisplay }) => {
       {copySuccess && (
         <div className="text-green-400 text-sm mb-2">{copySuccess}</div>
       )}
+
+      <button
+        onClick={onDownloadProject}
+        className="absolute top-2 right-24 p-2 bg-sky-500 hover:bg-blue-600 text-white shadow-md rounded text-sm flex items-center justify-center gap-1"
+      >
+        Download
+      </button>
 
       <button
         onClick={handleCopy}

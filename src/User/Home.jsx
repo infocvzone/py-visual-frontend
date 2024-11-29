@@ -77,13 +77,23 @@ const Home = () => {
     setSelectedElement(null);
   };
 
-  // Function to scale an element
-  const handleScaleElement = (id, width, height) => {
-    console.log(width + " - " + height);
-    const updatedElements = elements.map((el) =>
-      el.id === id ? { ...el, width: width, height: height } : el
-    );
-    setElements(updatedElements);
+  const handleScaleElement = (id, width, height, scale_value) => {
+    console.log("Before update:", elements); // Log the current state
+    console.log(`${id} - ${width} - ${height} - ${scale_value}`);
+
+    setElements((prevElements) => {
+      const updatedElements = prevElements.map((el) =>
+        el.id.toString() === id.toString()
+          ? el.type === "Image" || el.type === "Svg"
+            ? { ...el, scale_value: scale_value } // Update scale_value for Image/Svg
+            : el.type === "Text"
+            ? { ...el, fontSize: scale_value } // Update fontSize for Text
+            : { ...el, width: width, height: height } // Update width/height for others
+          : el
+      );
+      console.log("Updated elements:", updatedElements);
+      return updatedElements;
+    });
   };
 
   // Function to create a new project
@@ -330,10 +340,10 @@ def create_ui(window):
               : `"${el.name}"`
           }`;
           break;
-          case "Svg":
-          params += `, image_path="assets/Images/image_${index + 1}.svg", scale=${
-            el.scale_value
-          }, overlay_color=None, hidden=${
+        case "Svg":
+          params += `, image_path="assets/Images/image_${
+            index + 1
+          }.svg", scale=${el.scale_value}, overlay_color=None, hidden=${
             el.hiden === false ? "False" : "True"
           }, tag = ${
             el.name === null || el.name === ""
@@ -341,7 +351,6 @@ def create_ui(window):
               : `"${el.name}"`
           }`;
           break;
-        
 
         case "ButtonImage":
           params += `, scale = ${el.scale}, text="${el.text}", 
@@ -524,19 +533,12 @@ if __name__ == '__main__':
   };
 
   return (
-    <div className="home bg-cover bg-center h-screen overflow-y-auto">
+    <div className="home bg-[#f0f1f5] overflow-y-auto">
       <Header
         onGenerateCode={handleGenerateCode} // Pass down the generate code handler
         onDownloadProject={handleDownloadProject}
         onSaveProject={saveProject}
         ProjectName={ProjectName}
-        Height={height}
-        Width={width}
-        onWindowSizeChange={(width, height, color) => {
-          setHeight(height);
-          setWidth(width);
-          setColor(color);
-        }}
       />
       <div className="flex h-screen">
         {" "}
@@ -544,6 +546,11 @@ if __name__ == '__main__':
         <Sidebar
           onAddElement={handleAddElement} // Pass down the add element handler
           onCreateProject={createProject}
+          onWindowSizeChange={(width, height, color) => {
+            setHeight(height);
+            setWidth(width);
+            setColor(color);
+          }}
           onBgImageChange={(image) => {
             setBgImage(image);
           }}
@@ -581,7 +588,11 @@ if __name__ == '__main__':
         </div>
       </div>
       {codeDisplay ? (
-        <CodeDisplay code={generatedCode} setCodeDisplay={setCodeDisplay} />
+        <CodeDisplay
+          code={generatedCode}
+          setCodeDisplay={setCodeDisplay}
+          onDownloadProject={handleDownloadProject}
+        />
       ) : null}
     </div>
   );

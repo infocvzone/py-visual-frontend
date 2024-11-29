@@ -8,9 +8,10 @@ import InputSvg from "../assets/categories/input-svg.svg";
 import ShapesSvg from "../assets/categories/shapes.svg";
 import IconSvg from "../assets/categories/icons.svg";
 import BackgroundSvg from "../assets/categories/background.svg";
-import GraphicsSvg from "../assets/categories/image-pen.svg";
+import GraphicsSvg from "../assets/categories/graphics.svg";
+import WindowSvg from "../assets/categories/window.svg";
 import TextComponent from "../components/textComponent";
-import ImageSvg from "../assets/categories/image-svg.svg";
+import ImageSvg from "../assets/categories/image-pen.svg";
 import { API_KEY } from "../constant";
 import InputComponent from "../components/InputComponent";
 import { useSelector } from "react-redux";
@@ -19,7 +20,12 @@ import { Userlogout } from "../Redux/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
+const Sidebar = ({
+  onAddElement,
+  onBgImageChange,
+  onCreateProject,
+  onWindowSizeChange,
+}) => {
   const hiddenFileInput = React.useRef(null);
   const [activeCategory, setActiveCategory] = useState(null);
   const [buttonData, setButtonData] = useState([]);
@@ -35,6 +41,10 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [width, setWidth] = useState(700);
+  const [height, setHeight] = useState(400);
+  const [color, setColor] = useState("#ffffff");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [ImagesData, setImagesData] = useState([]);
@@ -280,6 +290,15 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
     fetchShape();
   }, []);
 
+  const handleWindowSizeChange = () => {
+    if (width > 800) {
+      setWidth(800);
+      onWindowSizeChange(800, height, color);
+    } else {
+      onWindowSizeChange(width, height, color);
+    }
+  };
+
   const fetchGraphicsData = async () => {
     try {
       const response = await axios.get(`${API_KEY}api/graphic/`);
@@ -355,20 +374,42 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
   }
 
   return (
-    <div className={`flex max-w-1/3 `}>
+    <div className={`flex max-w-[35%] `}>
       <div
-        className={`p-4 border-r w-[85px] ${
-          activeCategory === null ? "bg-white" : "bg-[#f6f7f8]"
+        className={`py-4 p-1 flex flex-col items-center justify-center border-r border-gray-300 w-[90px] ${
+          activeCategory === null ? "transparent" : "bg-[#ffffff]"
         } flex flex-col justify-between h-screen`}
       >
-        <div className="space-y-4">
+        <div className="flex flex-col items-center justify-center space-y-[25px]">
+          {/* Button category */}
+          <div className="flex items-center justify-center">
+            <button
+              className="flex items-center justify-center flex-col"
+              onClick={() => toggleCategory("Window")}
+            >
+              <img
+                src={WindowSvg}
+                alt="Window"
+                className={`w-6 h-6 p-1${
+                  activeCategory === "Window"
+                    ? "border-blue-400"
+                    : "border-black"
+                }`}
+              />
+              <h1 className="text-xs mt-1 text-center text-black">Window</h1>
+            </button>
+          </div>
+
           {/* Button category */}
           <div className="flex items-center">
-            <button onClick={() => toggleCategory("BasicButton")}>
+            <button
+              className="flex items-center justify-center flex-col"
+              onClick={() => toggleCategory("BasicButton")}
+            >
               <img
                 src={ButtonSvg}
                 alt="Button"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                className={`w-6 h-6 ${
                   activeCategory === "BasicButton"
                     ? "border-blue-400"
                     : "border-black"
@@ -380,11 +421,14 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
 
           {/* Text category */}
           <div className="flex items-center">
-            <button onClick={() => toggleCategory("Text")}>
+            <button
+              className="flex items-center justify-center flex-col"
+              onClick={() => toggleCategory("Text")}
+            >
               <img
                 src={TextSvg}
                 alt="Text"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                className={`w-6 h-6${
                   activeCategory === "Text" ? "border-blue-400" : "border-black"
                 }`}
               />
@@ -393,11 +437,14 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
           </div>
           {/* buttonImage Button */}
           <div className="flex items-center">
-            <button onClick={() => toggleCategory("InputField")}>
+            <button
+              className="flex items-center justify-center flex-col"
+              onClick={() => toggleCategory("InputField")}
+            >
               <img
                 src={InputSvg}
                 alt="InputField"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                className={`w-6 h-6 ${
                   activeCategory === "InputField"
                     ? "border-blue-400"
                     : "border-black"
@@ -410,6 +457,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
           {/* buttonImage Button */}
           <div className="flex items-center">
             <button
+              className="flex items-center justify-center flex-col"
               onClick={() => {
                 toggleCategory("background");
                 fetchBackgroundImages("backgrounds", 1);
@@ -418,7 +466,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
               <img
                 src={BackgroundSvg}
                 alt="background"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                className={`w-6 h-6 ${
                   activeCategory === "background"
                     ? "border-blue-400"
                     : "border-black"
@@ -432,6 +480,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
           {/* buttonImage Button */}
           <div className="flex items-center">
             <button
+              className="flex items-center justify-center flex-col"
               onClick={() => {
                 toggleCategory("Image");
                 fetchImages("photos", 1);
@@ -440,7 +489,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
               <img
                 src={ImageSvg}
                 alt="Image"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                className={`w-6 h-6 ${
                   activeCategory === "Image"
                     ? "border-blue-400"
                     : "border-black"
@@ -452,6 +501,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
           {/* buttonImage Button */}
           <div className="flex items-center">
             <button
+              className="flex items-center justify-center flex-col"
               onClick={() => {
                 toggleCategory("graphics");
                 fetchGraphics("graphics", 1);
@@ -460,7 +510,7 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
               <img
                 src={GraphicsSvg}
                 alt="Image"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                className={`w-6 h-6 ${
                   activeCategory === "graphics"
                     ? "border-blue-400"
                     : "border-black"
@@ -471,11 +521,14 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
           </div>
           {/* buttonImage Button */}
           <div className="flex items-center">
-            <button onClick={() => toggleCategory("Shapes")}>
+            <button
+              className="flex items-center justify-center flex-col"
+              onClick={() => toggleCategory("Shapes")}
+            >
               <img
                 src={ShapesSvg}
                 alt="Shapes"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                className={`w-6 h-6 ${
                   activeCategory === "Shapes"
                     ? "border-blue-400"
                     : "border-black"
@@ -486,11 +539,14 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
           </div>
           {/* buttonImage Button */}
           <div className="flex items-center">
-            <button onClick={() => toggleCategory("Icons")}>
+            <button
+              className="flex items-center justify-center flex-col"
+              onClick={() => toggleCategory("Icons")}
+            >
               <img
                 src={IconSvg}
                 alt="Icons"
-                className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+                className={`w-6 h-6 ${
                   activeCategory === "Icons"
                     ? "border-blue-400"
                     : "border-black"
@@ -502,11 +558,14 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
         </div>
         {/* Line Button */}
         <div className="flex items-center">
-          <button onClick={() => handleLogout()}>
+          <button
+            className="flex items-center justify-center flex-col"
+            onClick={() => handleLogout()}
+          >
             <img
               src={LogoutSvg}
               alt="Line"
-              className={`w-10 h-8 border p-1 rounded-lg shadow-md ${
+              className={`w-6 h-6 ${
                 activeCategory === "Line" ? "border-blue-400" : "border-black"
               }`}
             />
@@ -517,23 +576,9 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
 
       {/* Second sidebar for category options */}
       {activeCategory && (
-        <div className="p-4 w-full bg-white h-1/2 mt-2 ml-1 rounded-lg border shadow-xl overflow-y-auto">
+        <div className="p-4 w-full bg-[#ffffff] h-[99%] overflow-y-auto">
           <div className="space-y-4">
             {/* Show elements for the active category */}
-
-            {activeCategory === "projects" && (
-              <div className="grid grid-cols-1 gap-2">
-                {Project.map((project) => (
-                  <button
-                    key={project._id}
-                    className="w-full border h-[80px] bg-white p-2 shadow-lg rounded-lg"
-                    onClick={() => onCreateProject(project)}
-                  >
-                    {project.name}
-                  </button>
-                ))}
-              </div>
-            )}
 
             {activeCategory === "BasicButton" && (
               <div className="grid grid-cols-2 gap-1">
@@ -576,6 +621,61 @@ const Sidebar = ({ onAddElement, onBgImageChange, onCreateProject }) => {
                     />
                   </button>
                 ))}
+              </div>
+            )}
+
+            {activeCategory === "Window" && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6 bg-gray-800 rounded-lg shadow-xl">
+                {/* Width Input */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-white">
+                    Width
+                  </label>
+                  <input
+                    type="text"
+                    value={width}
+                    onChange={(e) => setWidth(Number(e.target.value))}
+                    className="w-full sm:w-[100px] h-[40px] px-4 text-sm text-gray-800 placeholder-gray-500 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                    placeholder="Enter width"
+                  />
+                </div>
+
+                {/* Height Input */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-white">
+                    Height
+                  </label>
+                  <input
+                    type="text"
+                    value={height}
+                    onChange={(e) => setHeight(Number(e.target.value))}
+                    className="w-full sm:w-[100px] h-[40px] px-4 text-sm text-gray-800 placeholder-gray-500 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                    placeholder="Enter height"
+                  />
+                </div>
+
+                {/* Background Color Picker */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-white">
+                    Background
+                  </label>
+                  <input
+                    type="color"
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                    className="w-[40px] h-[40px] border-2 border-gray-300 rounded-full cursor-pointer focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+
+                {/* Set Button */}
+                <div className="flex justify-center sm:col-span-2 mt-4">
+                  <button
+                    className="w-full sm:w-auto h-[40px] px-6 text-sm bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-lg transition-all transform hover:scale-105"
+                    onClick={handleWindowSizeChange}
+                  >
+                    Set
+                  </button>
+                </div>
               </div>
             )}
 

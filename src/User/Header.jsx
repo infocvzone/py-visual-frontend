@@ -1,34 +1,14 @@
 import React, { useEffect, useState } from "react";
-import logo from "../assets/logo.png";
-import code from "../assets/codeschool.svg";
+import logo from "../assets/cv-zone.svg";
+import code from "../assets/download.png";
+import save from "../assets/save.png";
 import DownloadSvg from "../assets/download.svg";
 
-function Header({
-  onGenerateCode,
-  onDownloadProject,
-  onWindowSizeChange,
-  onSaveProject,
-  ProjectName,
-  Height,
-  Width
-}) {
-  const [width, setWidth] = useState(700);
-  const [height, setHeight] = useState(400);
-  const [color, setColor] = useState("#ffffff");
+function Header({ onGenerateCode, onSaveProject, ProjectName }) {
   const [projectName, setProjectName] = useState(ProjectName);
 
-  const handleWindowSizeChange = () => {
-    if (width > 800) {
-      setWidth(800);
-      onWindowSizeChange(800, height, color);
-    } else {
-      onWindowSizeChange(width, height, color);
-    }
-  };
   useEffect(() => {
     setProjectName(ProjectName);
-    setHeight(Height)
-    setWidth(Width)
   }, [ProjectName]); // Syncs with parent state when it changes
 
   const handleSaveProject = () => {
@@ -36,9 +16,12 @@ function Header({
   };
 
   return (
-    <div className="flex items-center justify-between h-[70px] bg-gradient-to-l from-[#01A4C9] via-[#08B9E2ED] to-[#0FD1FF] shadow-lg">
-      <div className="w-1/4 h-full flex items-center justify-center">
-        <img src={logo} alt="Zui" className="h-[30px]" />
+    <div className="flex items-center justify-between h-[55px] bg-gradient-to-r from-[#5de0e6] to-[#004aad] shadow-lg">
+      <div className="w-1/5 h-full flex items-center justify-center gap-4 pr-8">
+        <img src={logo} alt="Zui" className="h-[12px]" />
+        <button className="w-[40px] h-[25px] border border-white text-white text-xs bg-transparent hover:shadow-lg rounded">
+          file
+        </button>
       </div>
 
       <div className="flex items-center justify-end px-6 w-[85%] h-full">
@@ -48,68 +31,21 @@ function Header({
           placeholder="Project Name"
           value={projectName}
           onChange={(e) => setProjectName(e.target.value)}
-          className="w-[150px] bg-transparent border-b-2 border-white text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:border-sky-300"
+          className="w-[150px] bg-transparent border-b-2 text-sm border-gray-200 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:border-sky-300"
         />
         {/* Save Project Button */}
         <button
-          className="px-3 py-1 ml-2 bg-purple-500 hover:bg-purple-600 text-white text-sm rounded-md shadow-lg transition"
+          className="p-[5px] ml-2 border border-gray-300 text-white text-sm rounded-md shadow-lg transition"
           onClick={handleSaveProject}
         >
-          Save
+          <img src={save} alt="save" className="w-[18px]" />
         </button>
         <button
-          className="px-2 py-2 flex mx-2 gap-1 items-center justify-center bg-white text-black text-sm shadow-xl rounded-lg hover:bg-gray-200 transition"
+          className="px-4 py-[5px] flex mx-2 gap-2 items-center justify-center bg-white text-gray-600 text-sm shadow-xl rounded-lg hover:bg-gray-200 transition"
           onClick={onGenerateCode}
         >
-          Generate Code
-          <img src={code} alt="code" className="w-[20px]" />
-        </button>
-
-        <button
-          className="px-2 py-2 flex mx-2 gap-1 items-center justify-center bg-white text-black text-sm shadow-xl rounded-lg hover:bg-gray-200 transition"
-          onClick={onDownloadProject}
-        >
-          Download
-          <img src={DownloadSvg} alt="download" className="w-[20px]" />
-        </button>
-
-        <div className="flex gap-2 items-center">
-          <label className="block text-xs font-medium text-white">Width</label>
-          <input
-            type="text"
-            value={width}
-            onChange={(e) => setWidth(Number(e.target.value))}
-            className="w-[40px] h-[30px] text-xs p-2 border border-black rounded"
-          />
-        </div>
-
-        <div className="flex gap-2 mx-2 items-center">
-          <label className="block text-xs font-medium text-white">Height</label>
-          <input
-            type="text"
-            value={height}
-            onChange={(e) => setHeight(Number(e.target.value))}
-            className="w-[40px] h-[30px] text-xs p-2 border border-black rounded"
-          />
-        </div>
-
-        <div className="flex gap-2 mx-2 items-center">
-          <label className="block text-xs font-medium text-white">
-            Background
-          </label>
-          <input
-            type="color"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-            className="w-[40px] h-[30px] text-xs p-2 border border-black rounded"
-          />
-        </div>
-
-        <button
-          className="w-[40px] h-[30px] text-xs bg-green-500 hover:bg-green-600 text-white shadow-lg rounded-md"
-          onClick={handleWindowSizeChange}
-        >
-          Set
+          <img src={code} alt="code" className="w-[15px]" />
+          Code
         </button>
       </div>
     </div>

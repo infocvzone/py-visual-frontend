@@ -33,6 +33,9 @@ const CanvasArea = ({
   const alignmentLines = useRef([]); // Store alignment lines
   const [isTracking, setTracking] = useState(false);
   const undoStack = useRef([]);
+  const [temp, setTemp] = useState(null);
+  const tempRef = useRef(null); // Add a ref for temp
+  let isScaling = useRef(false);
 
   // Initialize Fabric canvas
   useEffect(() => {
@@ -47,23 +50,13 @@ const CanvasArea = ({
     });
     setCanvasObj(canvas);
 
-    // Array to store selected elements
-    const handleSelection = (event) => {
-      const selectedObjects = event.selected || [];
-      console.log(selectedObjects);
-    };
-
-    // Attach event listeners for selection
-    canvas.on("selection:created", handleSelection);
-    canvas.on("selection:updated", handleSelection);
+    canvas.on("mouse:up", updateSize);
 
     // Clean up event listeners and alignment lines
     return () => {
       alignmentLines.current.forEach((line) => {
         canvas.remove(line);
       });
-      canvas.off("selection:created", handleSelection);
-      canvas.off("selection:updated", handleSelection);
       canvas.dispose();
     };
   }, [Height, Width]);
@@ -72,11 +65,45 @@ const CanvasArea = ({
     selectedIndex(elementData);
   };
 
-  const handleScaling = (id, fabricElement) => {
-    requestAnimationFrame(() => {
-      const rect = fabricElement.getBoundingRect();
-      onScaleElement(id, rect.width, rect.height);
-    });
+  const updateSize = () => {
+    if (isScaling.current === true) {
+      if (tempRef.current !== null) {
+        console.log(tempRef.current); // Access the latest value from the ref
+        if (!tempRef.current.type) {
+          onScaleElement(
+            tempRef.current.id,
+            tempRef.current.width,
+            tempRef.current.height
+          );
+        } else if (tempRef.current.type === "Text") {
+          let fontSize = Math.round(
+            (tempRef.current.currentHeight / tempRef.current.firstHeight) *
+              tempRef.current.fontSize
+          );
+          onScaleElement(
+            tempRef.current.id,
+            tempRef.current.currentWidth,
+            tempRef.current.currentHeight,
+            fontSize
+          );
+        } else {
+          let scale_value =
+            (tempRef.current.currentHeight / tempRef.current.firstHeight) *
+            tempRef.current.scale_value;
+          onScaleElement(
+            tempRef.current.id,
+            tempRef.current.currentWidth,
+            tempRef.current.currentHeight,
+            scale_value > 1 ? 1 : scale_value
+          );
+        }
+
+        tempRef.current = null;
+        isScaling.current = false;
+      }
+    } else {
+      console.log("not scaling");
+    }
   };
 
   // Update canvas with new elements
@@ -100,10 +127,9 @@ const CanvasArea = ({
             }
           }
           try {
-            console.log(element);
             const fabricElement = await createFabricElement(element);
+            console.log(element);
             if (fabricElement) {
-              console.log(fabricElement);
               canvasObj.add(fabricElement);
               setTracking(false);
               handleElementSizing(fabricElement, element.id); // Update size when selected
@@ -125,6 +151,66 @@ const CanvasArea = ({
                 onSelectedElement();
                 //handleElementSizing(fabricElement, element.id); // Update size when selected
               });
+
+              fabricElement.on("scaling", () => {
+                isScaling.current = true;
+                if (element.type === "Image" || element.type === "Svg") {
+                  isScaling.current = true;
+                  const rect = fabricElement.getBoundingRect();
+                  if (
+                    !tempRef.current ||
+                    !tempRef.current.firstWidth ||
+                    !tempRef.current.firstHeight
+                  ) {
+                    tempRef.current = {
+                      id: element.id,
+                      firstWidth: rect.width,
+                      firstHeight: rect.height,
+                      type: element.type,
+                      scale_value: element.scale_value,
+                    };
+                  }
+                  // Update the current width and height during scaling
+                  tempRef.current = {
+                    ...tempRef.current, // Keep the initial values
+                    currentWidth: rect.width,
+                    currentHeight: rect.height,
+                  };
+                } else if (element.type === "Text") {
+                  isScaling.current = true;
+                  const rect = fabricElement.getBoundingRect();
+                  if (
+                    !tempRef.current ||
+                    !tempRef.current.firstWidth ||
+                    !tempRef.current.firstHeight
+                  ) {
+                    tempRef.current = {
+                      id: element.id,
+                      firstWidth: rect.width,
+                      firstHeight: rect.height,
+                      type: element.type,
+                      fontSize: element.fontSize,
+                    };
+                  }
+                  // Update the current width and height during scaling
+                  tempRef.current = {
+                    ...tempRef.current, // Keep the initial values
+                    currentWidth: rect.width,
+                    currentHeight: rect.height,
+                  };
+                } else {
+                  const rect = fabricElement.getBoundingRect();
+                  let data = {
+                    id: element.id,
+                    width: rect.width,
+                    height: rect.height,
+                  };
+                  setTemp(data);
+                  tempRef.current = data;
+                }
+                console.log("temp (inside scaling):", tempRef.current);
+              });
+
               fabricElement.on("mouseup", () => {
                 clearAlignmentLines();
               });
@@ -408,6 +494,7 @@ const CanvasArea = ({
               if (!img) {
                 return reject(new Error("Failed to load image"));
               }
+
               img.set({
                 left: element.x,
                 top: element.y,
@@ -416,6 +503,18 @@ const CanvasArea = ({
                 selectable: true,
                 hasControls: true,
               });
+
+              // Disable vertical and horizontal scaling controls
+              img.setControlsVisibility({
+                mt: false, // middle-top
+                mb: false, // middle-bottom
+                ml: false, // middle-left
+                mr: false, // middle-right
+              });
+
+              // Allow corner scaling only
+              img.lockUniScaling = true; // Ensure proportional scaling
+
               canvasObj.add(img);
               canvasObj.renderAll();
               resolve(img);
@@ -453,6 +552,16 @@ const CanvasArea = ({
                   selectable: true,
                   hasControls: true,
                 });
+
+                svgGroup.setControlsVisibility({
+                  mt: false, // middle-top
+                  mb: false, // middle-bottom
+                  ml: false, // middle-left
+                  mr: false, // middle-right
+                });
+
+                svgGroup.lockUniScaling = true;
+
                 // Add the SVG group to the canvas
                 canvasObj.add(svgGroup);
                 canvasObj.renderAll();
