@@ -10,6 +10,7 @@ import IconSvg from "../assets/categories/icons.svg";
 import BackgroundSvg from "../assets/categories/background.svg";
 import GraphicsSvg from "../assets/categories/graphics.svg";
 import WindowSvg from "../assets/categories/window.svg";
+import closeSvg from "../assets/close.svg";
 import TextComponent from "../components/textComponent";
 import ImageSvg from "../assets/categories/image-pen.svg";
 import { API_KEY } from "../constant";
@@ -65,7 +66,7 @@ const Sidebar = ({
 
       try {
         const response = await axios.get(
-          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=photo&page=${nextPage}&per_page=10`
+          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=photo&page=${nextPage}&per_page=20`
         );
         const newImages = response.data.hits;
 
@@ -115,7 +116,7 @@ const Sidebar = ({
 
       try {
         const response = await axios.get(
-          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=vector&page=${nextPage}&per_page=10`
+          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=vector&page=${nextPage}&per_page=20`
         );
         const newImages = response.data.hits;
 
@@ -168,7 +169,7 @@ const Sidebar = ({
 
       try {
         const response = await axios.get(
-          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=illustration&category=backgrounds&page=${nextPage}&per_page=10`
+          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=illustration&category=backgrounds&page=${nextPage}&per_page=20`
         );
         const newImages = response.data.hits;
 
@@ -374,11 +375,22 @@ const Sidebar = ({
   }
 
   return (
-    <div className={`flex max-w-[35%] `}>
+    <div className={`flex max-w-[40%] absolute top-0 left-0 z-10`}>
+      {activeCategory !== null && (
+        <button
+          onClick={() => {
+            setActiveCategory(null);
+          }}
+          className="absolute top-3 right-3"
+        >
+          <img src={closeSvg} alt="close" />
+        </button>
+      )}
+
       <div
-        className={`py-4 p-1 flex flex-col items-center justify-center border-r border-gray-300 w-[90px] ${
+        className={`py-[25px] p-1 flex flex-col items-center justify-center border-r border-gray-300 w-[90px] ${
           activeCategory === null ? "transparent" : "bg-[#ffffff]"
-        } flex flex-col justify-between h-screen`}
+        } flex flex-col justify-between h-auto`}
       >
         <div className="flex flex-col items-center justify-center space-y-[25px]">
           {/* Button category */}
@@ -390,13 +402,15 @@ const Sidebar = ({
               <img
                 src={WindowSvg}
                 alt="Window"
-                className={`w-6 h-6 p-1${
+                className={`w-6 h-6${
                   activeCategory === "Window"
                     ? "border-blue-400"
                     : "border-black"
                 }`}
               />
-              <h1 className="text-xs mt-1 text-center text-black">Window</h1>
+              <h1 className="text-[10px] mt-[14px] text-center text-black">
+                Window
+              </h1>
             </button>
           </div>
 
@@ -415,7 +429,9 @@ const Sidebar = ({
                     : "border-black"
                 }`}
               />
-              <h1 className="text-xs mt-1 text-center text-black">Button</h1>
+              <h1 className="text-[10px] mt-[14px] text-center text-black">
+                Button
+              </h1>
             </button>
           </div>
 
@@ -432,7 +448,9 @@ const Sidebar = ({
                   activeCategory === "Text" ? "border-blue-400" : "border-black"
                 }`}
               />
-              <h1 className="text-xs mt-1 text-center text-black">Text</h1>
+              <h1 className="text-[10px] mt-[14px] text-center text-black">
+                Text
+              </h1>
             </button>
           </div>
           {/* buttonImage Button */}
@@ -450,7 +468,9 @@ const Sidebar = ({
                     : "border-black"
                 }`}
               />
-              <h1 className="text-xs mt-1 text-center text-black">Input</h1>
+              <h1 className="text-[10px] mt-[14px] text-center text-black">
+                Input
+              </h1>
             </button>
           </div>
 
@@ -472,7 +492,7 @@ const Sidebar = ({
                     : "border-black"
                 }`}
               />
-              <h1 className="text-xs mt-1 text-center text-black">
+              <h1 className="text-[10px] mt-[14px] text-center text-black">
                 Background
               </h1>
             </button>
@@ -495,7 +515,9 @@ const Sidebar = ({
                     : "border-black"
                 }`}
               />
-              <h1 className="text-xs mt-1 text-center text-black">Images</h1>
+              <h1 className="text-[10px] mt-[14px] text-center text-black">
+                Images
+              </h1>
             </button>
           </div>
           {/* buttonImage Button */}
@@ -516,7 +538,9 @@ const Sidebar = ({
                     : "border-black"
                 }`}
               />
-              <h1 className="text-xs mt-1 text-center text-black">Graphics</h1>
+              <h1 className="text-[10px] mt-[14px] text-center text-black">
+                Graphics
+              </h1>
             </button>
           </div>
           {/* buttonImage Button */}
@@ -534,7 +558,9 @@ const Sidebar = ({
                     : "border-black"
                 }`}
               />
-              <h1 className="text-xs mt-1 text-center text-black">Shapes</h1>
+              <h1 className="text-[10px] mt-[14px] text-center text-black">
+                Shapes
+              </h1>
             </button>
           </div>
           {/* buttonImage Button */}
@@ -552,12 +578,14 @@ const Sidebar = ({
                     : "border-black"
                 }`}
               />
-              <h1 className="text-xs mt-1 text-center text-black">Icons</h1>
+              <h1 className="text-[10px] mt-[14px] text-center text-black">
+                Icons
+              </h1>
             </button>
           </div>
         </div>
         {/* Line Button */}
-        <div className="flex items-center">
+        <div className="flex items-center mt-[25px]">
           <button
             className="flex items-center justify-center flex-col"
             onClick={() => handleLogout()}
@@ -569,23 +597,25 @@ const Sidebar = ({
                 activeCategory === "Line" ? "border-blue-400" : "border-black"
               }`}
             />
-            <h1 className="text-xs mt-1 text-center text-black">Logout</h1>
+            <h1 className="text-[10px] mt-[14px] text-center text-black">
+              Logout
+            </h1>
           </button>
         </div>
       </div>
 
       {/* Second sidebar for category options */}
       {activeCategory && (
-        <div className="p-4 w-full bg-[#ffffff] h-[99%] overflow-y-auto">
+        <div className="p-4 w-full bg-[#ffffff] h-screen overflow-y-auto border pt-[50px]">
           <div className="space-y-4">
             {/* Show elements for the active category */}
 
             {activeCategory === "BasicButton" && (
-              <div className="grid grid-cols-2 gap-1">
+              <div className="grid grid-cols-3 gap-[5px]">
                 {buttonData.map((button) => (
                   <button
                     key={button._id}
-                    className="border bg-white p-2 shadow-lg rounded-lg"
+                    className=""
                     onClick={() => onAddElement("BasicButton", button)}
                   >
                     <ButtonComponent
@@ -594,8 +624,9 @@ const Sidebar = ({
                       hoverColor={button.hoverColor}
                       clickedColor={button.clickedColor}
                       textColor={button.textColor}
-                      width={button.width}
-                      height={button.height}
+                      width={60}
+                      height={60}
+                      fontSize={10}
                       border_thickness={button.borderThickness}
                       borderColor={button.borderColor}
                       fontFamily={button.fontFamily}
@@ -605,7 +636,7 @@ const Sidebar = ({
                 {buttonimageData.map((Button, index) => (
                   <button
                     key={index}
-                    className="border h-[80px] bg-white p-2 shadow-lg rounded-lg"
+                    className=""
                     onClick={() => onAddElement("ButtonImage", Button)}
                     onMouseEnter={() => setHoveredIndex(index)} // Set hovered index on mouse enter
                     onMouseLeave={() => setHoveredIndex(null)} // Reset hovered index on mouse leave
@@ -617,7 +648,7 @@ const Sidebar = ({
                           : Button.idleImage
                       } // Change source based on hover state
                       alt="Button"
-                      className="max-w-[110px] max-h-[70px] m-auto p-2"
+                      className="max-w-[60px] max-h-[60px] m-auto"
                     />
                   </button>
                 ))}
@@ -684,7 +715,7 @@ const Sidebar = ({
                 {textData.map((textItem) => (
                   <button
                     key={textItem._id}
-                    className="w-full border h-[80px] bg-white p-2 shadow-lg rounded-lg"
+                    className=""
                     onClick={() => onAddElement("Text", textItem)}
                   >
                     <TextComponent
@@ -732,11 +763,16 @@ const Sidebar = ({
               <div>
                 {/* Search input and button */}
                 <div className="mb-4 flex justify-center">
-                  <input
+                <input
                     type="text"
                     placeholder="Search for images..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSearch();
+                      }
+                    }}
                     className="border p-2 rounded-l-lg"
                   />
                   <button
@@ -748,28 +784,25 @@ const Sidebar = ({
                 </div>
                 <div
                   id="bgimage-container"
-                  className="grid grid-cols-2 gap-1 h-[500px] overflow-auto"
+                  className="grid grid-cols-2 gap-[5px] h-[450px] overflow-auto"
                 >
-                  <button
-                    className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
-                    onClick={() => handleImageChange(null)}
-                  >
+                  <button className="" onClick={() => handleImageChange(null)}>
                     <img
                       src="https://img.freepik.com/free-photo/white-png-base_23-2151645368.jpg?size=626&ext=jpg&ga=GA1.1.1880011253.1728950400&semt=ais_hybrid-rr-similar"
                       alt="null"
-                      className="w-[150px] h-[120px] border"
+                      className="w-[120px] border m-auto"
                     />
                   </button>
                   {ImageData.map((image, index) => (
                     <button
                       key={index}
-                      className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
+                      className=""
                       onClick={() => handleImageChange(image.webformatURL)}
                     >
                       <img
                         src={image.previewURL}
                         alt={image.tags}
-                        className="w-[150px] h-[120px]"
+                        className="w-[120px] m-auto"
                       />
                     </button>
                   ))}
@@ -780,11 +813,16 @@ const Sidebar = ({
               <div>
                 {/* Search input and button */}
                 <div className="mb-4 flex justify-center">
-                  <input
+                <input
                     type="text"
                     placeholder="Search for images..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSearch();
+                      }
+                    }}
                     className="border p-2 rounded-l-lg"
                   />
                   <button
@@ -798,12 +836,12 @@ const Sidebar = ({
                 {/* Image grid container with lazy loading */}
                 <div
                   id="image-container"
-                  className="grid grid-cols-2 gap-1 h-[500px] overflow-auto"
+                  className="grid grid-cols-2 gap-[5px] h-[450px] overflow-auto"
                 >
                   {ImagesData.map((image, index) => (
                     <button
                       key={index}
-                      className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
+                      className=""
                       onClick={() => {
                         // Add the additional properties to the image object
                         const modifiedImage = {
@@ -824,7 +862,7 @@ const Sidebar = ({
                       <img
                         src={image.previewURL}
                         alt={image.tags}
-                        className="w-[100px] h-[100px] object-cover"
+                        className="w-[120px] border object-cover"
                       />
                     </button>
                   ))}
@@ -841,11 +879,11 @@ const Sidebar = ({
             {activeCategory === "Icons" && (
               <div>
                 {/* Image grid container with lazy loading */}
-                <div className="grid grid-cols-2 gap-1 h-[500px] overflow-auto">
+                <div className="grid grid-cols-4 gap-[5px] h-[450px] overflow-auto">
                   {iconsData.map((image, index) => (
                     <button
                       key={index}
-                      className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
+                      className="border p-1"
                       onClick={() => {
                         // Add the additional properties to the image object
                         const modifiedImage = {
@@ -864,9 +902,9 @@ const Sidebar = ({
                       }}
                     >
                       <div
-                        style={{ width: "100px", height: "100px" }}
+                        style={{ width: "70px", margin:"auto" }}
                         dangerouslySetInnerHTML={{
-                          __html: setSvgSize(image.svg, "100", "100"), // Set width and height dynamically
+                          __html: setSvgSize(image.svg, "70"), // Set width and height dynamically
                         }}
                       />
                     </button>
@@ -878,11 +916,11 @@ const Sidebar = ({
             {activeCategory === "Shapes" && (
               <div>
                 {/* Image grid container with lazy loading */}
-                <div className="grid grid-cols-2 gap-1 h-[500px] overflow-auto">
+                <div className="grid grid-cols-4 gap-1 h-[450px] overflow-auto">
                   {ShapesData.map((image, index) => (
                     <button
                       key={index}
-                      className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
+                      className="border p-1 m-auto"
                       onClick={() => {
                         // Add the additional properties to the image object
                         const modifiedImage = {
@@ -901,9 +939,9 @@ const Sidebar = ({
                       }}
                     >
                       <div
-                        style={{ width: "100px", height: "100px" }}
+                        style={{ width: "70px", margin:"auto" }}
                         dangerouslySetInnerHTML={{
-                          __html: setSvgSize(image.svg, "100", "100"), // Set width and height dynamically
+                          __html: setSvgSize(image.svg, "70"), // Set width and height dynamically
                         }}
                       />
                     </button>
@@ -921,6 +959,11 @@ const Sidebar = ({
                     placeholder="Search for images..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSearch();
+                      }
+                    }}
                     className="border p-2 rounded-l-lg"
                   />
                   <button
@@ -934,12 +977,12 @@ const Sidebar = ({
                 {/* Image grid container with lazy loading */}
                 <div
                   id="graphics-container"
-                  className="grid grid-cols-2 gap-1 h-[500px] overflow-auto"
+                  className="grid grid-cols-3 gap-1 h-[450px] overflow-auto"
                 >
                   {GraphicsData.map((image, index) => (
                     <button
                       key={index}
-                      className="w-full border h-[150px] bg-white p-2 shadow-lg rounded-lg"
+                      className="border p-1 items-center justify-center"
                       onClick={() => {
                         // Add the additional properties to the image object
                         const modifiedImage = {
@@ -964,13 +1007,13 @@ const Sidebar = ({
                         <img
                           src={image.previewURL || image.svg}
                           alt={image.tags || "Image"}
-                          className="w-[100px] h-[100px] object-cover"
+                          className="w-[70px] object-cover m-auto"
                         />
                       ) : (
                         <div
-                          style={{ width: "100px", height: "100px" }}
+                          style={{ width: "70px" , margin:"auto" }}
                           dangerouslySetInnerHTML={{
-                            __html: setSvgSize(image.svg, "100", "100"), // Set width and height dynamically
+                            __html: setSvgSize(image.svg, "70"), // Set width and height dynamically
                           }}
                         />
                       )}

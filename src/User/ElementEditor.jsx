@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Add Axios for API requests
 import { API_KEY } from "../constant";
+import deleteImage from "../assets/delete.png";
 
 const ElementEditor = ({ selectedElement, elements, setElements }) => {
   const [editedElement, setEditedElement] = useState(null);
@@ -174,54 +175,110 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       case "BasicButton":
         return (
           <div className="flex flex-wrap gap-2">
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Text</label>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Dimensions</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "width",
+                        value: (editedElement.width || 150) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="width"
+                  value={editedElement.width || 150}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "width",
+                        value: (editedElement.width || 150) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Height</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "height",
+                        value: (editedElement.height || 150) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="height"
+                  value={editedElement.height || 150}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "height",
+                        value: (editedElement.height || 150) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Font</label>
               <input
                 type="text"
                 name="text"
                 value={editedElement.text || ""}
                 onChange={handleChange}
-                className="p-2 h-8 w-[100px] border rounded"
+                className="p-[5px]  w-[90px] border text-xs rounded-lg"
               />
             </div>
 
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Font Size</label>
-              <input
-                type="number"
-                name="fontSize"
-                value={editedElement.fontSize || 12}
-                onChange={handleChange}
-                className="p-2 h-8 w-[60px] border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Width</label>
-              <input
-                type="number"
-                name="width"
-                value={editedElement.width || 150}
-                onChange={handleChange}
-                className="p-2 h-8 w-[60px] border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Height</label>
-              <input
-                type="number"
-                name="height"
-                value={editedElement.height || 30}
-                onChange={handleChange}
-                className="p-2 h-8 w-[60px] border rounded"
-              />
-            </div>
-            <div className="">
-              <label className="block">Font Family</label>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">
+                Font Family
+              </label>
               <select
                 name="fontFamily"
                 value={editedElement.fontFamily}
                 onChange={handleChange}
-                className="border p-1 rounded"
+                className="border text-xs rounded-lg px-[5px] py-[5px] w-[100px]"
               >
                 {/* Map the fetched fonts to options */}
                 {Fonts.map((font, index) => (
@@ -232,154 +289,267 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 ))}
               </select>
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Border</label>
-              <input
-                type="number"
-                name="borderThickness"
-                value={editedElement.borderThickness || ""}
-                onChange={handleChange}
-                className="p-2 h-8 w-[60px] border rounded"
-              />
+
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Font</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "fontSize",
+                        value: (editedElement.fontSize || 150) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="fontSize"
+                  value={editedElement.fontSize || 150}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "fontSize",
+                        value: (editedElement.fontSize || 150) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
             </div>
 
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Idle</label>
-              <input
-                type="color"
-                name="idleColor"
-                value={editedElement.idleColor || "#00000"}
-                onChange={handleChange}
-                className="p-2 h-8 border rounded-full"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Hover</label>
-              <input
-                type="color"
-                name="hoverColor"
-                value={editedElement.hoverColor || "#00000"}
-                onChange={handleChange}
-                className="p-2 h-8 border rounded-full"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Clicked</label>
-              <input
-                type="color"
-                name="clickedColor"
-                value={editedElement.clickedColor || "#00000"}
-                onChange={handleChange}
-                className="p-2 h-8 border rounded-full"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Text</label>
+              <label className="block text-xs text-transparent">Text</label>
               <input
                 type="color"
                 name="textColor"
                 value={editedElement.textColor || "#00000"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded-full"
+                className="color"
+              />
+            </div>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+
+            <div className="flex flex-col items-center justify-center">
+              <label className="block text-xs">Colors</label>
+              <input
+                type="color"
+                name="idleColor"
+                value={editedElement.idleColor || "#00000"}
+                onChange={handleChange}
+                className="color"
               />
             </div>
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Stroke</label>
+              <label className="block text-xs text-transparent">Hover</label>
+              <input
+                type="color"
+                name="hoverColor"
+                value={editedElement.hoverColor || "#00000"}
+                onChange={handleChange}
+                className="color"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block text-xs text-transparent">Clicked</label>
+              <input
+                type="color"
+                name="clickedColor"
+                value={editedElement.clickedColor || "#00000"}
+                onChange={handleChange}
+                className="color"
+              />
+            </div>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+
+            <div className="flex flex-col items-center justify-center">
+              <label className="block text-xs">Border</label>
               <input
                 type="color"
                 name="borderColor"
                 value={editedElement.borderColor || "#00000"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded-full"
+                className="color"
               />
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">On_hover</label>
-              <input
-                type="text"
-                name="onHover"
-                value={editedElement.onHover || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Border</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "borderThickness",
+                        value: (editedElement.borderThickness || 0) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="borderThickness"
+                  value={editedElement.borderThickness || 0}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "borderThickness",
+                        value: (editedElement.borderThickness || 0) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">On_Click</label>
-              <input
-                type="text"
-                name="onClick"
-                value={editedElement.onClick || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">On_Release</label>
-              <input
-                type="text"
-                name="onRelease"
-                value={editedElement.onRelease || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Tag</label>
-              <input
-                type="text"
-                name="name"
-                value={editedElement.name || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Variable Name</label>
-              <input
-                type="text"
-                name="variableName"
-                value={editedElement.variableName || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
           </div>
         );
       case "InputField":
         return (
           <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Dimensions</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "width",
+                        value: (editedElement.width || 150) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="width"
+                  value={editedElement.width || 150}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "width",
+                        value: (editedElement.width || 150) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* Height */}
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Height</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "height",
+                        value: (editedElement.height || 150) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="height"
+                  value={editedElement.height || 150}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "height",
+                        value: (editedElement.height || 150) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+
             {/* Placeholder */}
-            <div className="">
-              <label className="block">Placeholder</label>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Placeholder</label>
               <input
                 type="text"
                 name="placeholder"
                 value={editedElement.placeholder || ""}
                 onChange={handleChange}
-                className="p-2 h-8 w-[120px] border rounded"
+                className="p-[5px]  w-[90px] border text-xs rounded-lg"
               />
             </div>
 
             {/* Default Text */}
-            <div className="">
-              <label className="block">Default Text</label>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Text</label>
               <input
                 type="text"
                 name="text"
                 value={editedElement.text || ""}
                 onChange={handleChange}
-                className="p-2 h-8 w-[120px] border rounded"
+                className="p-[5px]  w-[80px] border text-xs rounded-lg"
               />
             </div>
 
             {/* Input Type */}
-            <div className="">
-              <label className="block">Input Type</label>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Input Type</label>
               <select
                 name="input_type"
                 value={editedElement.input_type || "text"}
                 onChange={handleChange}
-                className="px-1 h-8 w-[140px] border rounded"
+                className="p-[5px]  w-[80px] border text-xs rounded-lg"
               >
                 <option value="text">Text</option>
                 <option value="number">Number</option>
@@ -387,111 +557,38 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 <option value="password">Password</option>
               </select>
             </div>
-
-            {/* Width */}
-            <div className="">
-              <label className="block">Width</label>
-              <input
-                type="number"
-                name="width"
-                value={editedElement.width || 300}
-                onChange={handleChange}
-                className="p-2 h-8 w-[80px] border rounded"
-              />
-            </div>
-
-            {/* Height */}
-            <div className="">
-              <label className="block">Height</label>
-              <input
-                type="number"
-                name="height"
-                value={editedElement.height || 40}
-                onChange={handleChange}
-                className="p-2 h-8 w-[80px] border rounded"
-              />
-            </div>
-
-            {/* Background Color */}
-            <div className="">
-              <label className="block">Background</label>
-              <input
-                type="color"
-                name="bgColor"
-                value={editedElement.bgColor || "#ffffff"}
-                onChange={handleChange}
-                className="p-2 h-8 border rounded-full"
-              />
-            </div>
-
-            {/* Border Color */}
-            <div className="">
-              <label className="block">Stroke</label>
-              <input
-                type="color"
-                name="borderColor"
-                value={editedElement.borderColor || "#c8c8c8"}
-                onChange={handleChange}
-                className="p-2 h-8 border rounded-full"
-              />
-            </div>
-
-            {/* Border Thickness */}
-            <div className="">
-              <label className="block">Border Thickness</label>
-              <input
-                type="number"
-                name="borderThickness"
-                value={editedElement.borderThickness || 1}
-                onChange={handleChange}
-                className="p-2 h-8 w-[80px] border rounded"
-              />
-            </div>
-
-            {/* Text Color */}
-            <div className="">
-              <label className="block">Text Color</label>
-              <input
-                type="color"
-                name="textColor"
-                value={editedElement.textColor || "#323232"}
-                onChange={handleChange}
-                className="p-2 h-8 border rounded-full"
-              />
-            </div>
-
             {/* Placeholder Color 
             <div className="">
-              <label className="block">Placeholder Color</label>
+              <label className="block text-xs">Placeholder Color</label>
               <input
                 type="color"
                 name="placeholderColor"
                 value={editedElement.placeholderColor || "#c8c8c8"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded"
+                className="color"
               />
             </div>*/}
-
-            {/* Font Size */}
-            <div className="">
-              <label className="block">Font Size</label>
+            {/* Background Color */}
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Color</label>
               <input
-                type="number"
-                name="fontSize"
-                value={editedElement.fontSize || 15}
+                type="color"
+                name="bgColor"
+                value={editedElement.bgColor || "#ffffff"}
                 onChange={handleChange}
-                className="p-2 h-8 w-[80px] border rounded"
+                className="color"
               />
             </div>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
 
-            {/* Font Family */}
-            <div className="">
-              <label className="block">Font Family</label>
+            {/* Font Size */}
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Font</label>
               <select
                 name="fontFamily"
                 value={editedElement.fontFamily}
                 onChange={handleChange}
-                className="border w-[120px] p-1 rounded"
+                className="border text-xs rounded-lg px-[5px] py-[5px] w-[100px]"
               >
                 {/* Map the fetched fonts to options */}
                 {Fonts.map((font, index) => (
@@ -503,154 +600,135 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               </select>
             </div>
 
-            {/* Padding Left */}
-            <div className="">
-              <label className="block">Padding Left</label>
-              <input
-                type="number"
-                name="padding_left"
-                value={editedElement.padding_left || 10}
-                onChange={handleChange}
-                className="p-2 h-8 w-[120px] border rounded"
-              />
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Font</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "fontSize",
+                        value: (editedElement.fontSize || 150) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="fontSize"
+                  value={editedElement.fontSize || 150}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "fontSize",
+                        value: (editedElement.fontSize || 150) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
             </div>
 
-            {/* Padding Right */}
-            <div className="">
-              <label className="block">Padding Right</label>
+            {/* Text Color */}
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Color</label>
               <input
-                type="number"
-                name="padding_right"
-                value={editedElement.padding_right || 10}
+                type="color"
+                name="textColor"
+                value={editedElement.textColor || "#323232"}
                 onChange={handleChange}
-                className="p-2 h-8 w-[120px] border rounded"
+                className="color"
               />
             </div>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
 
-            {/* Padding Top */}
-            <div className="">
-              <label className="block">Padding Top</label>
+            {/* Border Color */}
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs ">Border</label>
               <input
-                type="number"
-                name="padding_top"
-                value={editedElement.padding_top || 0}
+                type="color"
+                name="borderColor"
+                value={editedElement.borderColor || "#c8c8c8"}
                 onChange={handleChange}
-                className="p-2 h-8 w-[120px] border rounded"
+                className="color"
               />
             </div>
-
-            {/* Padding Bottom */}
-            <div className="">
-              <label className="block">Padding Bottom</label>
-              <input
-                type="number"
-                name="padding_bottom"
-                value={editedElement.padding_bottom || 10}
-                onChange={handleChange}
-                className="p-2 h-8 w-[120px] border rounded"
-              />
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Font</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "borderThickness",
+                        value: (editedElement.borderThickness || 0) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="borderThickness"
+                  value={editedElement.borderThickness || 0}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "borderThickness",
+                        value: (editedElement.borderThickness || 0) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
             </div>
-
-            {/* Border Style 
-            <div className="">
-              <label className="block">Border Style</label>
-              <select
-                name="border_style"
-                value={
-                  editedElement.border_style || [
-                    "bottom",
-                    "top",
-                    "right",
-                    "left",
-                  ]
-                }
-                onChange={handleChange}
-                className="p-2 h-8 w-full border rounded"
-                multiple
-              >
-                <option value="bottom">Bottom</option>
-                <option value="top">Top</option>
-                <option value="left">Left</option>
-                <option value="right">Right</option>
-              </select>
-            </div>*/}
-
-            {/* onInput (Optional) */}
-            <div className="">
-              <label className="block">On Input (Function)</label>
-              <input
-                type="text"
-                name="on_input"
-                value={editedElement.on_input || ""}
-                onChange={handleChange}
-                className="p-2 h-8 w-[120px] border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Tag</label>
-              <input
-                type="text"
-                name="name"
-                value={editedElement.name || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Variable Name</label>
-              <input
-                type="text"
-                name="variableName"
-                value={editedElement.variableName || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
           </div>
         );
       case "Text":
         return (
           <div className="flex flex-wrap gap-2">
-            <div className="">
-              <label className="block">Text</label>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Font</label>
               <input
                 type="text"
                 name="text"
                 value={editedElement.text || ""}
                 onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
+                className="p-[5px]  w-[80px] border text-xs rounded-lg"
               />
             </div>
 
-            <div className="">
-              <label className="block">Color</label>
-              <input
-                type="color"
-                name="color"
-                value={editedElement.color || ""}
-                onChange={handleChange}
-                className="p-2 h-8 border rounded-full"
-              />
-            </div>
-
-            <div className="">
-              <label className="block">Font Size</label>
-              <input
-                type="number"
-                name="fontSize"
-                value={editedElement.fontSize || 20}
-                onChange={handleChange}
-                className="p-1 w-[70px] h-8 border rounded"
-              />
-            </div>
-
-            <div className="">
-              <label className="block">Font Family</label>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Font</label>
               <select
                 name="fontFamily"
                 value={editedElement.fontFamily}
                 onChange={handleChange}
-                className="border w-[120px] p-1 rounded"
+                className="border text-xs rounded-lg px-[5px] py-[5px] w-[100px]"
               >
                 {/* Map the fetched fonts to options */}
                 {Fonts.map((font, index) => (
@@ -662,9 +740,62 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               </select>
             </div>
 
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Font</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "fontSize",
+                        value: (editedElement.fontSize || 150) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="fontSize"
+                  value={editedElement.fontSize || 150}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "fontSize",
+                        value: (editedElement.fontSize || 150) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Color</label>
+              <input
+                type="color"
+                name="color"
+                value={editedElement.color || ""}
+                onChange={handleChange}
+                className="color"
+              />
+            </div>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+
             {/* New properties for text styling */}
-            <div className="">
-              <label className="block">Bold</label>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Bold</label>
               <input
                 type="checkbox"
                 name="bold"
@@ -674,12 +805,12 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     target: { name: "bold", value: e.target.checked },
                   })
                 }
-                className="h-4 w-4 border rounded"
+                className="h-5 w-5 border rounded"
               />
             </div>
 
-            <div className="">
-              <label className="block">Italic</label>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Italic</label>
               <input
                 type="checkbox"
                 name="italic"
@@ -689,12 +820,12 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     target: { name: "italic", value: e.target.checked },
                   })
                 }
-                className="h-4 w-4 border rounded"
+                className="h-5 w-5 border rounded"
               />
             </div>
 
-            <div className="">
-              <label className="block">U-line</label>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">U-line</label>
               <input
                 type="checkbox"
                 name="underline"
@@ -704,12 +835,12 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     target: { name: "underline", value: e.target.checked },
                   })
                 }
-                className="h-4 w-4 border rounded"
+                className="h-5 w-5 border rounded"
               />
             </div>
 
-            <div className="">
-              <label className="block">Strike</label>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Strike</label>
               <input
                 type="checkbox"
                 name="strikethrough"
@@ -719,29 +850,10 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     target: { name: "strikethrough", value: e.target.checked },
                   })
                 }
-                className="h-4 w-4 border rounded"
+                className="h-5 w-5 border rounded"
               />
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Tag</label>
-              <input
-                type="text"
-                name="name"
-                value={editedElement.name || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Variable Name</label>
-              <input
-                type="text"
-                name="variableName"
-                value={editedElement.variableName || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
           </div>
         );
       case "Toggle":
@@ -804,41 +916,67 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       case "Svg":
         return (
           <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Scale</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "scale_value",
+                        value: (editedElement.scale_value || 1) - 0.1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="scale_value"
+                  value={editedElement.scale_value || 1}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "scale_value",
+                        value: (editedElement.scale_value || 1) + 0.1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+
             {/* Loop through all the fill values and display them as color pickers */}
             {svgFills.map((fill, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center justify-center"
-              >
+              <div key={index} className="flex flex-col">
+                <label className="block text-xs text-transparent">Scale</label>
                 {/* <label className="block">{`Fill ${index + 1}`}</label> */}
                 <input
                   type="color"
                   value={fill}
                   onChange={(e) => updateSvgFill(index, e.target.value)}
-                  className="p-2 w-8 rounded-full"
+                  className="color"
                 />
               </div>
             ))}
-            <div className="flex flex-col items-center justify-center">
-              {/* Scale Range Input */}
-              <label className="block mb-2">
-                Scale:
-              </label>
-              <input
-                type="range"
-                name="scale_value"
-                min="0.1"
-                max="10.0"
-                step="0.1"
-                value={editedElement.scale_value || 1}
-                onChange={handleChange}
-                className="w-full h-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-300"
-              />
-              {/* Display Scale Value */}
-            </div>
-            <div className="flex flex-col items-center justify-center">
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+
+            <div className="flex flex-col justify-center">
               {/* Hidden Checkbox */}
-              <label className="block mb-2">Hidden:</label>
+              <label className="block text-xs">Hidden:</label>
               <input
                 type="checkbox"
                 name="hiden"
@@ -848,37 +986,60 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     target: { name: "hiden", value: e.target.checked },
                   })
                 }
-                className="p-2 border rounded"
+                className="p-2 h-5 w-5 border rounded"
               />
             </div>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
             {/* Other SVG properties */}
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Tag</label>
-              <input
-                type="text"
-                name="name"
-                value={editedElement.name || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Variable Name</label>
-              <input
-                type="text"
-                name="variableName"
-                value={editedElement.variableName || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
+
           </div>
         );
       case "Image":
         return (
           <div className="flex flex-wrap gap-2">
-            <div>
-              {/* Scale Range Input */}
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Scale</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "scale_value",
+                        value: (editedElement.scale_value || 1) - 0.1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="scale_value"
+                  value={editedElement.scale_value || 1}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "scale_value",
+                        value: (editedElement.scale_value || 1) + 0.1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            {/* <div>
+               Scale Range Input 
               <label className="block">Scale:</label>
               <input
                 type="range"
@@ -890,10 +1051,10 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 onChange={handleChange}
                 className="p-2 border rounded w-full mb-4"
               />
-            </div>
-            <div>
+            </div>*/}
+            <div className="flex flex-col justify-center">
               {/* Hidden Checkbox */}
-              <label className="block">Hidden:</label>
+              <label className="block text-xs">Hidden:</label>
               <input
                 type="checkbox"
                 name="hiden"
@@ -903,73 +1064,78 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     target: { name: "hiden", value: e.target.checked },
                   })
                 }
-                className="p-2 border rounded"
+                className="p-2 w-5 h-5 border rounded"
               />
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Tag</label>
-              <input
-                type="text"
-                name="name"
-                value={editedElement.name || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Variable Name</label>
-              <input
-                type="text"
-                name="variableName"
-                value={editedElement.variableName || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
           </div>
         );
 
       case "ButtonImage":
         return (
           <div className="flex flex-wrap gap-2">
-            <div className="">
-              <label className="block">Scale:</label>
-              <input
-                type="number"
-                name="scale"
-                value={editedElement.scale || 1}
-                onChange={handleChange}
-                className="p-2 h-8 w-[60px] border rounded"
-              />
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Scale</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "scale",
+                        value: (editedElement.scale || 1) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="scale"
+                  value={editedElement.scale || 1}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "scale",
+                        value: (editedElement.scale || 1) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Text</label>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Font</label>
               <input
                 type="text"
                 name="text"
                 value={editedElement.text || ""}
                 onChange={handleChange}
-                className="p-2 h-8 w-[100px] border rounded"
+                className="p-[5px]  w-[90px] border text-xs rounded-lg"
               />
             </div>
 
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Font Size</label>
-              <input
-                type="number"
-                name="fontSize"
-                value={editedElement.fontSize || 12}
-                onChange={handleChange}
-                className="p-2 h-8 w-[60px] border rounded"
-              />
-            </div>
-            <div className="">
-              <label className="block">Font Family</label>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">
+                Font Family
+              </label>
               <select
                 name="fontFamily"
                 value={editedElement.fontFamily}
                 onChange={handleChange}
-                className="border w-[120px] p-1 rounded w-[120px]"
+                className="border text-xs rounded-lg px-[5px] py-[5px] w-[100px]"
               >
                 {/* Map the fetched fonts to options */}
                 {Fonts.map((font, index) => (
@@ -980,66 +1146,59 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 ))}
               </select>
             </div>
+
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Font</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "fontSize",
+                        value: (editedElement.fontSize || 150) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="fontSize"
+                  value={editedElement.fontSize || 150}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "fontSize",
+                        value: (editedElement.fontSize || 150) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Color</label>
+              <label className="block text-xs text-transparent">Text</label>
               <input
                 type="color"
                 name="textColor"
                 value={editedElement.textColor || "#00000"}
                 onChange={handleChange}
-                className="p-2 h-8 border rounded-full"
+                className="color"
               />
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">On_hover</label>
-              <input
-                type="text"
-                name="onHover"
-                value={editedElement.onHover || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">On_Click</label>
-              <input
-                type="text"
-                name="onClick"
-                value={editedElement.onClick || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">On_Release</label>
-              <input
-                type="text"
-                name="onRelease"
-                value={editedElement.onRelease || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Tag</label>
-              <input
-                type="text"
-                name="name"
-                value={editedElement.name || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Variable Name</label>
-              <input
-                type="text"
-                name="variableName"
-                value={editedElement.variableName || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
           </div>
         );
       case "Checkbox":
@@ -1311,16 +1470,312 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
     }
   };
 
+  const renderPropertiesForFunctionalities = () => {
+    switch (editedElement.type) {
+      case "BasicButton":
+        return (
+          <div className="flex flex-col space-y-[10px]">
+            <h1 className="text-lg py-1">General</h1>
+            <div className="flex flex-col">
+              <label className="block text-[10px]">Tag</label>
+              <input
+                type="text"
+                name="name"
+                value={editedElement.name || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-[10px]">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <h1 className="text-lg py-1">Functions</h1>
+            <div className="flex flex-col">
+              <label className="block text-[10px]">On_hover</label>
+              <input
+                type="text"
+                name="onHover"
+                value={editedElement.onHover || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-[10px]">On_Click</label>
+              <input
+                type="text"
+                name="onClick"
+                value={editedElement.onClick || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-[10px]">On_Release</label>
+              <input
+                type="text"
+                name="onRelease"
+                value={editedElement.onRelease || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+          </div>
+        );
+
+      case "InputField":
+        return (
+          <div>
+            <h1 className="text-lg py-1">General</h1>
+            {/* Padding Left */}
+            <div className="flex flex-col">
+              <label className="block text-[10px]">Padding Left</label>
+              <input
+                type="number"
+                name="padding_left"
+                value={editedElement.padding_left || 10}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+
+            {/* Padding Right */}
+            <div className="flex flex-col">
+              <label className="block text-[10px]">Padding Right</label>
+              <input
+                type="number"
+                name="padding_right"
+                value={editedElement.padding_right || 10}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+
+            {/* Padding Top */}
+            <div className="flex flex-col">
+              <label className="block text-[10px]">Padding Top</label>
+              <input
+                type="number"
+                name="padding_top"
+                value={editedElement.padding_top || 0}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+
+            {/* Padding Bottom */}
+            <div className="flex flex-col">
+              <label className="block text-[10px]">Padding Bottom</label>
+              <input
+                type="number"
+                name="padding_bottom"
+                value={editedElement.padding_bottom || 10}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+
+            {/* onInput (Optional) */}
+            <h1 className="text-lg py-1">Functions</h1>
+            <div className="flex flex-col">
+              <label className="block text-[10px]">On Input (Function)</label>
+              <input
+                type="text"
+                name="on_input"
+                value={editedElement.on_input || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-[10px]">Tag</label>
+              <input
+                type="text"
+                name="name"
+                value={editedElement.name || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-[10px]">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+          </div>
+        );
+      case "Text":
+        return (
+          <div className="flext felx-col space-y-2">
+            <h1 className="text-lg py-1">Functions</h1>
+            <div className="flex flex-col">
+              <label className="bloc text-xs">Tag</label>
+              <input
+                type="text"
+                name="name"
+                value={editedElement.name || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-xs">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+          </div>
+        );
+      case "ButtonImage":
+        return (
+          <div className="flex flex-col space-y-[10px]">
+            <h1 className="text-lg py-1">General</h1>
+            <div className="flex flex-col">
+              <label className="block text-xs">Tag</label>
+              <input
+                type="text"
+                name="name"
+                value={editedElement.name || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-xs">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <h1 className="text-lg py-1">Functions</h1>
+
+            <div className="flex flex-col">
+              <label className="block text-xs">On_hover</label>
+              <input
+                type="text"
+                name="onHover"
+                value={editedElement.onHover || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-xs">On_Click</label>
+              <input
+                type="text"
+                name="onClick"
+                value={editedElement.onClick || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-xs">On_Release</label>
+              <input
+                type="text"
+                name="onRelease"
+                value={editedElement.onRelease || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+          </div>
+        );
+      case "Image":
+        return (
+          <div className="flex flex-col gap-[10px]">
+            <h1 className="text-lg py-1">General</h1>
+            <div className="flex flex-col">
+              <label className="block text-xs">Tag</label>
+              <input
+                type="text"
+                name="name"
+                value={editedElement.name || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-xs">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+          </div>
+        );
+
+      case "Svg":
+        return (
+          <div className="flex flex-col gap-[10px]">
+            <h1 className="text-lg py-1">General</h1>
+            <div className="flex flex-col">
+              <label className="block text-xs">Tag</label>
+              <input
+                type="text"
+                name="name"
+                value={editedElement.name || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-xs">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="flex gap-2 p-2 border mb-2 items-center justify-center bg-white shadow-md w-[95%]  mt-4 rounded-xs mx-auto">
-      {renderPropertiesByType()}
-      <div className="mt-6 flex justify-between">
-        <button
-          className="bg-red-500 text-white px-2 h-8 rounded-md"
-          onClick={handleRemoveElement}
-        >
-          Remove
-        </button>
+    <div>
+      {/* Header Section */}
+      <header className="flex gap-2 py-3 px-1 items-center justify-center bg-white shadow-md w-[90%] mx-auto rounded-xl mt-2">
+        <div>{renderPropertiesByType()}</div>
+        <div className="flex flex-col justify-center">
+          <label className="block text-xs">Others</label>
+          <button onClick={handleRemoveElement}>
+            <img src={deleteImage} alt="remove" className="w-[17px] h-[20px]" />
+          </button>
+        </div>
+      </header>
+      {/* Main Content */}
+      <div className="relative">
+        <aside className="absolute top-5 right-0 rounded-l-xl z-10 p-4 bg-[#ffffff] shadow-md border min-h-96 w-48">
+          {renderPropertiesForFunctionalities()}
+        </aside>
       </div>
     </div>
   );

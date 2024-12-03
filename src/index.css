@@ -2,10 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
-
+*{
+    font-family: "Inter", sans-serif;
+}
 
 /*
 .home{
     background-image: url("./assets/Background.png");
 }
 */
+
+.color{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    width: 29px;
+    height: 32px;
+    border: none;
+    cursor: pointer;
+}
+.color::-webkit-color-swatch{
+    border-radius: 100%;
+}
+.color::-moz-color-swatch{
+    border-radius: 100%;
+}

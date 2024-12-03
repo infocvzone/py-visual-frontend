@@ -86,6 +86,16 @@ const CanvasArea = ({
             tempRef.current.currentHeight,
             fontSize
           );
+        } else if (tempRef.current.type === "ButtonImage") {
+          let scale_value =
+            (tempRef.current.currentHeight / tempRef.current.firstHeight) *
+            tempRef.current.scale_value;
+          onScaleElement(
+            tempRef.current.id,
+            tempRef.current.currentWidth,
+            tempRef.current.currentHeight,
+            scale_value
+          );
         } else {
           let scale_value =
             (tempRef.current.currentHeight / tempRef.current.firstHeight) *
@@ -168,6 +178,28 @@ const CanvasArea = ({
                       firstHeight: rect.height,
                       type: element.type,
                       scale_value: element.scale_value,
+                    };
+                  }
+                  // Update the current width and height during scaling
+                  tempRef.current = {
+                    ...tempRef.current, // Keep the initial values
+                    currentWidth: rect.width,
+                    currentHeight: rect.height,
+                  };
+                } else if (element.type === "ButtonImage") {
+                  isScaling.current = true;
+                  const rect = fabricElement.getBoundingRect();
+                  if (
+                    !tempRef.current ||
+                    !tempRef.current.firstWidth ||
+                    !tempRef.current.firstHeight
+                  ) {
+                    tempRef.current = {
+                      id: element.id,
+                      firstWidth: rect.width,
+                      firstHeight: rect.height,
+                      type: element.type,
+                      scale_value: element.scale,
                     };
                   }
                   // Update the current width and height during scaling
@@ -846,7 +878,13 @@ const CanvasArea = ({
   };
 
   return (
-    <div className="flex items-center justify-center p-4 relative">
+    <div
+      className={`flex items-center ${
+        !selected
+          ? "justify-center "
+          : " md:ml-[1%] lg:ml-[3%] xl:ml-[15%] 2xl:ml-[30%]"
+      } h-full relative`}
+    >
       <div
         style={{
           backgroundImage: Image ? `url('${Image}')` : "none",

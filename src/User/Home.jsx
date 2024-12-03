@@ -85,7 +85,9 @@ const Home = () => {
       const updatedElements = prevElements.map((el) =>
         el.id.toString() === id.toString()
           ? el.type === "Image" || el.type === "Svg"
-            ? { ...el, scale_value: scale_value } // Update scale_value for Image/Svg
+            ? { ...el, scale_value: scale_value }
+            : el.type === "ButtonImage"
+            ? { ...el, scale: scale_value }
             : el.type === "Text"
             ? { ...el, fontSize: scale_value } // Update fontSize for Text
             : { ...el, width: width, height: height } // Update width/height for others
@@ -534,15 +536,16 @@ if __name__ == '__main__':
 
   return (
     <div className="home bg-[#f0f1f5] overflow-y-auto">
+      {/* Header at the top */}
       <Header
         onGenerateCode={handleGenerateCode} // Pass down the generate code handler
         onDownloadProject={handleDownloadProject}
         onSaveProject={saveProject}
         ProjectName={ProjectName}
       />
-      <div className="flex h-screen">
-        {" "}
-        {/* Main container for layout */}
+
+      <div className="relative flex h-screen">
+        {/* Sidebar on the left */}
         <Sidebar
           onAddElement={handleAddElement} // Pass down the add element handler
           onCreateProject={createProject}
@@ -555,10 +558,10 @@ if __name__ == '__main__':
             setBgImage(image);
           }}
         />
-        <div className="flex-1 relative">
-          {" "}
-          {/* Flex container for the canvas and code display */}
-          {/* Add the ElementEditor component here */}
+
+        {/* Main content area */}
+        <div className="flex flex-1 flex-col ml-24">
+          {/* Editable element */}
           {selectedElement && (
             <ElementEditor
               selectedElement={selectedElement}
@@ -566,6 +569,8 @@ if __name__ == '__main__':
               setElements={setElements}
             />
           )}
+
+          {/* Canvas area */}
           <CanvasArea
             elements={elements} // Pass down the elements to CanvasArea
             onUpdatePosition={handleUpdatePosition} // Pass down the position update handler
@@ -587,13 +592,15 @@ if __name__ == '__main__':
           />
         </div>
       </div>
-      {codeDisplay ? (
+
+      {/* Optional code display */}
+      {codeDisplay && (
         <CodeDisplay
           code={generatedCode}
           setCodeDisplay={setCodeDisplay}
           onDownloadProject={handleDownloadProject}
         />
-      ) : null}
+      )}
     </div>
   );
 };

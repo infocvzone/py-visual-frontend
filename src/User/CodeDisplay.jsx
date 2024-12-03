@@ -30,7 +30,7 @@ const CodeDisplay = ({ code, setCodeDisplay, onDownloadProject }) => {
   };
 
   return (
-    <div className="fixed top-16 right-2 w-[70%] lg:w-[60%] p-4 bg-white shadow-lg border rounded-lg overflow-hidden my-4">
+    <div className="fixed top-16 right-2 w-[70%] lg:w-[60%] p-4 bg-white shadow-lg border rounded-lg z-20 overflow-hidden my-4">
       <button onClick={() => setCodeDisplay(false)}>
         <svg
           width="24px"
