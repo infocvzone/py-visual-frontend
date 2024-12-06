@@ -1046,6 +1046,62 @@ const Sidebar = ({
                       key={index}
                       className="border p-1 m-auto"
                       onClick={() => {
+                        // Function to calculate scale_value
+                        const calculateScaleValue = (
+                          svgString,
+                          canvasHeight
+                        ) => {
+                          try {
+                            // Parse the SVG string
+                            const parser = new DOMParser();
+                            const svgDoc = parser.parseFromString(
+                              svgString,
+                              "image/svg+xml"
+                            );
+                            const svgElement = svgDoc.querySelector("svg");
+
+                            if (!svgElement) throw new Error("Invalid SVG");
+
+                            // Get the height of the SVG
+                            let svgHeight = parseFloat(
+                              svgElement.getAttribute("height")
+                            );
+
+                            // If no explicit height, derive it from viewBox
+                            if (isNaN(svgHeight)) {
+                              const viewBox =
+                                svgElement.getAttribute("viewBox");
+                              if (viewBox) {
+                                const [, , , viewBoxHeight] = viewBox
+                                  .split(" ")
+                                  .map(Number);
+                                svgHeight = viewBoxHeight;
+                              } else {
+                                throw new Error(
+                                  "No height or viewBox found in SVG"
+                                );
+                              }
+                            }
+
+                            // Calculate scale_value to make the SVG 30% of canvas height
+                            return (canvasHeight * 0.3) / svgHeight;
+                          } catch (error) {
+                            console.error(
+                              "Error calculating scale_value:",
+                              error.message
+                            );
+                            return 0.5; // Default scale value if an error occurs
+                          }
+                        };
+
+                        // Assume canvasHeight is known or fetched dynamically
+
+                        // Calculate the scale_value
+                        const scaleValue = calculateScaleValue(
+                          image.svg,
+                          height
+                        );
+
                         // Add the additional properties to the image object
                         const modifiedImage = {
                           x: 100,
@@ -1055,7 +1111,7 @@ const Sidebar = ({
                           name: null,
                           hiden: false,
                           type: "Svg",
-                          scale_value: 0.5,
+                          scale_value: scaleValue,
                           id: Date.now(),
                         };
                         // Pass the modified image object to onAddElement
@@ -1240,6 +1296,63 @@ const Sidebar = ({
                       key={index}
                       className="border p-1 items-center justify-center"
                       onClick={() => {
+                        let scaleValue = 0.3;
+
+                        if (image.type === "Svg") {
+                          // Function to calculate scale_value
+                          const calculateScaleValue = (
+                            svgString,
+                            canvasHeight
+                          ) => {
+                            try {
+                              // Parse the SVG string
+                              const parser = new DOMParser();
+                              const svgDoc = parser.parseFromString(
+                                svgString,
+                                "image/svg+xml"
+                              );
+                              const svgElement = svgDoc.querySelector("svg");
+
+                              if (!svgElement) throw new Error("Invalid SVG");
+
+                              // Get the height of the SVG
+                              let svgHeight = parseFloat(
+                                svgElement.getAttribute("height")
+                              );
+
+                              // If no explicit height, derive it from viewBox
+                              if (isNaN(svgHeight)) {
+                                const viewBox =
+                                  svgElement.getAttribute("viewBox");
+                                if (viewBox) {
+                                  const [, , , viewBoxHeight] = viewBox
+                                    .split(" ")
+                                    .map(Number);
+                                  svgHeight = viewBoxHeight;
+                                } else {
+                                  throw new Error(
+                                    "No height or viewBox found in SVG"
+                                  );
+                                }
+                              }
+
+                              // Calculate scale_value to make the SVG 30% of canvas height
+                              return (canvasHeight * 0.3) / svgHeight;
+                            } catch (error) {
+                              console.error(
+                                "Error calculating scale_value:",
+                                error.message
+                              );
+                              return 0.5; // Default scale value if an error occurs
+                            }
+                          };
+
+                          // Assume canvasHeight is known or fetched dynamically
+
+                          // Calculate the scale_value
+                          scaleValue = calculateScaleValue(image.svg, height);
+                        }
+
                         // Add the additional properties to the image object
                         const modifiedImage = {
                           x: 100,
@@ -1252,7 +1365,7 @@ const Sidebar = ({
                           name: null,
                           hidden: false,
                           type: image.type !== "Svg" ? "Image" : image.type,
-                          scale_value: 0.3,
+                          scale_value: scaleValue,
                           id: Date.now(),
                         };
                         // Pass the modified image object to onAddElement
