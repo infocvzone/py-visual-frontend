@@ -84,7 +84,9 @@ const Home = () => {
     setElements((prevElements) => {
       const updatedElements = prevElements.map((el) =>
         el.id.toString() === id.toString()
-          ? el.type === "Image" || el.type === "Svg"
+          ? el.type === "Image"
+            ? { ...el, scale_value: scale_value > 1 ? 1 : scale_value }
+            : el.type === "Svg"
             ? { ...el, scale_value: scale_value }
             : el.type === "ButtonImage"
             ? { ...el, scale: scale_value }

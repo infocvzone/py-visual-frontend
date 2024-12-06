@@ -104,7 +104,7 @@ const CanvasArea = ({
             tempRef.current.id,
             tempRef.current.currentWidth,
             tempRef.current.currentHeight,
-            scale_value > 1 ? 1 : scale_value
+            scale_value
           );
         }
 
@@ -879,11 +879,9 @@ const CanvasArea = ({
 
   return (
     <div
-      className={`flex items-center ${
-        !selected
-          ? "justify-center "
-          : " md:ml-[1%] lg:ml-[3%] xl:ml-[15%] 2xl:ml-[30%]"
-      } h-full relative`}
+      className={`flex ${
+        !selected ? "top-20" : "top-10"
+      } justify-center h-full relative`}
     >
       <div
         style={{

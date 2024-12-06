@@ -51,7 +51,7 @@ const IconUploader = () => {
     const data = svgs.map((svg) => ({
       svg: svg.preview,
       name: svg.name,
-      tags: svg.tags.split(",").map((tag) => tag.trim()),
+      tags: svg.tags.split("-").map((tag) => tag.trim()),
     }));
 
     try {

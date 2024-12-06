@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import axios from "axios";
@@ -7,6 +7,7 @@ import TextComponent from "../components/textComponent";
 import { useNavigate } from "react-router-dom";
 import { API_KEY } from "../constant";
 import InputComponent from "../components/InputComponent";
+import Swal from "sweetalert2";
 
 function Dashboard() {
   const [buttonData, setButtonData] = useState([]); // To store fetched button data
@@ -19,6 +20,118 @@ function Dashboard() {
   const [loading, setLoading] = useState(true); // To handle loading state
   const navigate = useNavigate();
   const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  /* Shapes Fetching */
+  const [shapesLoading, setShapesLoading] = useState(false);
+  const [shapesPage, setShapesPage] = useState(0);
+  const [shapesHasMore, setShapesHasMore] = useState(true);
+
+  const fetchShapes = useCallback(
+    async (nextPage) => {
+      if (shapesLoading || !shapesHasMore) return;
+      setShapesLoading(true);
+      try {
+        const response = await axios.get(`${API_KEY}api/shape/`, {
+          params: {
+            page: nextPage, // page number
+            limit: 40, // number of results per page
+            tag: "", // search tag
+          },
+        });
+        const newShapes = response.data.data;
+        const pagination = response.data.pagination;
+        if (nextPage === 0) {
+          setRectData(newShapes);
+        } else {
+          setRectData((prevShapes) => [...prevShapes, ...newShapes]);
+        }
+
+        setShapesHasMore(
+          newShapes.length > 0 && pagination.currentPage < pagination.totalPages
+        );
+        setShapesPage(nextPage + 1);
+      } catch (error) {
+        console.error("Failed to fetch shapes:", error);
+      } finally {
+        setShapesLoading(false);
+      }
+    },
+    [shapesLoading, shapesHasMore]
+  );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const divElement = document.getElementById("shape-container");
+      if (
+        divElement &&
+        divElement.scrollTop + divElement.clientHeight >=
+          divElement.scrollHeight - 10
+      ) {
+        fetchShapes(shapesPage);
+      }
+    };
+
+    const divElement = document.getElementById("shape-container");
+    divElement?.addEventListener("scroll", handleScroll);
+
+    return () => divElement?.removeEventListener("scroll", handleScroll);
+  }, [fetchShapes, shapesPage]);
+
+  /* Shapes Fetching */
+  const [iconsLoading, setIconsLoading] = useState(false);
+  const [iconssPage, setIconsPage] = useState(0);
+  const [iconsHasMore, setIconHasMore] = useState(true);
+
+  const fetchIcons = useCallback(
+    async (nextPage) => {
+      if (iconsLoading || !iconsHasMore) return;
+      setIconsLoading(true);
+      try {
+        const response = await axios.get(`${API_KEY}api/icons/`, {
+          params: {
+            page: nextPage, // page number
+            limit: 40, // number of results per page
+            tag: "", // search tag
+          },
+        });
+        const newShapes = response.data.data;
+        const pagination = response.data.pagination;
+        if (nextPage === 0) {
+          setCircleData(newShapes);
+        } else {
+          setCircleData((prevShapes) => [...prevShapes, ...newShapes]);
+        }
+
+        setIconHasMore(
+          newShapes.length > 0 && pagination.currentPage < pagination.totalPages
+        );
+        setIconsPage(nextPage + 1);
+      } catch (error) {
+        console.error("Failed to fetch shapes:", error);
+      } finally {
+        setIconsLoading(false);
+      }
+    },
+    [iconsLoading, iconsHasMore]
+  );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const divElement = document.getElementById("icons-container");
+      if (
+        divElement &&
+        divElement.scrollTop + divElement.clientHeight >=
+          divElement.scrollHeight - 10
+      ) {
+        fetchIcons(shapesPage);
+      }
+    };
+
+    const divElement = document.getElementById("icons-container");
+    divElement?.addEventListener("scroll", handleScroll);
+
+    return () => divElement?.removeEventListener("scroll", handleScroll);
+  }, [fetchIcons, iconssPage]);
 
   // Fetch button data from API when component mounts
   useEffect(() => {
@@ -66,26 +179,6 @@ function Dashboard() {
       }
     };
 
-    const fetchRectData = async () => {
-      try {
-        const response = await axios.get(`${API_KEY}api/rect/`); // Replace with your actual API endpoint for text
-        setRectData(response.data); // Set fetched text data
-      } catch (error) {
-        console.error("Error fetching text data:", error);
-      } finally {
-        setLoading(false); // Stop loading spinner
-      }
-    };
-    const fetchCircleData = async () => {
-      try {
-        const response = await axios.get(`${API_KEY}api/circle/`); // Replace with your actual API endpoint for text
-        setCircleData(response.data); // Set fetched text data
-      } catch (error) {
-        console.error("Error fetching text data:", error);
-      } finally {
-        setLoading(false); // Stop loading spinner
-      }
-    };
     const fetchLineData = async () => {
       try {
         const response = await axios.get(`${API_KEY}api/line/`); // Replace with your actual API endpoint for text
@@ -97,18 +190,68 @@ function Dashboard() {
       }
     };
 
-    // Call both APIs
     fetchButtonData();
     fetchTextData();
     fetchButtonImageData();
     fetchInputFieldData();
-    fetchRectData();
-    fetchCircleData();
+    fetchShapes(0);
+    fetchIcons(0);
     fetchLineData();
   }, []);
 
+  // Function to set SVG size
+  const setSvgSize = (svgString, width, height) => {
+    // Parse the SVG string to modify width and height
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(svgString, "image/svg+xml");
+    const svgElement = svgDoc.documentElement;
+
+    // Set width and height
+    svgElement.setAttribute("width", width);
+    svgElement.setAttribute("height", height);
+
+    // Return the modified SVG string
+    return new XMLSerializer().serializeToString(svgElement);
+  };
+
   const onAddElement = (type, element) => {
     navigate("/edit-element", { state: { type, element } });
+  };
+  // Delete image by ID
+  const handleDeleteShapes = (id) => {
+    axios
+      .delete(`${API_KEY}api/shape/${id}`)
+      .then(() => {
+        setRectData(RectData.filter((image) => image._id !== id));
+        Swal.fire({
+          title: "Shape Deleted Successfully",
+          showCancelButton: false,
+          confirmButtonText: "ok",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload();
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Error deleting image:", error);
+      });
+  };
+  // Delete icons by ID
+  const handleDeleteIcons = (id) => {
+    axios
+      .delete(`${API_KEY}api/icons/${id}`)
+      .then(() => {
+        setCircleData(CircleData.filter((image) => image._id !== id));
+        Swal.fire({
+          title: "Shape Deleted Successfully",
+          showCancelButton: false,
+          confirmButtonText: "ok",
+        });
+      })
+      .catch((error) => {
+        console.error("Error deleting image:", error);
+      });
   };
 
   return (
@@ -209,47 +352,63 @@ function Dashboard() {
       </div>
       <div className="flex-grow p-6 ml-64 mt-6">
         <h1 className="text-4xl font-bold text-blue-900 mb-6">Shapes</h1>
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {RectData.map((rect) => (
-            <button
-              key={rect._id} // Use _id from the API response
-              className=" border p-3 rounded-lg shadow-lg transition-all transform hover:scale-105 bg-gray-100"
-              onClick={() => onAddElement("Rect", rect)}
-            >
-              <svg className="flex items-center justify-center w-full h-full">
-                {/* Rectangle */}
-                <rect
-                  width={rect.width}
-                  height={rect.height}
-                  fill={rect.Color}
+        {RectData && (
+          <div
+            id="shape-container"
+            className="h-[500px] overflow-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2"
+          >
+            {RectData.map((image) => (
+              <div
+                key={image._id}
+                className="image-item h-[200px] bg-white p-2 shadow-lg rounded-lg flex flex-col items-center justify-center gap-1"
+              >
+                <div
+                  style={{ width: "70px", margin: "auto" }}
+                  dangerouslySetInnerHTML={{
+                    __html: setSvgSize(image.svg, "70", "70"), // Set width and height dynamically
+                  }}
                 />
-              </svg>
-            </button>
-          ))}
-        </div>
+                <button
+                  onClick={() => handleDeleteShapes(image._id)} // Wrap it in an anonymous function
+                  className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 w-[80%]"
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       <div className="flex-grow p-6 ml-64 mt-6">
-        <h1 className="text-4xl font-bold text-blue-900 mb-6">Circle</h1>
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {CircleData.map((circle) => (
-            <button
-              key={circle._id} // Use _id from the API response
-              className=" border p-3 rounded-lg shadow-lg transition-all transform hover:scale-105 bg-gray-100"
-              onClick={() => onAddElement("Circle", circle)}
-            >
-              <svg className="flex items-center justify-center">
-                {/* Rectangle */}
-                <circle
-                  cx={circle.x}
-                  cy="70"
-                  r={circle.radius}
-                  fill={circle.Color}
+        <h1 className="text-4xl font-bold text-blue-900 mb-6">Icons</h1>
+        {CircleData && (
+          <div
+            id="shape-container"
+            className="h-[500px] overflow-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2"
+          >
+            {CircleData.map((image) => (
+              <div
+                key={image._id}
+                className="image-item h-[200px] bg-white p-2 shadow-lg rounded-lg flex flex-col items-center justify-center gap-1"
+              >
+                <div
+                  style={{ width: "70px", margin: "auto" }}
+                  dangerouslySetInnerHTML={{
+                    __html: setSvgSize(image.svg, "70", "70"), // Set width and height dynamically
+                  }}
                 />
-              </svg>
-            </button>
-          ))}
-        </div>
+                <button
+                  onClick={() => handleDeleteIcons(image._id)} // Wrap it in an anonymous function
+                  className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 w-[80%]"
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+
       <div className="flex-grow p-6 ml-64 mt-6">
         <h1 className="text-4xl font-bold text-blue-900 mb-6">Line</h1>
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -34,7 +34,6 @@ const Sidebar = ({
   const [textData, setTextData] = useState([]);
   const [ImageData, setImageData] = useState([]);
   const [iconsData, setIconsData] = useState([]);
-  const [ShapesData, setShapesData] = useState([]);
   const [buttonimageData, setButtonImageData] = useState([]); // New state for images
   const [loading, setLoading] = useState(true);
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -56,6 +55,127 @@ const Sidebar = ({
   const [hasMore, setHasMore] = useState(true);
 
   const KEY = "47140599-1bb65ee8bbdb1fdf35ec80ea9";
+
+  /*-------------------------------------------------------------------*/
+
+  /* Shapes Fetching */
+  const [ShapesData, setShapesData] = useState([]);
+  const [shapesLoading, setShapesLoading] = useState(false);
+  const [shapesPage, setShapesPage] = useState(0);
+  const [shapesHasMore, setShapesHasMore] = useState(true);
+
+  const fetchShapes = useCallback(
+    async (newSearchTerm, nextPage) => {
+      if (shapesLoading || !shapesHasMore) return;
+
+      setShapesLoading(true);
+
+      try {
+        const response = await axios.get(`${API_KEY}api/shape/`, {
+          params: {
+            page: nextPage, // page number
+            limit: 30, // number of results per page
+            tag: newSearchTerm, // search tag
+          },
+        });
+        console.log(response.data.data);
+        const newShapes = response.data.data;
+        const pagination = response.data.pagination;
+        if (nextPage === 0) {
+          setShapesData(newShapes);
+        } else {
+          setShapesData((prevShapes) => [...prevShapes, ...newShapes]);
+        }
+
+        setShapesHasMore(
+          newShapes.length > 0 && pagination.currentPage < pagination.totalPages
+        );
+        setShapesPage(nextPage + 1);
+      } catch (error) {
+        console.error("Failed to fetch shapes:", error);
+      } finally {
+        setShapesLoading(false);
+      }
+    },
+    [shapesLoading, shapesHasMore]
+  );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const divElement = document.getElementById("shape-container");
+      if (
+        divElement &&
+        divElement.scrollTop + divElement.clientHeight >=
+          divElement.scrollHeight - 10
+      ) {
+        fetchShapes(searchTerm, shapesPage);
+      }
+    };
+
+    const divElement = document.getElementById("shape-container");
+    divElement?.addEventListener("scroll", handleScroll);
+
+    return () => divElement?.removeEventListener("scroll", handleScroll);
+  }, [fetchShapes, searchTerm, shapesPage]);
+
+  /* ------------------------------------------------------------------------- */
+
+  /* Shapes Fetching */
+  const [iconsLoading, setIconsLoading] = useState(false);
+  const [iconsPage, setIconsPage] = useState(0);
+  const [iconHasMore, setIconsHasMore] = useState(true);
+
+  const fetchIcons = useCallback(
+    async (newSearchTerm, nextPage) => {
+      if (iconsLoading || !iconHasMore) return;
+      setIconsLoading(true);
+      try {
+        const response = await axios.get(`${API_KEY}api/icons/`, {
+          params: {
+            page: nextPage, // page number
+            limit: 30, // number of results per page
+            tag: newSearchTerm, // search tag
+          },
+        });
+        console.log(response.data.data);
+        const newShapes = response.data.data;
+        const pagination = response.data.pagination;
+        if (nextPage === 0) {
+          setIconsData(newShapes);
+        } else {
+          setIconsData((prevShapes) => [...prevShapes, ...newShapes]);
+        }
+
+        setIconsHasMore(
+          newShapes.length > 0 && pagination.currentPage < pagination.totalPages
+        );
+        setIconsPage(nextPage + 1);
+      } catch (error) {
+        console.error("Failed to fetch shapes:", error);
+      } finally {
+        setIconsLoading(false);
+      }
+    },
+    [iconsLoading, iconHasMore]
+  );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const divElement = document.getElementById("icon-container");
+      if (
+        divElement &&
+        divElement.scrollTop + divElement.clientHeight >=
+          divElement.scrollHeight - 10
+      ) {
+        fetchIcons(searchTerm, iconsPage);
+      }
+    };
+
+    const divElement = document.getElementById("icon-container");
+    divElement?.addEventListener("scroll", handleScroll);
+
+    return () => divElement?.removeEventListener("scroll", handleScroll);
+  }, [fetchIcons, searchTerm, iconsPage]);
 
   /*-------------------------------------------------------------------*/
 
@@ -221,6 +341,10 @@ const Sidebar = ({
         fetchBackgroundImages(searchTerm, 1);
       } else if (activeCategory === "graphics") {
         fetchGraphics(searchTerm, 1);
+      } else if (activeCategory === "Shapes") {
+        fetchShapes(searchTerm);
+      } else if (activeCategory === "Icons") {
+        fetchIcons(searchTerm);
       }
     }
   };
@@ -287,8 +411,6 @@ const Sidebar = ({
     fetchTextData();
     fetchImageData(); // Fetch images
     fetchInputfieldData();
-    fetchIcons();
-    fetchShape();
   }, []);
 
   const handleWindowSizeChange = () => {
@@ -547,7 +669,14 @@ const Sidebar = ({
           <div className="flex items-center">
             <button
               className="flex items-center justify-center flex-col"
-              onClick={() => toggleCategory("Shapes")}
+              onClick={() => {
+                setShapesData([]);
+                setSearchTerm("");
+                setShapesLoading(false);
+                setShapesHasMore(true);
+                fetchShapes("", 0);
+                toggleCategory("Shapes");
+              }}
             >
               <img
                 src={ShapesSvg}
@@ -567,7 +696,14 @@ const Sidebar = ({
           <div className="flex items-center">
             <button
               className="flex items-center justify-center flex-col"
-              onClick={() => toggleCategory("Icons")}
+              onClick={() => {
+                setIconsData([]);
+                setSearchTerm("");
+                setIconsLoading(false);
+                setIconsHasMore(true);
+                fetchIcons("", 0);
+                toggleCategory("Icons");
+              }}
             >
               <img
                 src={IconSvg}
@@ -763,7 +899,7 @@ const Sidebar = ({
               <div>
                 {/* Search input and button */}
                 <div className="mb-4 flex justify-center">
-                <input
+                  <input
                     type="text"
                     placeholder="Search for images..."
                     value={searchTerm}
@@ -813,7 +949,7 @@ const Sidebar = ({
               <div>
                 {/* Search input and button */}
                 <div className="mb-4 flex justify-center">
-                <input
+                  <input
                     type="text"
                     placeholder="Search for images..."
                     value={searchTerm}
@@ -878,46 +1014,34 @@ const Sidebar = ({
 
             {activeCategory === "Icons" && (
               <div>
-                {/* Image grid container with lazy loading */}
-                <div className="grid grid-cols-4 gap-[5px] h-[450px] overflow-auto">
-                  {iconsData.map((image, index) => (
-                    <button
-                      key={index}
-                      className="border p-1"
-                      onClick={() => {
-                        // Add the additional properties to the image object
-                        const modifiedImage = {
-                          x: 100,
-                          y: 100,
-                          variableName: "Image",
-                          webformatURL: image.svg,
-                          name: null,
-                          hiden: false,
-                          type: "Svg",
-                          scale_value: 0.3,
-                          id: Date.now(),
-                        };
-                        // Pass the modified image object to onAddElement
-                        onAddElement("Image", modifiedImage);
-                      }}
-                    >
-                      <div
-                        style={{ width: "70px", margin:"auto" }}
-                        dangerouslySetInnerHTML={{
-                          __html: setSvgSize(image.svg, "70"), // Set width and height dynamically
-                        }}
-                      />
-                    </button>
-                  ))}
+                {/* Search input and button */}
+                <div className="mb-4 flex justify-center">
+                  <input
+                    type="text"
+                    placeholder="Search for images..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSearch();
+                      }
+                    }}
+                    className="border p-2 rounded-l-lg"
+                  />
+                  <button
+                    onClick={handleSearch}
+                    className="bg-blue-500 text-white p-2 rounded-r-lg hover:bg-blue-600"
+                  >
+                    Search
+                  </button>
                 </div>
-              </div>
-            )}
 
-            {activeCategory === "Shapes" && (
-              <div>
                 {/* Image grid container with lazy loading */}
-                <div className="grid grid-cols-4 gap-1 h-[450px] overflow-auto">
-                  {ShapesData.map((image, index) => (
+                <div
+                  id="icon-container"
+                  className="grid grid-cols-4 gap-1 h-[450px] overflow-auto"
+                >
+                  {iconsData.map((image, index) => (
                     <button
                       key={index}
                       className="border p-1 m-auto"
@@ -939,13 +1063,145 @@ const Sidebar = ({
                       }}
                     >
                       <div
-                        style={{ width: "70px", margin:"auto" }}
+                        style={{ width: "70px", margin: "auto" }}
                         dangerouslySetInnerHTML={{
-                          __html: setSvgSize(image.svg, "70"), // Set width and height dynamically
+                          __html: setSvgSize(image.svg, "70", "70"), // Set width and height dynamically
                         }}
                       />
                     </button>
                   ))}
+                  {loading && <p className="text-center">Loading...</p>}
+                  {!hasMore && (
+                    <p className="text-center text-gray-500">
+                      No more icons to load.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeCategory === "Shapes" && (
+              <div>
+                {/* Search input and button */}
+                <div className="mb-4 flex justify-center">
+                  <input
+                    type="text"
+                    placeholder="Search for images..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSearch();
+                      }
+                    }}
+                    className="border p-2 rounded-l-lg"
+                  />
+                  <button
+                    onClick={handleSearch}
+                    className="bg-blue-500 text-white p-2 rounded-r-lg hover:bg-blue-600"
+                  >
+                    Search
+                  </button>
+                </div>
+
+                {/* Image grid container with lazy loading */}
+                <div
+                  id="shape-container"
+                  className="grid grid-cols-4 gap-1 h-[450px] overflow-auto"
+                >
+                  {ShapesData.map((image, index) => (
+                    <button
+                      key={index}
+                      className="border p-1 m-auto"
+                      onClick={() => {
+                        // Function to calculate scale_value
+                        const calculateScaleValue = (
+                          svgString,
+                          canvasHeight
+                        ) => {
+                          try {
+                            // Parse the SVG string
+                            const parser = new DOMParser();
+                            const svgDoc = parser.parseFromString(
+                              svgString,
+                              "image/svg+xml"
+                            );
+                            const svgElement = svgDoc.querySelector("svg");
+
+                            if (!svgElement) throw new Error("Invalid SVG");
+
+                            // Get the height of the SVG
+                            let svgHeight = parseFloat(
+                              svgElement.getAttribute("height")
+                            );
+
+                            // If no explicit height, derive it from viewBox
+                            if (isNaN(svgHeight)) {
+                              const viewBox =
+                                svgElement.getAttribute("viewBox");
+                              if (viewBox) {
+                                const [, , , viewBoxHeight] = viewBox
+                                  .split(" ")
+                                  .map(Number);
+                                svgHeight = viewBoxHeight;
+                              } else {
+                                throw new Error(
+                                  "No height or viewBox found in SVG"
+                                );
+                              }
+                            }
+
+                            // Calculate scale_value to make the SVG 30% of canvas height
+                            return (canvasHeight * 0.3) / svgHeight;
+                          } catch (error) {
+                            console.error(
+                              "Error calculating scale_value:",
+                              error.message
+                            );
+                            return 0.5; // Default scale value if an error occurs
+                          }
+                        };
+
+                        // Assume canvasHeight is known or fetched dynamically
+
+                        // Calculate the scale_value
+                        const scaleValue = calculateScaleValue(
+                          image.svg,
+                          height
+                        );
+
+                        // Add the additional properties to the image object
+                        const modifiedImage = {
+                          x: 100,
+                          y: 100,
+                          variableName: "Image",
+                          webformatURL: image.svg,
+                          name: null,
+                          hiden: false,
+                          type: "Svg",
+                          scale_value: scaleValue, // Use the calculated scale_value
+                          id: Date.now(),
+                        };
+
+                        // Pass the modified image object to onAddElement
+                        onAddElement("Image", modifiedImage);
+                      }}
+                    >
+                      <div
+                        style={{ width: "70px", margin: "auto" }}
+                        dangerouslySetInnerHTML={{
+                          __html: setSvgSize(image.svg, "70", "70"), // Set width and height dynamically
+                        }}
+                      />
+                    </button>
+                  ))}
+
+                  {loading && <p className="text-center">Loading...</p>}
+                  {!hasMore && (
+                    <p className="text-center text-gray-500">
+                      No more shapes to load.
+                    </p>
+                  )}
                 </div>
               </div>
             )}
@@ -1011,9 +1267,9 @@ const Sidebar = ({
                         />
                       ) : (
                         <div
-                          style={{ width: "70px" , margin:"auto" }}
+                          style={{ width: "70px", margin: "auto" }}
                           dangerouslySetInnerHTML={{
-                            __html: setSvgSize(image.svg, "70"), // Set width and height dynamically
+                            __html: setSvgSize(image.svg, "70", "70"), // Set width and height dynamically
                           }}
                         />
                       )}
