@@ -11,7 +11,6 @@ const CanvasArea = ({
   onUpdatePosition,
   onUpdateSize,
   onScaleElement,
-  setSelectedElement,
   onAddElement,
   onRemoveElement,
   setPOSITION,
@@ -94,7 +93,7 @@ const CanvasArea = ({
             tempRef.current.id,
             tempRef.current.currentWidth,
             tempRef.current.currentHeight,
-            scale_value
+            scale_value > 1 ? 1 : scale_value
           );
         } else {
           let scale_value =
@@ -155,10 +154,9 @@ const CanvasArea = ({
 
               fabricElement.on("selected", () => {
                 setSelected(fabricElement);
-                setSelectedElement(fabricElement);
                 // handleElementMovement(fabricElement, element.id);
                 setElementData(element);
-                onSelectedElement();
+                selectedIndex(element);
                 //handleElementSizing(fabricElement, element.id); // Update size when selected
               });
 

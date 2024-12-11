@@ -6,6 +6,7 @@ import deleteImage from "../assets/delete.png";
 const ElementEditor = ({ selectedElement, elements, setElements }) => {
   const [editedElement, setEditedElement] = useState(null);
   const [Fonts, setFont] = useState([]);
+  const [colorIndexMap, setColorIndexMap] = useState({});
   const [svgFills, setSvgFills] = useState([]);
 
   useEffect(() => {
@@ -43,33 +44,50 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
     }
   }, [selectedElement]);
 
-  // Function to extract fill values from the SVG string
   const extractFillValues = (svgString) => {
     const regex = /fill="([^"]*)"/g; // Regex to find fill attributes
     let matches = [];
     let match;
+
+    // Extract all colors and map them to their indices
     while ((match = regex.exec(svgString)) !== null) {
       matches.push(match[1]); // Push fill values to the array
     }
-    setSvgFills(matches); // Update state with all fill values
+
+    // Create a mapping from color to their indices
+    const colorMap = {};
+    matches.forEach((color, index) => {
+      if (!colorMap[color]) {
+        colorMap[color] = [];
+      }
+      colorMap[color].push(index);
+    });
+
+    // Extract unique colors (to display as input fields)
+    const uniqueColors = [...new Set(matches)];
+
+    setSvgFills(uniqueColors); // Update state with unique fill values
+    setColorIndexMap(colorMap); // Save color to index mapping
   };
 
-  // Function to update the fill value in the SVG string
-  const updateSvgFill = (index, newFill) => {
+  const updateSvgFill = (color, newFill) => {
     if (!editedElement.webformatURL) return;
 
     let svgString = editedElement.webformatURL;
-    const regex = /fill="([^"]*)"/g;
-    let match;
-    let count = 0;
-    let updatedSvgString = svgString.replace(regex, (matchStr, color) => {
-      if (count === index) {
-        count++;
-        return `fill="${newFill}"`; // Replace the fill with new value
+
+    // Get the indexes of the color that needs to be updated
+    const indexesToUpdate = colorIndexMap[color] || [];
+
+    // Replace all occurrences of the selected color
+    let updatedSvgString = svgString.replace(
+      /fill="([^"]*)"/g,
+      (matchStr, currentColor) => {
+        if (indexesToUpdate.length > 0 && currentColor === color) {
+          return `fill="${newFill}"`; // Replace all instances of the selected color
+        }
+        return matchStr; // Keep other fills unchanged
       }
-      count++;
-      return matchStr; // Keep other fills unchanged
-    });
+    );
 
     // Update the SVG string in editedElement
     const updatedElement = {
@@ -96,6 +114,16 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       loadFont(value);
     }
     if (
+      (editedElement.type === "ButtonImage" ||
+        editedElement.type === "Image") &&
+      (name === "scale" || name === "scale_value")
+    ) {
+      if (updatedValue > 1) {
+        updatedValue = 1;
+      }
+    }
+
+    if (
       name === "borderThickness" ||
       name === "width" ||
       name === "height" ||
@@ -107,6 +135,13 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
     ) {
       updatedValue = parseFloat(value);
     }
+
+    if (name === "borderThickness") {
+      if (updatedValue < 0) {
+        updatedValue = 0;
+      }
+    }
+
     const updatedElement = {
       ...editedElement,
       [name]: updatedValue,
@@ -959,14 +994,14 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
 
             {/* Loop through all the fill values and display them as color pickers */}
-            {svgFills.map((fill, index) => (
+            {svgFills.map((color, index) => (
               <div key={index} className="flex flex-col">
                 <label className="block text-xs text-transparent">Scale</label>
                 {/* <label className="block">{`Fill ${index + 1}`}</label> */}
                 <input
                   type="color"
-                  value={fill}
-                  onChange={(e) => updateSvgFill(index, e.target.value)}
+                  value={color}
+                  onChange={(e) => updateSvgFill(color, e.target.value)}
                   className="color"
                 />
               </div>
@@ -991,7 +1026,6 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
             {/* Other SVG properties */}
-
           </div>
         );
       case "Image":
@@ -1083,7 +1117,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "scale",
-                        value: (editedElement.scale || 1) - 1,
+                        value: (editedElement.scale || 1) - 0.1,
                       },
                     })
                   }
@@ -1104,7 +1138,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "scale",
-                        value: (editedElement.scale || 1) + 1,
+                        value: (editedElement.scale || 1) + 0.1,
                       },
                     })
                   }

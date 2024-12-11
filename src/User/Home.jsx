@@ -550,7 +550,8 @@ if __name__ == '__main__':
         {/* Sidebar on the left */}
         <Sidebar
           onAddElement={handleAddElement} // Pass down the add element handler
-          onCreateProject={createProject}
+          Height={!projectData ? null : projectData.height}
+          Width={!projectData ? null : projectData.width}
           onWindowSizeChange={(width, height, color) => {
             setHeight(height);
             setWidth(width);
@@ -578,7 +579,6 @@ if __name__ == '__main__':
             onUpdatePosition={handleUpdatePosition} // Pass down the position update handler
             onUpdateSize={handleUpdateSize}
             onScaleElement={handleScaleElement} // Pass down the scale element handler
-            setSelectedElement={setSelectedElement} // Pass down the selected element setter
             onAddElement={handleAddElement}
             onRemoveElement={removeElement}
             setPOSITION={setPositions}

@@ -22,7 +22,8 @@ export default function Projects() {
         const response = await axios.get(
           `${API_KEY}api/projects/user/${user._id}`
         );
-        setProjects(response.data);
+        const reversedProjects = response.data.reverse(); // Reverse the array
+        setProjects(reversedProjects);
       } catch (err) {
         setError("Failed to load projects. Please try again later.");
       } finally {
@@ -67,6 +68,57 @@ export default function Projects() {
     });
   };
 
+  const handelDuplicate = async (project) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to duplicate project?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        let projectName = project.name;
+        const lastPart = projectName.match(/-(\d+)$/);
+        if (lastPart) {
+          const number = parseInt(lastPart[1], 10);
+          projectName = projectName.replace(/-(\d+)$/, `-${number + 1}`);
+        } else {
+          projectName = `${projectName}-1`;
+        }
+
+        try {
+          const response = await axios.put(`${API_KEY}api/projects/`, {
+            name: projectName,
+            user: user._id,
+            color: project.color,
+            bgImage: project.bgImage,
+            width: project.width,
+            height: project.height,
+            elements: project.elements,
+            positions: project.positions,
+          });
+          Swal.fire({
+            title: `Project ${projectName} Saved!`,
+            icon: "success",
+            confirmButtonText: "Ok",
+          }).then(() => {
+            window.location.reload(); // Replace with state management if possible
+          });
+        } catch (error) {
+          Swal.fire({
+            title: "Error",
+            text: "An error occurred while saving the project.",
+            icon: "error",
+            confirmButtonText: "Ok",
+          });
+          console.error("Error saving project:", error);
+        }
+      }
+    });
+  };
+
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -86,6 +138,14 @@ export default function Projects() {
                   className="w-full text-left bg-blue-100 p-4 rounded-lg hover:bg-blue-200 transition relative z-10"
                 >
                   {project.name}
+                </button>
+                <button
+                  onClick={() => {
+                    handelDuplicate(project);
+                  }}
+                  className="bg-green-400 hover:bg-green-500 text-white px-2 py-1 rounded-full text-xs absolute top-1/2 transform -translate-y-1/2 right-10 z-20"
+                >
+                  Duplicate
                 </button>
                 <FaTrashAlt
                   onClick={() => deleteProject(project._id)}

@@ -44,10 +44,10 @@ class FabricButton {
 
     // Create the Fabric button rectangle
     this.buttonRect = new fabric.Rect({
-      left: this.x,
-      top: this.y,
-      width: this.width,
-      height: this.height,
+      left: this.x + this.borderThickness / 2,
+      top: this.y + this.borderThickness / 2,
+      width: this.width - this.borderThickness,
+      height: this.height - this.borderThickness,
       fill: this.idleColor,
       stroke: this.borderColor,
       strokeWidth: this.borderThickness,
@@ -55,8 +55,8 @@ class FabricButton {
 
     // Create the Fabric text for the button
     this.buttonText = new fabric.Text(this.text, {
-      left: this.x + this.width / 2,
-      top: this.y + this.height / 2,
+      left: this.x + this.borderThickness / 2 + this.width / 2,
+      top: this.y + this.borderThickness / 2 + this.height / 2,
       originX: "center",
       originY: "center",
       fill: this.textColor,
@@ -115,9 +115,14 @@ class FabricButton {
 
   setBorder(borderThickness, borderColor) {
     // Update the border color and thickness
+    this.borderThickness = borderThickness;
     this.buttonRect.set({
       stroke: borderColor,
       strokeWidth: borderThickness,
+      left: this.x + borderThickness / 2,
+      top: this.y + borderThickness / 2,
+      width: this.width - borderThickness,
+      height: this.height - borderThickness,
     });
     this.canvas.renderAll(); // Re-render the canvas
   }
@@ -127,6 +132,8 @@ class FabricButton {
     this.buttonText.set({
       fontFamily: fontFamily,
       fontSize: fontSize,
+      left: this.x + this.borderThickness / 2 + this.width / 2,
+      top: this.y + this.borderThickness / 2 + this.height / 2,
     });
     this.canvas.renderAll(); // Re-render the canvas
   }

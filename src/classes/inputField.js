@@ -56,10 +56,10 @@ class FabricInputField {
 
     // Create a Fabric rectangle to represent the input field
     this.inputRect = new fabric.Rect({
-      left: this.x,
-      top: this.y,
-      width: this.width,
-      height: this.height,
+      left: this.x + borderThickness / 2,
+      top: this.y + borderThickness / 2,
+      width: this.width - borderThickness,
+      height: this.height - borderThickness,
       fill: this.bgColor,
       stroke: this.borderColor,
       strokeWidth: this.borderThickness,
@@ -67,8 +67,8 @@ class FabricInputField {
 
     // Create the text for the input field (initially with placeholder text)
     this.inputText = new fabric.Text(this.placeholder, {
-      left: this.x + this.padding,
-      top: this.y + this.padding + this.fontSize / 2,
+      left: this.x + this.padding + borderThickness/ 2,
+      top: this.y + this.padding + this.fontSize / 2 + borderThickness / 2,
       originX: "left",
       originY: "top",
       fill: this.placeholderColor,

@@ -9,6 +9,7 @@ import ShapesSvg from "../assets/categories/shapes.svg";
 import IconSvg from "../assets/categories/icons.svg";
 import BackgroundSvg from "../assets/categories/background.svg";
 import GraphicsSvg from "../assets/categories/graphics.svg";
+import LoadingGif from "../assets/loading1.gif";
 import WindowSvg from "../assets/categories/window.svg";
 import closeSvg from "../assets/close.svg";
 import TextComponent from "../components/textComponent";
@@ -24,7 +25,8 @@ import { useNavigate } from "react-router-dom";
 const Sidebar = ({
   onAddElement,
   onBgImageChange,
-  onCreateProject,
+  Height,
+  Width,
   onWindowSizeChange,
 }) => {
   const hiddenFileInput = React.useRef(null);
@@ -45,6 +47,21 @@ const Sidebar = ({
   const [width, setWidth] = useState(700);
   const [height, setHeight] = useState(400);
   const [color, setColor] = useState("#ffffff");
+
+  useEffect(() => {
+    // Set default values if width or height are null
+    if (Height === null) {
+      setHeight(400);
+    } else {
+      setHeight(Height);
+    }
+
+    if (Width === null) {
+      setWidth(700);
+    } else {
+      setWidth(Width);
+    }
+  }, [Height, Width]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [ImagesData, setImagesData] = useState([]);
@@ -133,7 +150,7 @@ const Sidebar = ({
         const response = await axios.get(`${API_KEY}api/icons/`, {
           params: {
             page: nextPage, // page number
-            limit: 30, // number of results per page
+            limit: 50, // number of results per page
             tag: newSearchTerm, // search tag
           },
         });
@@ -229,6 +246,10 @@ const Sidebar = ({
 
   /*-------------------------------------------------------------------*/
 
+  const [graphicsLoading, setGraphicsLoading] = useState(false);
+  const [graphicsPage, setGraphicsPage] = useState(0);
+  const [graphicsHasMore, setGraphicsHasMore] = useState(true);
+
   const fetchGraphics = useCallback(
     async (newSearchTerm, nextPage) => {
       if (Loading || !hasMore) return;
@@ -236,19 +257,11 @@ const Sidebar = ({
 
       try {
         const response = await axios.get(
-          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=vector&page=${nextPage}&per_page=20`
+          `https://pixabay.com/api/?key=${KEY}&q=${newSearchTerm}&image_type=vector&page=${nextPage}&per_page=40`
         );
         const newImages = response.data.hits;
-
-        if (nextPage === 1) {
-          let temp = await fetchGraphicsData();
-          // Reset images for a new search term
-          setGraphicsData(temp);
-          setGraphicsData((prevImages) => [...prevImages, ...newImages]);
-        } else {
-          // Append new images for lazy loading
-          setGraphicsData((prevImages) => [...prevImages, ...newImages]);
-        }
+        // Append new images for lazy loading
+        setGraphicsData(newImages);
 
         setHasMore(newImages.length > 0); // Check if there are more images
         setPage(nextPage + 1);
@@ -261,6 +274,40 @@ const Sidebar = ({
     [API_KEY, loading, hasMore]
   );
 
+  const fetchgraphicsData = useCallback(async () => {
+    if (graphicsLoading || !graphicsHasMore) return;
+
+    setGraphicsLoading(true);
+
+    try {
+      const response = await axios.get(`${API_KEY}api/graphic`, {
+        params: {
+          page: graphicsPage, // page number
+          limit: 40, // number of results per page
+          tag: "", // search tag
+        },
+      });
+
+      const newShapes = response.data.data;
+      const pagination = response.data.pagination;
+
+      if (graphicsPage === 0) {
+        setGraphicsData(newShapes);
+      } else {
+        setGraphicsData((prevShapes) => [...prevShapes, ...newShapes]);
+      }
+
+      setGraphicsHasMore(
+        newShapes.length > 0 && pagination.currentPage < pagination.totalPages
+      );
+      setGraphicsPage(graphicsPage + 1);
+    } catch (error) {
+      console.error("Failed to fetch shapes:", error);
+    } finally {
+      setGraphicsLoading(false);
+    }
+  }, [graphicsLoading, graphicsHasMore]);
+
   useEffect(() => {
     const handleScroll = () => {
       const divElement = document.getElementById("graphics-container");
@@ -269,8 +316,8 @@ const Sidebar = ({
         divElement.scrollTop + divElement.clientHeight >=
           divElement.scrollHeight - 10
       ) {
-        fetchGraphicsData();
-        fetchGraphics(searchTerm, page);
+        console.log("print");
+        fetchgraphicsData();
       }
     };
 
@@ -422,17 +469,6 @@ const Sidebar = ({
     }
   };
 
-  const fetchGraphicsData = async () => {
-    try {
-      const response = await axios.get(`${API_KEY}api/graphic/`);
-      const newImages = response.data;
-      setGraphics(newImages);
-      return newImages;
-    } catch (error) {
-      console.error("Error fetching images:", error);
-    }
-  };
-
   const toggleCategory = (category) => {
     setActiveCategory(activeCategory === category ? null : category);
   };
@@ -449,9 +485,14 @@ const Sidebar = ({
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes",
-    }).then(async (result) => {
-      dispatch(Userlogout());
-      navigate("/login");
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(Userlogout());
+        navigate("/login");
+      } else {
+        return; // Do nothing if the user cancels
+      }
     });
   };
 
@@ -510,7 +551,7 @@ const Sidebar = ({
       )}
 
       <div
-        className={`py-[25px] p-1 flex flex-col items-center justify-center border-r border-gray-300 w-[90px] ${
+        className={`py-[25px] p-1 flex flex-col items-center justify-center border-r border-gray-300 w-[90px] min-h-screen ${
           activeCategory === null ? "transparent" : "bg-[#ffffff]"
         } flex flex-col justify-between h-auto`}
       >
@@ -648,7 +689,7 @@ const Sidebar = ({
               className="flex items-center justify-center flex-col"
               onClick={() => {
                 toggleCategory("graphics");
-                fetchGraphics("graphics", 1);
+                fetchgraphicsData();
               }}
             >
               <img
@@ -920,7 +961,7 @@ const Sidebar = ({
                 </div>
                 <div
                   id="bgimage-container"
-                  className="grid grid-cols-2 gap-[5px] h-[450px] overflow-auto"
+                  className="grid grid-cols-2 gap-[5px] h-screen overflow-auto"
                 >
                   <button className="" onClick={() => handleImageChange(null)}>
                     <img
@@ -972,7 +1013,7 @@ const Sidebar = ({
                 {/* Image grid container with lazy loading */}
                 <div
                   id="image-container"
-                  className="grid grid-cols-2 gap-[5px] h-[450px] overflow-auto"
+                  className="grid grid-cols-2 gap-[5px] h-screen overflow-auto"
                 >
                   {ImagesData.map((image, index) => (
                     <button
@@ -1039,7 +1080,7 @@ const Sidebar = ({
                 {/* Image grid container with lazy loading */}
                 <div
                   id="icon-container"
-                  className="grid grid-cols-4 gap-1 h-[450px] overflow-auto"
+                  className="grid grid-cols-4 gap-1 h-screen overflow-auto"
                 >
                   {iconsData.map((image, index) => (
                     <button
@@ -1287,108 +1328,116 @@ const Sidebar = ({
                 </div>
 
                 {/* Image grid container with lazy loading */}
-                <div
-                  id="graphics-container"
-                  className="grid grid-cols-3 gap-1 h-[450px] overflow-auto"
-                >
-                  {GraphicsData.map((image, index) => (
-                    <button
-                      key={index}
-                      className="border p-1 items-center justify-center"
-                      onClick={() => {
-                        let scaleValue = 0.3;
 
-                        if (image.type === "Svg") {
-                          // Function to calculate scale_value
-                          const calculateScaleValue = (
-                            svgString,
-                            canvasHeight
-                          ) => {
-                            try {
-                              // Parse the SVG string
-                              const parser = new DOMParser();
-                              const svgDoc = parser.parseFromString(
-                                svgString,
-                                "image/svg+xml"
-                              );
-                              const svgElement = svgDoc.querySelector("svg");
+                {GraphicsData.length < 1 ? (
+                  <div>
+                    <img src={LoadingGif} className="w-[200px] m-auto" />
+                  </div>
+                ) : (
+                  <div
+                    id="graphics-container"
+                    className="grid grid-cols-3 gap-1 h-screen overflow-auto"
+                  >
+                    {GraphicsData.map((image, index) => (
+                      <button
+                        key={index}
+                        className="border p-1 items-center justify-center"
+                        onClick={() => {
+                          let scaleValue = 0.3;
 
-                              if (!svgElement) throw new Error("Invalid SVG");
+                          if (image.type === "Svg") {
+                            // Function to calculate scale_value
+                            const calculateScaleValue = (
+                              svgString,
+                              canvasHeight
+                            ) => {
+                              try {
+                                // Parse the SVG string
+                                const parser = new DOMParser();
+                                const svgDoc = parser.parseFromString(
+                                  svgString,
+                                  "image/svg+xml"
+                                );
+                                const svgElement = svgDoc.querySelector("svg");
 
-                              // Get the height of the SVG
-                              let svgHeight = parseFloat(
-                                svgElement.getAttribute("height")
-                              );
+                                if (!svgElement) throw new Error("Invalid SVG");
 
-                              // If no explicit height, derive it from viewBox
-                              if (isNaN(svgHeight)) {
-                                const viewBox =
-                                  svgElement.getAttribute("viewBox");
-                                if (viewBox) {
-                                  const [, , , viewBoxHeight] = viewBox
-                                    .split(" ")
-                                    .map(Number);
-                                  svgHeight = viewBoxHeight;
-                                } else {
-                                  throw new Error(
-                                    "No height or viewBox found in SVG"
-                                  );
+                                // Get the height of the SVG
+                                let svgHeight = parseFloat(
+                                  svgElement.getAttribute("height")
+                                );
+
+                                // If no explicit height, derive it from viewBox
+                                if (isNaN(svgHeight)) {
+                                  const viewBox =
+                                    svgElement.getAttribute("viewBox");
+                                  if (viewBox) {
+                                    const [, , , viewBoxHeight] = viewBox
+                                      .split(" ")
+                                      .map(Number);
+                                    svgHeight = viewBoxHeight;
+                                  } else {
+                                    throw new Error(
+                                      "No height or viewBox found in SVG"
+                                    );
+                                  }
                                 }
+
+                                // Calculate scale_value to make the SVG 30% of canvas height
+                                return (canvasHeight * 0.3) / svgHeight;
+                              } catch (error) {
+                                console.error(
+                                  "Error calculating scale_value:",
+                                  error.message
+                                );
+                                return 0.5; // Default scale value if an error occurs
                               }
+                            };
 
-                              // Calculate scale_value to make the SVG 30% of canvas height
-                              return (canvasHeight * 0.3) / svgHeight;
-                            } catch (error) {
-                              console.error(
-                                "Error calculating scale_value:",
-                                error.message
-                              );
-                              return 0.5; // Default scale value if an error occurs
-                            }
+                            // Assume canvasHeight is known or fetched dynamically
+
+                            // Calculate the scale_value
+                            scaleValue = calculateScaleValue(image.svg, height);
+                          }
+
+                          // Add the additional properties to the image object
+                          const modifiedImage = {
+                            x: 100,
+                            y: 100,
+                            webformatURL:
+                              image.type !== "Image" && image.type !== "Svg"
+                                ? image.webformatURL
+                                : image.svg,
+                            variableName: "Image",
+                            name: null,
+                            hidden: false,
+                            type: image.type !== "Svg" ? "Image" : image.type,
+                            scale_value: scaleValue,
+                            id: Date.now(),
                           };
+                          // Pass the modified image object to onAddElement
+                          onAddElement("Image", modifiedImage);
+                        }}
+                      >
+                        {image.type !== "Svg" ? (
+                          <img
+                            src={image.previewURL || image.svg}
+                            alt={image.tags || "Image"}
+                            className="w-[70px] object-cover m-auto"
+                          />
+                        ) : (
+                          <div
+                            style={{ width: "70px", margin: "auto" }}
+                            dangerouslySetInnerHTML={{
+                              __html: setSvgSize(image.svg, "70", "70"), // Set width and height dynamically
+                            }}
+                          />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
 
-                          // Assume canvasHeight is known or fetched dynamically
-
-                          // Calculate the scale_value
-                          scaleValue = calculateScaleValue(image.svg, height);
-                        }
-
-                        // Add the additional properties to the image object
-                        const modifiedImage = {
-                          x: 100,
-                          y: 100,
-                          webformatURL:
-                            image.type !== "Image" && image.type !== "Svg"
-                              ? image.webformatURL
-                              : image.svg,
-                          variableName: "Image",
-                          name: null,
-                          hidden: false,
-                          type: image.type !== "Svg" ? "Image" : image.type,
-                          scale_value: scaleValue,
-                          id: Date.now(),
-                        };
-                        // Pass the modified image object to onAddElement
-                        onAddElement("Image", modifiedImage);
-                      }}
-                    >
-                      {image.type !== "Svg" ? (
-                        <img
-                          src={image.previewURL || image.svg}
-                          alt={image.tags || "Image"}
-                          className="w-[70px] object-cover m-auto"
-                        />
-                      ) : (
-                        <div
-                          style={{ width: "70px", margin: "auto" }}
-                          dangerouslySetInnerHTML={{
-                            __html: setSvgSize(image.svg, "70", "70"), // Set width and height dynamically
-                          }}
-                        />
-                      )}
-                    </button>
-                  ))}
-                </div>
                 {loading && <p className="text-center">Loading...</p>}
                 {!hasMore && (
                   <p className="text-center text-gray-500">
