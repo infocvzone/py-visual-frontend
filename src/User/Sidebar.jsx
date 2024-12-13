@@ -8,7 +8,7 @@ import InputSvg from "../assets/categories/input-svg.svg";
 import ShapesSvg from "../assets/categories/shapes.svg";
 import IconSvg from "../assets/categories/icons.svg";
 import BackgroundSvg from "../assets/categories/background.svg";
-import GraphicsSvg from "../assets/categories/graphics.svg";
+import GraphicsSvg from "../assets/search-svg.svg";
 import LoadingGif from "../assets/loading1.gif";
 import WindowSvg from "../assets/categories/window.svg";
 import closeSvg from "../assets/close.svg";
@@ -392,6 +392,11 @@ const Sidebar = ({
         fetchShapes(searchTerm);
       } else if (activeCategory === "Icons") {
         fetchIcons(searchTerm);
+      } else if (activeCategory === "element") {
+        fetchImages(searchTerm, 1);
+        fetchGraphics(searchTerm, 1);
+        fetchShapes(searchTerm);
+        fetchIcons(searchTerm);
       }
     }
   };
@@ -665,8 +670,22 @@ const Sidebar = ({
             <button
               className="flex items-center justify-center flex-col"
               onClick={() => {
-                toggleCategory("Image");
+                toggleCategory("element");
                 fetchImages("photos", 1);
+
+                fetchgraphicsData();
+
+                setIconsData([]);
+                setSearchTerm("");
+                setIconsLoading(false);
+                setIconsHasMore(true);
+                fetchIcons("", 0);
+
+                setShapesData([]);
+                setSearchTerm("");
+                setShapesLoading(false);
+                setShapesHasMore(true);
+                fetchShapes("", 0);
               }}
             >
               <img
@@ -679,11 +698,12 @@ const Sidebar = ({
                 }`}
               />
               <h1 className="text-[10px] mt-[14px] text-center text-black">
-                Images
+                Graphics
               </h1>
             </button>
           </div>
-          {/* buttonImage Button */}
+
+          {/* buttonImage Button 
           <div className="flex items-center">
             <button
               className="flex items-center justify-center flex-col"
@@ -706,7 +726,9 @@ const Sidebar = ({
               </h1>
             </button>
           </div>
-          {/* buttonImage Button */}
+          */}
+
+          {/* buttonImage Button 
           <div className="flex items-center">
             <button
               className="flex items-center justify-center flex-col"
@@ -732,8 +754,8 @@ const Sidebar = ({
                 Shapes
               </h1>
             </button>
-          </div>
-          {/* buttonImage Button */}
+          </div>*/}
+          {/* buttonImage Button 
           <div className="flex items-center">
             <button
               className="flex items-center justify-center flex-col"
@@ -759,8 +781,9 @@ const Sidebar = ({
                 Icons
               </h1>
             </button>
-          </div>
+          </div>*/}
         </div>
+
         {/* Line Button */}
         <div className="flex items-center mt-[25px]">
           <button
@@ -939,7 +962,7 @@ const Sidebar = ({
             {activeCategory === "background" && (
               <div>
                 {/* Search input and button */}
-                <div className="mb-4 flex justify-center">
+                <div className="mb-4 flex justify-center w-full relative">
                   <input
                     type="text"
                     placeholder="Search for images..."
@@ -950,13 +973,17 @@ const Sidebar = ({
                         handleSearch();
                       }
                     }}
-                    className="border p-2 rounded-l-lg"
+                    className="border border-gray-300 text-sm w-full p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-xs pr-12"
                   />
                   <button
                     onClick={handleSearch}
-                    className="bg-blue-500 text-white p-2 rounded-r-lg hover:bg-blue-600"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 focus:outline-none"
                   >
-                    Search
+                    <img
+                      src={GraphicsSvg}
+                      alt="Search Icon"
+                      className="w-5 h-5"
+                    />
                   </button>
                 </div>
                 <div
@@ -989,7 +1016,7 @@ const Sidebar = ({
             {activeCategory === "Image" && (
               <div>
                 {/* Search input and button */}
-                <div className="mb-4 flex justify-center">
+                <div className="mb-4 flex justify-center w-full relative">
                   <input
                     type="text"
                     placeholder="Search for images..."
@@ -1000,13 +1027,17 @@ const Sidebar = ({
                         handleSearch();
                       }
                     }}
-                    className="border p-2 rounded-l-lg"
+                    className="border border-gray-300 text-sm w-full p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-xs pr-12"
                   />
                   <button
                     onClick={handleSearch}
-                    className="bg-blue-500 text-white p-2 rounded-r-lg hover:bg-blue-600"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 focus:outline-none"
                   >
-                    Search
+                    <img
+                      src={GraphicsSvg}
+                      alt="Search Icon"
+                      className="w-5 h-5"
+                    />
                   </button>
                 </div>
 
@@ -1030,6 +1061,7 @@ const Sidebar = ({
                           hidden: false,
                           type: "Image",
                           scale_value: 0.3,
+                          makeButton: false,
                           id: Date.now(),
                         };
                         // Pass the modified image object to onAddElement
@@ -1056,7 +1088,7 @@ const Sidebar = ({
             {activeCategory === "Icons" && (
               <div>
                 {/* Search input and button */}
-                <div className="mb-4 flex justify-center">
+                <div className="mb-4 flex justify-center w-full relative">
                   <input
                     type="text"
                     placeholder="Search for images..."
@@ -1067,13 +1099,17 @@ const Sidebar = ({
                         handleSearch();
                       }
                     }}
-                    className="border p-2 rounded-l-lg"
+                    className="border border-gray-300 text-sm w-full p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-xs pr-12"
                   />
                   <button
                     onClick={handleSearch}
-                    className="bg-blue-500 text-white p-2 rounded-r-lg hover:bg-blue-600"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 focus:outline-none"
                   >
-                    Search
+                    <img
+                      src={GraphicsSvg}
+                      alt="Search Icon"
+                      className="w-5 h-5"
+                    />
                   </button>
                 </div>
 
@@ -1152,6 +1188,7 @@ const Sidebar = ({
                           name: null,
                           hiden: false,
                           type: "Svg",
+                          makeButton: false,
                           scale_value: scaleValue,
                           id: Date.now(),
                         };
@@ -1180,7 +1217,7 @@ const Sidebar = ({
             {activeCategory === "Shapes" && (
               <div>
                 {/* Search input and button */}
-                <div className="mb-4 flex justify-center">
+                <div className="mb-4 flex justify-center w-full relative">
                   <input
                     type="text"
                     placeholder="Search for images..."
@@ -1191,13 +1228,17 @@ const Sidebar = ({
                         handleSearch();
                       }
                     }}
-                    className="border p-2 rounded-l-lg"
+                    className="border border-gray-300 text-sm w-full p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-xs pr-12"
                   />
                   <button
                     onClick={handleSearch}
-                    className="bg-blue-500 text-white p-2 rounded-r-lg hover:bg-blue-600"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 focus:outline-none"
                   >
-                    Search
+                    <img
+                      src={GraphicsSvg}
+                      alt="Search Icon"
+                      className="w-5 h-5"
+                    />
                   </button>
                 </div>
 
@@ -1306,7 +1347,7 @@ const Sidebar = ({
             {activeCategory === "graphics" && (
               <div>
                 {/* Search input and button */}
-                <div className="mb-4 flex justify-center">
+                <div className="mb-4 flex justify-center w-full relative">
                   <input
                     type="text"
                     placeholder="Search for images..."
@@ -1317,13 +1358,17 @@ const Sidebar = ({
                         handleSearch();
                       }
                     }}
-                    className="border p-2 rounded-l-lg"
+                    className="border border-gray-300 text-sm w-full p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-xs pr-12"
                   />
                   <button
                     onClick={handleSearch}
-                    className="bg-blue-500 text-white p-2 rounded-r-lg hover:bg-blue-600"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 focus:outline-none"
                   >
-                    Search
+                    <img
+                      src={GraphicsSvg}
+                      alt="Search Icon"
+                      className="w-5 h-5"
+                    />
                   </button>
                 </div>
 
@@ -1443,6 +1488,462 @@ const Sidebar = ({
                   <p className="text-center text-gray-500">
                     No more images to load.
                   </p>
+                )}
+              </div>
+            )}
+
+            {activeCategory === "element" && (
+              <div>
+                {/* Search input and button */}
+                <div className="mb-4 flex justify-center w-full relative">
+                  <input
+                    type="text"
+                    placeholder="Search for images..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSearch();
+                      }
+                    }}
+                    className="border border-gray-300 text-sm w-full p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-xs pr-12"
+                  />
+                  <button
+                    onClick={handleSearch}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 focus:outline-none"
+                  >
+                    <img
+                      src={GraphicsSvg}
+                      alt="Search Icon"
+                      className="w-5 h-5"
+                    />
+                  </button>
+                </div>
+
+                {GraphicsData.length < 1 &&
+                ImageData.length < 1 &&
+                iconsData.length < 1 ? (
+                  <div>
+                    <img src={LoadingGif} className="w-[200px] m-auto" />
+                  </div>
+                ) : (
+                  <>
+                    {/* Label */}
+
+                    <div className="flex justify-between items-center mt-6 mb-2">
+                      <h1 className="text-md font-semibold text-gray-700">
+                        Images
+                      </h1>
+                      <button
+                        onClick={() => {
+                          toggleCategory("Image");
+                          fetchImages(searchTerm, page);
+                        }}
+                        className="text-xs text-gray-600 hover:text-gray-400"
+                      >
+                        See All..
+                      </button>
+                    </div>
+                    <div className="flex flex-col h-full w-[350px]">
+                      {/* Image display with horizontal scroll */}
+                      <div className="h-full w-[350px]">
+                        <div className="flex h-[120px] space-x-2 overflow-x-auto">
+                          {ImagesData.map((image, index) => (
+                            <div>
+                              <button
+                                className="w-[120px]"
+                                key={index}
+                                onClick={() => {
+                                  const modifiedImage = {
+                                    ...image,
+                                    x: 100,
+                                    y: 100,
+                                    variableName: "Image",
+                                    name: null,
+                                    hidden: false,
+                                    type: "Image",
+                                    scale_value: 0.3,
+                                    makeButton: false,
+                                    id: Date.now(),
+                                  };
+                                  onAddElement("Image", modifiedImage);
+                                }}
+                              >
+                                <img
+                                  src={image.previewURL}
+                                  alt={image.tags}
+                                  className="w-[120px] border"
+                                />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Label */}
+                    <div className="flex justify-between items-center mt-4 mb-2">
+                      <h1 className="text-md font-semibold text-gray-700">
+                        Vectors
+                      </h1>
+
+                      <button
+                        onClick={() => {
+                          setGraphicsPage(0);
+                          toggleCategory("graphics");
+                          fetchgraphicsData();
+                        }}
+                        className="text-xs text-gray-600 hover:text-gray-400"
+                      >
+                        See All..
+                      </button>
+                    </div>
+                    <div className="flex flex-col h-full">
+                      {/* Image display with horizontal scroll */}
+                      <div className="h-full w-[350px]">
+                        <div className="flex space-x-2 overflow-x-auto">
+                          {GraphicsData.map((image, index) => (
+                            <div>
+                              <button
+                                key={index}
+                                className="border p-1 items-center justify-center w-[120px]"
+                                onClick={() => {
+                                  let scaleValue = 0.3;
+
+                                  if (image.type === "Svg") {
+                                    // Function to calculate scale_value
+                                    const calculateScaleValue = (
+                                      svgString,
+                                      canvasHeight
+                                    ) => {
+                                      try {
+                                        // Parse the SVG string
+                                        const parser = new DOMParser();
+                                        const svgDoc = parser.parseFromString(
+                                          svgString,
+                                          "image/svg+xml"
+                                        );
+                                        const svgElement =
+                                          svgDoc.querySelector("svg");
+
+                                        if (!svgElement)
+                                          throw new Error("Invalid SVG");
+
+                                        // Get the height of the SVG
+                                        let svgHeight = parseFloat(
+                                          svgElement.getAttribute("height")
+                                        );
+                                        // If no explicit height, derive it from viewBox
+                                        if (isNaN(svgHeight)) {
+                                          const viewBox =
+                                            svgElement.getAttribute("viewBox");
+                                          if (viewBox) {
+                                            const [, , , viewBoxHeight] =
+                                              viewBox.split(" ").map(Number);
+                                            svgHeight = viewBoxHeight;
+                                          } else {
+                                            throw new Error(
+                                              "No height or viewBox found in SVG"
+                                            );
+                                          }
+                                        }
+
+                                        // Calculate scale_value to make the SVG 30% of canvas height
+                                        return (canvasHeight * 0.3) / svgHeight;
+                                      } catch (error) {
+                                        console.error(
+                                          "Error calculating scale_value:",
+                                          error.message
+                                        );
+                                        return 0.5; // Default scale value if an error occurs
+                                      }
+                                    };
+
+                                    // Assume canvasHeight is known or fetched dynamically
+
+                                    // Calculate the scale_value
+                                    scaleValue = calculateScaleValue(
+                                      image.svg,
+                                      height
+                                    );
+                                  }
+
+                                  // Add the additional properties to the image object
+                                  const modifiedImage = {
+                                    x: 100,
+                                    y: 100,
+                                    webformatURL:
+                                      image.type !== "Image" &&
+                                      image.type !== "Svg"
+                                        ? image.webformatURL
+                                        : image.svg,
+                                    variableName: "Image",
+                                    name: null,
+                                    hidden: false,
+                                    type:
+                                      image.type !== "Svg"
+                                        ? "Image"
+                                        : image.type,
+                                    scale_value: scaleValue,
+                                    id: Date.now(),
+                                  };
+                                  // Pass the modified image object to onAddElement
+                                  onAddElement("Image", modifiedImage);
+                                }}
+                              >
+                                {image.type !== "Svg" ? (
+                                  <img
+                                    src={image.previewURL || image.svg}
+                                    alt={image.tags || "Image"}
+                                    className="w-[120px]"
+                                  />
+                                ) : (
+                                  <div
+                                    style={{ width: "70px", margin: "auto" }}
+                                    dangerouslySetInnerHTML={{
+                                      __html: setSvgSize(image.svg, "70", "70"), // Set width and height dynamically
+                                    }}
+                                  />
+                                )}
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    {/* Label */}
+
+                    <div className="flex justify-between items-center mt-6 mb-2">
+                      <h1 className="text-md font-semibold text-gray-700">
+                        Icons
+                      </h1>
+
+                      <button
+                        onClick={() => {
+                          setIconsData([]);
+                          setSearchTerm("");
+                          setIconsLoading(false);
+                          setIconsHasMore(true);
+                          fetchIcons("", 0);
+                          toggleCategory("Icons");
+                        }}
+                        className="text-xs text-gray-600 hover:text-gray-400"
+                      >
+                        See All..
+                      </button>
+                    </div>
+                    <div className="flex flex-col h-full">
+                      {/* Image display with horizontal scroll */}
+                      <div className="h-full w-[350px]">
+                        <div className="flex space-x-2 overflow-x-auto">
+                          {iconsData.map((image, index) => (
+                            <button
+                              key={index}
+                              className="border p-1 m-auto"
+                              onClick={() => {
+                                // Function to calculate scale_value
+                                const calculateScaleValue = (
+                                  svgString,
+                                  canvasHeight
+                                ) => {
+                                  try {
+                                    // Parse the SVG string
+                                    const parser = new DOMParser();
+                                    const svgDoc = parser.parseFromString(
+                                      svgString,
+                                      "image/svg+xml"
+                                    );
+                                    const svgElement =
+                                      svgDoc.querySelector("svg");
+
+                                    if (!svgElement)
+                                      throw new Error("Invalid SVG");
+
+                                    // Get the height of the SVG
+                                    let svgHeight = parseFloat(
+                                      svgElement.getAttribute("height")
+                                    );
+
+                                    // If no explicit height, derive it from viewBox
+                                    if (isNaN(svgHeight)) {
+                                      const viewBox =
+                                        svgElement.getAttribute("viewBox");
+                                      if (viewBox) {
+                                        const [, , , viewBoxHeight] = viewBox
+                                          .split(" ")
+                                          .map(Number);
+                                        svgHeight = viewBoxHeight;
+                                      } else {
+                                        throw new Error(
+                                          "No height or viewBox found in SVG"
+                                        );
+                                      }
+                                    }
+
+                                    // Calculate scale_value to make the SVG 30% of canvas height
+                                    return (canvasHeight * 0.3) / svgHeight;
+                                  } catch (error) {
+                                    console.error(
+                                      "Error calculating scale_value:",
+                                      error.message
+                                    );
+                                    return 0.5; // Default scale value if an error occurs
+                                  }
+                                };
+
+                                // Assume canvasHeight is known or fetched dynamically
+
+                                // Calculate the scale_value
+                                const scaleValue = calculateScaleValue(
+                                  image.svg,
+                                  height
+                                );
+
+                                // Add the additional properties to the image object
+                                const modifiedImage = {
+                                  x: 100,
+                                  y: 100,
+                                  variableName: "Image",
+                                  webformatURL: image.svg,
+                                  name: null,
+                                  hiden: false,
+                                  type: "Svg",
+                                  makeButton: false,
+                                  scale_value: scaleValue,
+                                  id: Date.now(),
+                                };
+                                // Pass the modified image object to onAddElement
+                                onAddElement("Image", modifiedImage);
+                              }}
+                            >
+                              <div
+                                style={{ width: "70px", margin: "auto" }}
+                                dangerouslySetInnerHTML={{
+                                  __html: setSvgSize(image.svg, "70", "70"), // Set width and height dynamically
+                                }}
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Label */}
+
+                    <div className="flex justify-between items-center mt-6 mb-2">
+                      <h1 className="text-md font-semibold text-gray-700">
+                        Shapes
+                      </h1>
+                      <button
+                        onClick={() => {
+                          setShapesData([]);
+                          setSearchTerm("");
+                          setShapesLoading(false);
+                          setShapesHasMore(true);
+                          fetchShapes("", 0);
+                          toggleCategory("Shapes");
+                        }}
+                        className="text-xs text-gray-600 hover:text-gray-400"
+                      >
+                        See All..
+                      </button>
+                    </div>
+                    <div className="flex flex-col h-full">
+                      {/* Image display with horizontal scroll */}
+                      <div className="h-full w-[350px]">
+                        <div className="flex h-[100px] space-x-2 overflow-x-auto">
+                          {ShapesData.map((image, index) => (
+                            <button
+                              key={index}
+                              className="border p-1 m-auto"
+                              onClick={() => {
+                                // Function to calculate scale_value
+                                const calculateScaleValue = (
+                                  svgString,
+                                  canvasHeight
+                                ) => {
+                                  try {
+                                    // Parse the SVG string
+                                    const parser = new DOMParser();
+                                    const svgDoc = parser.parseFromString(
+                                      svgString,
+                                      "image/svg+xml"
+                                    );
+                                    const svgElement =
+                                      svgDoc.querySelector("svg");
+
+                                    if (!svgElement)
+                                      throw new Error("Invalid SVG");
+
+                                    // Get the height of the SVG
+                                    let svgHeight = parseFloat(
+                                      svgElement.getAttribute("height")
+                                    );
+
+                                    // If no explicit height, derive it from viewBox
+                                    if (isNaN(svgHeight)) {
+                                      const viewBox =
+                                        svgElement.getAttribute("viewBox");
+                                      if (viewBox) {
+                                        const [, , , viewBoxHeight] = viewBox
+                                          .split(" ")
+                                          .map(Number);
+                                        svgHeight = viewBoxHeight;
+                                      } else {
+                                        throw new Error(
+                                          "No height or viewBox found in SVG"
+                                        );
+                                      }
+                                    }
+
+                                    // Calculate scale_value to make the SVG 30% of canvas height
+                                    return (canvasHeight * 0.3) / svgHeight;
+                                  } catch (error) {
+                                    console.error(
+                                      "Error calculating scale_value:",
+                                      error.message
+                                    );
+                                    return 0.5; // Default scale value if an error occurs
+                                  }
+                                };
+
+                                // Assume canvasHeight is known or fetched dynamically
+
+                                // Calculate the scale_value
+                                const scaleValue = calculateScaleValue(
+                                  image.svg,
+                                  height
+                                );
+
+                                // Add the additional properties to the image object
+                                const modifiedImage = {
+                                  x: 100,
+                                  y: 100,
+                                  variableName: "Image",
+                                  webformatURL: image.svg,
+                                  name: null,
+                                  hiden: false,
+                                  type: "Svg",
+                                  scale_value: scaleValue, // Use the calculated scale_value
+                                  id: Date.now(),
+                                };
+
+                                // Pass the modified image object to onAddElement
+                                onAddElement("Image", modifiedImage);
+                              }}
+                            >
+                              <div
+                                style={{ width: "70px", margin: "auto" }}
+                                dangerouslySetInnerHTML={{
+                                  __html: setSvgSize(image.svg, "70", "70"), // Set width and height dynamically
+                                }}
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             )}

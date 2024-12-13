@@ -4,6 +4,7 @@ import FabricButton from "../classes/button";
 import FabricText from "../classes/text";
 import ButtonImage from "../classes/imageButton";
 import FabricInputField from "../classes/inputField";
+import ButtonSvg from "../classes/buttonSvg";
 import svg from "../assets/categories/image-pen.svg";
 
 const CanvasArea = ({
@@ -617,32 +618,24 @@ const CanvasArea = ({
           element.text, // Default text
           element.textColor || "#000000", // Default text color
           element.fontFamily || "Arial", // Default font
-          element.fontSize || 16 // Default font size
+          element.fontSize || 16, // Default font size
+          !element.fromImage ? false : element.fromImage
         ).getFabricElementAsync();
 
-      case "Line":
-        return new fabric.Line(
-          [element.x1, element.y1, element.x2, element.y2],
-          {
-            stroke: element.Color, // Stroke color
-            strokeWidth: element.strokeWidth, // Line width
-          }
-        );
-      case "Circle":
-        return new fabric.Circle({
-          left: element.x, // X coordinate
-          top: element.y, // Y coordinate
-          radius: element.radius, // Radius of the circle
-          fill: element.Color, // Fill color
-        });
-      case "Rect":
-        return new fabric.Rect({
-          left: element.x, // X coordinate
-          top: element.y, // Y coordinate
-          fill: element.Color, // Fill color
-          width: element.width, // Width of the rectangle
-          height: element.height, // Height of the rectangle
-        });
+      case "ButtonSvg":
+        return new ButtonSvg(
+          canvasObj,
+          element.x,
+          element.y,
+          element.idleImage,
+          element.hoverImage,
+          element.clickedImage,
+          element.scale,
+          element.text, // Default text
+          element.textColor || "#000000", // Default text color
+          element.fontFamily || "Arial", // Default font
+          element.fontSize || 16 // Default font size
+        ).getFabricElementAsync();
 
       default:
         return null;

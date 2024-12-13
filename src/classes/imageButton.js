@@ -1,9 +1,17 @@
 class ButtonImage {
   constructor(
-    canvas, x, y, 
-    idleImage, hoverImage, clickedImage, 
-    scale = 1.0, 
-    text = "", textColor = "#000000", textFont = "Roboto", textSize = 14
+    canvas,
+    x,
+    y,
+    idleImage,
+    hoverImage,
+    clickedImage,
+    scale = 1.0,
+    text = "",
+    textColor = "#000000",
+    textFont = "Roboto",
+    textSize = 14,
+    fromImage = false
   ) {
     this.canvas = canvas;
     this.x = x;
@@ -14,6 +22,7 @@ class ButtonImage {
     this.hoverImage = hoverImage;
     this.clickedImage = clickedImage;
 
+    this.fromImage = fromImage,
     this.state = "idle"; // Start in idle state
 
     // Text properties
@@ -47,23 +56,32 @@ class ButtonImage {
   // Function to load and scale images
   loadImages() {
     return new Promise((resolve, reject) => {
-      fabric.Image.fromURL(this.idleImage, (idleImg) => {
-        fabric.Image.fromURL(this.hoverImage, (hoverImg) => {
-          fabric.Image.fromURL(this.clickedImage, (clickedImg) => {
-            this.idleImage = this.normalizeImage(idleImg, 150, 150);
-            this.hoverImage = this.normalizeImage(hoverImg, 150, 150);
-            this.clickedImage = this.normalizeImage(clickedImg, 150, 150);
+      fabric.Image.fromURL(
+        this.idleImage,
+        (idleImg) => {
+          fabric.Image.fromURL(this.hoverImage, (hoverImg) => {
+            fabric.Image.fromURL(this.clickedImage, (clickedImg) => {
+              this.idleImage = this.normalizeImage(idleImg, 150, 150);
+              this.hoverImage = this.normalizeImage(hoverImg, 150, 150);
+              this.clickedImage = this.normalizeImage(clickedImg, 150, 150);
 
-            // Group images and text
-            this.imageGroup = new fabric.Group(
-              [this.idleImage, this.hoverImage, this.clickedImage, this.textElement],
-              { left: this.x, top: this.y, selectable: true, evented: true }
-            );
+              // Group images and text
+              this.imageGroup = new fabric.Group(
+                [
+                  this.idleImage,
+                  this.hoverImage,
+                  this.clickedImage,
+                  this.textElement,
+                ],
+                { left: this.x, top: this.y, selectable: true, evented: true }
+              );
 
-            resolve(); // Resolve when images are loaded
+              resolve(); // Resolve when images are loaded
+            });
           });
-        });
-      }, { crossOrigin: "anonymous" });
+        },
+        { crossOrigin: "anonymous" }
+      );
     });
   }
 
@@ -129,22 +147,20 @@ class ButtonImage {
   }
 
   isWithinBounds(mouseX, mouseY) {
-    return (
-      mouseX >= this.imageGroup.left &&
+    return mouseX >= this.imageGroup.left &&
       mouseX <= this.imageGroup.left + 70 * this.scale &&
-      mouseY >= this.imageGroup.top &&
-      mouseY <= this.imageGroup.top + 70 * this.scale
-    );
+        mouseY >= this.imageGroup.top &&
+        mouseY <= this.imageGroup.top + 70 * this.scale;
   }
 
   updateState() {
     if (this.state === "clicked") {
       this.idleImage.set({ opacity: 0 });
       this.hoverImage.set({ opacity: 0 });
-      this.clickedImage.set({ opacity: 1 });
+      this.clickedImage.set({ opacity: this.fromImage === true ? 0.5 : 1 });
     } else if (this.state === "hover") {
       this.idleImage.set({ opacity: 0 });
-      this.hoverImage.set({ opacity: 1 });
+      this.hoverImage.set({ opacity: this.fromImage === true ? 0.7 : 1 });
       this.clickedImage.set({ opacity: 0 });
     } else {
       this.idleImage.set({ opacity: 1 });
