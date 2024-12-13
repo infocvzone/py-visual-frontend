@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios"; // Add Axios for API requests
 import { API_KEY } from "../constant";
 import deleteImage from "../assets/delete.png";
+import upSvg from "../assets/up.svg";
+import downSvg from "../assets/down.svg";
 
 const ElementEditor = ({ selectedElement, elements, setElements }) => {
   const [editedElement, setEditedElement] = useState(null);
@@ -657,6 +659,49 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
+
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Layers</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "zIndex",
+                        value: (editedElement.zIndex || 1) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                <img src={downSvg} className="w-3"/>
+                </button>
+                <input
+                  type="text"
+                  name="zIndex"
+                  value={editedElement.zIndex || 1}
+                  onChange={handleChange}
+                  className="text-center h-[27px] w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "zIndex",
+                        value: (editedElement.zIndex || 1) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                <img src={upSvg} className="w-3"/>
+                </button>
+              </div>
+            </div>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
           </div>
         );
       case "InputField":
@@ -934,6 +979,48 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               </div>
             </div>
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Layers</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "zIndex",
+                        value: (editedElement.zIndex || 1) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                <img src={downSvg} className="w-3"/>
+                </button>
+                <input
+                  type="text"
+                  name="zIndex"
+                  value={editedElement.zIndex || 1}
+                  onChange={handleChange}
+                  className="text-center h-[27px] w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "zIndex",
+                        value: (editedElement.zIndex || 1) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                <img src={upSvg} className="w-3"/>
+                </button>
+              </div>
+            </div>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
           </div>
         );
       case "Text":
@@ -1081,6 +1168,48 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 className="h-5 w-5 border rounded"
               />
             </div>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Layers</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "zIndex",
+                        value: (editedElement.zIndex || 1) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                <img src={downSvg} className="w-3"/>
+                </button>
+                <input
+                  type="text"
+                  name="zIndex"
+                  value={editedElement.zIndex || 1}
+                  onChange={handleChange}
+                  className="text-center h-[27px] w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "zIndex",
+                        value: (editedElement.zIndex || 1) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                <img src={upSvg} className="w-3"/>
+                </button>
+              </div>
+            </div>
+
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
           </div>
         );
@@ -1233,6 +1362,48 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               />
             </div>
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Layers</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "zIndex",
+                        value: (editedElement.zIndex || 1) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                <img src={downSvg} className="w-3"/>
+                </button>
+                <input
+                  type="text"
+                  name="zIndex"
+                  value={editedElement.zIndex || 1}
+                  onChange={handleChange}
+                  className="text-center h-[27px] w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "zIndex",
+                        value: (editedElement.zIndex || 1) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                <img src={upSvg} className="w-3"/>
+                </button>
+              </div>
+            </div>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
             {/* Other SVG properties */}
           </div>
         );
@@ -1324,6 +1495,48 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 className="p-2 w-5 h-5 border rounded"
               />
             </div>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Layers</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "zIndex",
+                        value: (editedElement.zIndex || 1) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                <img src={downSvg} className="w-3"/>
+                </button>
+                <input
+                  type="text"
+                  name="zIndex"
+                  value={editedElement.zIndex || 1}
+                  onChange={handleChange}
+                  className="text-center h-[27px] w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "zIndex",
+                        value: (editedElement.zIndex || 1) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                <img src={upSvg} className="w-3"/>
+                </button>
+              </div>
+            </div>
+
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
           </div>
         );
@@ -1504,6 +1717,48 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             ))}
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Layers</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "zIndex",
+                        value: (editedElement.zIndex || 1) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                <img src={downSvg} className="w-3"/>
+                </button>
+                <input
+                  type="text"
+                  name="zIndex"
+                  value={editedElement.zIndex || 1}
+                  onChange={handleChange}
+                  className="text-center h-[27px] w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "zIndex",
+                        value: (editedElement.zIndex || 1) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                <img src={upSvg} className="w-3"/>
+                </button>
+              </div>
+            </div>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
           </div>
         );
 
@@ -1634,6 +1889,48 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 className="color"
               />
             </div>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Layers</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "zIndex",
+                        value: (editedElement.zIndex || 1) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                <img src={downSvg} className="w-3"/>
+                </button>
+                <input
+                  type="text"
+                  name="zIndex"
+                  value={editedElement.zIndex || 1}
+                  onChange={handleChange}
+                  className="text-center h-[27px] w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "zIndex",
+                        value: (editedElement.zIndex || 1) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                <img src={upSvg} className="w-3"/>
+                </button>
+              </div>
+            </div>
+
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
           </div>
         );

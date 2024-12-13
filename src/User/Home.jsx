@@ -40,7 +40,7 @@ const Home = () => {
   // Function to add a new element
   const handleAddElement = (type, element) => {
     // Update the element's id to the current timestamp
-    const updatedElement = { ...element, id: Date.now(), lock: false };
+    const updatedElement = { ...element, id: Date.now(), lock: false, zIndex: 1 };
 
     // Set the updated element and position
     setElements((prev) => [...prev, updatedElement]);

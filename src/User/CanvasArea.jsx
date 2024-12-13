@@ -126,7 +126,15 @@ const CanvasArea = ({
         );
         canvasObj.clear();
         const keys = Object.keys(positions);
-        elements.forEach(async (element) => {
+
+        // Sort elements by their zIndex property (default to 1 if not defined)
+        const sortedElements = [...elements].sort(
+          (a, b) => (a.zIndex || 1) - (b.zIndex || 1)
+        );
+
+        console.log(sortedElements);
+
+        sortedElements.forEach(async (element) => {
           for (let i = 0; i < keys.length; i++) {
             if (keys[i].toString() === element.id.toString()) {
               const key = keys[i];
@@ -138,7 +146,7 @@ const CanvasArea = ({
           }
           try {
             const fabricElement = await createFabricElement(element);
-            console.log(element);
+           // console.log(element);
             if (fabricElement) {
               canvasObj.add(fabricElement);
               setTracking(false);
