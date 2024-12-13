@@ -384,7 +384,7 @@ const Sidebar = ({
       setPage(1);
       if (activeCategory === "Image") {
         fetchImages(searchTerm, 1);
-      } else if (activeCategory === "background") {
+      } else if (activeCategory === "Window") {
         fetchBackgroundImages(searchTerm, 1);
       } else if (activeCategory === "graphics") {
         fetchGraphics(searchTerm, 1);
@@ -565,7 +565,10 @@ const Sidebar = ({
           <div className="flex items-center justify-center">
             <button
               className="flex items-center justify-center flex-col"
-              onClick={() => toggleCategory("Window")}
+              onClick={() => {
+                fetchBackgroundImages("backgrounds", 1);
+                toggleCategory("Window");
+              }}
             >
               <img
                 src={WindowSvg}
@@ -578,6 +581,44 @@ const Sidebar = ({
               />
               <h1 className="text-[10px] mt-[14px] text-center text-black">
                 Window
+              </h1>
+            </button>
+          </div>
+
+          {/* buttonImage Button */}
+          <div className="flex items-center">
+            <button
+              className="flex items-center justify-center flex-col"
+              onClick={() => {
+                toggleCategory("element");
+                fetchImages("photos", 1);
+
+                fetchgraphicsData();
+
+                setIconsData([]);
+                setSearchTerm("");
+                setIconsLoading(false);
+                setIconsHasMore(true);
+                fetchIcons("", 0);
+
+                setShapesData([]);
+                setSearchTerm("");
+                setShapesLoading(false);
+                setShapesHasMore(true);
+                fetchShapes("", 0);
+              }}
+            >
+              <img
+                src={ImageSvg}
+                alt="Image"
+                className={`w-6 h-6 ${
+                  activeCategory === "Image"
+                    ? "border-blue-400"
+                    : "border-black"
+                }`}
+              />
+              <h1 className="text-[10px] mt-[14px] text-center text-black">
+                Graphics
               </h1>
             </button>
           </div>
@@ -642,7 +683,7 @@ const Sidebar = ({
             </button>
           </div>
 
-          {/* buttonImage Button */}
+          {/* buttonImage Button 
           <div className="flex items-center">
             <button
               className="flex items-center justify-center flex-col"
@@ -664,44 +705,7 @@ const Sidebar = ({
                 Background
               </h1>
             </button>
-          </div>
-          {/* buttonImage Button */}
-          <div className="flex items-center">
-            <button
-              className="flex items-center justify-center flex-col"
-              onClick={() => {
-                toggleCategory("element");
-                fetchImages("photos", 1);
-
-                fetchgraphicsData();
-
-                setIconsData([]);
-                setSearchTerm("");
-                setIconsLoading(false);
-                setIconsHasMore(true);
-                fetchIcons("", 0);
-
-                setShapesData([]);
-                setSearchTerm("");
-                setShapesLoading(false);
-                setShapesHasMore(true);
-                fetchShapes("", 0);
-              }}
-            >
-              <img
-                src={ImageSvg}
-                alt="Image"
-                className={`w-6 h-6 ${
-                  activeCategory === "Image"
-                    ? "border-blue-400"
-                    : "border-black"
-                }`}
-              />
-              <h1 className="text-[10px] mt-[14px] text-center text-black">
-                Graphics
-              </h1>
-            </button>
-          </div>
+          </div>*/}
 
           {/* buttonImage Button 
           <div className="flex items-center">
@@ -856,58 +860,118 @@ const Sidebar = ({
             )}
 
             {activeCategory === "Window" && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6 bg-gray-800 rounded-lg shadow-xl">
-                {/* Width Input */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-white">
-                    Width
-                  </label>
-                  <input
-                    type="text"
-                    value={width}
-                    onChange={(e) => setWidth(Number(e.target.value))}
-                    className="w-full sm:w-[100px] h-[40px] px-4 text-sm text-gray-800 placeholder-gray-500 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                    placeholder="Enter width"
-                  />
+              <>
+                <div className="bg-gray-800 rounded-lg p-2">
+                  <div className="flex w-full space-x-2 justify-between">
+                    {/* Width Input */}
+                    <div className="flex flex-col gap-2 items-center justify-center">
+                      <label className="text-sm font-medium text-white">
+                        Width
+                      </label>
+                      <input
+                        type="text"
+                        value={width}
+                        onChange={(e) => setWidth(Number(e.target.value))}
+                        className="w-[80px] h-[30px] px-2 text-sm text-gray-800 placeholder-gray-500 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                        placeholder="Enter width"
+                      />
+                    </div>
+
+                    {/* Height Input */}
+                    <div className="flex flex-col gap-2 items-center justify-center">
+                      <label className="text-sm font-medium text-white">
+                        Height
+                      </label>
+                      <input
+                        type="text"
+                        value={height}
+                        onChange={(e) => setHeight(Number(e.target.value))}
+                        className="w-[80px] h-[30px] px-2 text-sm text-gray-800 placeholder-gray-500 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                        placeholder="Enter height"
+                      />
+                    </div>
+
+                    {/* Background Color Picker */}
+                    <div className="flex flex-col gap-2 items-center justify-center">
+                      <label className="text-sm font-medium text-white">
+                        Background
+                      </label>
+                      <input
+                        type="color"
+                        value={color}
+                        onChange={(e) => setColor(e.target.value)}
+                        className="color w-[40px]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Set Button */}
+                  <div className="flex justify-center sm:col-span-2 mt-4">
+                    <button
+                      className="w-full h-[40px] px-6 text-sm bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-lg transition-all transform hover:scale-105"
+                      onClick={handleWindowSizeChange}
+                    >
+                      Set
+                    </button>
+                  </div>
                 </div>
 
-                {/* Height Input */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-white">
-                    Height
-                  </label>
-                  <input
-                    type="text"
-                    value={height}
-                    onChange={(e) => setHeight(Number(e.target.value))}
-                    className="w-full sm:w-[100px] h-[40px] px-4 text-sm text-gray-800 placeholder-gray-500 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                    placeholder="Enter height"
-                  />
-                </div>
-
-                {/* Background Color Picker */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-white">
-                    Background
-                  </label>
-                  <input
-                    type="color"
-                    value={color}
-                    onChange={(e) => setColor(e.target.value)}
-                    className="w-[40px] h-[40px] border-2 border-gray-300 rounded-full cursor-pointer focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
-
-                {/* Set Button */}
-                <div className="flex justify-center sm:col-span-2 mt-4">
-                  <button
-                    className="w-full sm:w-auto h-[40px] px-6 text-sm bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-lg transition-all transform hover:scale-105"
-                    onClick={handleWindowSizeChange}
+                <div>
+                  {/* Search input and button */}
+                  <div className="mb-4 flex justify-center w-full relative">
+                    <input
+                      type="text"
+                      placeholder="Search for images..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleSearch();
+                        }
+                      }}
+                      className="border border-gray-300 text-sm w-full p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-xs pr-12"
+                    />
+                    <button
+                      onClick={handleSearch}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 focus:outline-none"
+                    >
+                      <img
+                        src={GraphicsSvg}
+                        alt="Search Icon"
+                        className="w-5 h-5"
+                      />
+                    </button>
+                  </div>
+                  <div
+                    id="bgimage-container"
+                    className="grid grid-cols-2 gap-[5px] h-screen overflow-auto"
                   >
-                    Set
-                  </button>
+                    <button
+                      className=""
+                      onClick={() => handleImageChange(null)}
+                    >
+                      <img
+                        src="https://img.freepik.com/free-photo/white-png-base_23-2151645368.jpg?size=626&ext=jpg&ga=GA1.1.1880011253.1728950400&semt=ais_hybrid-rr-similar"
+                        alt="null"
+                        className="w-[120px] border m-auto"
+                      />
+                    </button>
+                    {ImageData.map((image, index) => (
+                      <button
+                        key={index}
+                        className=""
+                        onClick={() => handleImageChange(image.webformatURL)}
+                      >
+                        <img
+                          src={image.previewURL}
+                          alt={image.tags}
+                          className="w-[120px] m-auto"
+                        />
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              </>
             )}
 
             {activeCategory === "Text" && (
@@ -986,10 +1050,7 @@ const Sidebar = ({
                     />
                   </button>
                 </div>
-                <div
-                  id="bgimage-container"
-                  className="grid grid-cols-2 gap-[5px] h-screen overflow-auto"
-                >
+                <div className="grid grid-cols-2 gap-[5px] h-screen overflow-auto">
                   <button className="" onClick={() => handleImageChange(null)}>
                     <img
                       src="https://img.freepik.com/free-photo/white-png-base_23-2151645368.jpg?size=626&ext=jpg&ga=GA1.1.1880011253.1728950400&semt=ais_hybrid-rr-similar"
