@@ -4,21 +4,15 @@ import { API_KEY } from "../constant";
 import deleteImage from "../assets/delete.png";
 import upSvg from "../assets/up.svg";
 import downSvg from "../assets/down.svg";
+import { SketchPicker } from "react-color";
+import ColorComponent from "./colorComponent";
+import SvgColorComponent from "./SvgColorComponent";
 
 const ElementEditor = ({ selectedElement, elements, setElements }) => {
   const [editedElement, setEditedElement] = useState(null);
   const [Fonts, setFont] = useState([]);
   const [colorIndexMap, setColorIndexMap] = useState({});
   const [svgFills, setSvgFills] = useState([]);
-
-  const [idelcolorIndexMap, setIdelColorIndexMap] = useState({});
-  const [idelsvgFills, setIdelSvgFills] = useState([]);
-
-  const [hovercolorIndexMap, setHoverColorIndexMap] = useState({});
-  const [hoversvgFills, setHoverSvgFills] = useState([]);
-
-  const [clickedcolorIndexMap, setClickedColorIndexMap] = useState({});
-  const [clickedsvgFills, setClickedSvgFills] = useState([]);
 
   useEffect(() => {
     const fetchFonts = async () => {
@@ -29,7 +23,6 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
         console.log("error:", error);
       }
     };
-
     fetchFonts();
   }, []); // Added empty dependency array to run only once on mount
 
@@ -39,6 +32,14 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
         families: [fontName],
       },
     });
+  };
+
+  // Update elements list with the modified element
+  const updateElementsList = (updatedElement) => {
+    const updatedElements = elements.map((el) =>
+      el.id === updatedElement.id ? updatedElement : el
+    );
+    setElements(updatedElements);
   };
 
   // Update the local state when the selected element changes
@@ -51,69 +52,11 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       // Extract fill values from SVG string and update state
       if (selectedElement.webformatURL) {
         extractFillValues(selectedElement.webformatURL);
-      } else if (selectedElement.type === "ButtonSvg") {
-        extractIdleSvgFillValues(selectedElement.idleImage);
-        extractHoverSvgFillValues(selectedElement.hoverImage);
-        extractClickedSvgFillValues(selectedElement.clickedImage);
       }
     }
   }, [selectedElement]);
 
-  const extractIdleSvgFillValues = (svgString) => {
-    const regex = /fill="([^"]*)"/g;
-    let matches = [];
-    let match;
-    while ((match = regex.exec(svgString)) !== null) {
-      matches.push(match[1]); // Push fill values to the array
-    }
-    const colorMap = {};
-    matches.forEach((color, index) => {
-      if (!colorMap[color]) {
-        colorMap[color] = [];
-      }
-      colorMap[color].push(index);
-    });
-    const uniqueColors = [...new Set(matches)];
-    setIdelSvgFills(uniqueColors);
-    setIdelColorIndexMap(colorMap);
-  };
-  const extractHoverSvgFillValues = (svgString) => {
-    const regex = /fill="([^"]*)"/g;
-    let matches = [];
-    let match;
-    while ((match = regex.exec(svgString)) !== null) {
-      matches.push(match[1]); // Push fill values to the array
-    }
-    const colorMap = {};
-    matches.forEach((color, index) => {
-      if (!colorMap[color]) {
-        colorMap[color] = [];
-      }
-      colorMap[color].push(index);
-    });
-    const uniqueColors = [...new Set(matches)];
-    setHoverSvgFills(uniqueColors);
-    setHoverColorIndexMap(colorMap);
-  };
-  const extractClickedSvgFillValues = (svgString) => {
-    const regex = /fill="([^"]*)"/g;
-    let matches = [];
-    let match;
-    while ((match = regex.exec(svgString)) !== null) {
-      matches.push(match[1]); // Push fill values to the array
-    }
-    const colorMap = {};
-    matches.forEach((color, index) => {
-      if (!colorMap[color]) {
-        colorMap[color] = [];
-      }
-      colorMap[color].push(index);
-    });
-    const uniqueColors = [...new Set(matches)];
-    setClickedSvgFills(uniqueColors);
-    setClickedColorIndexMap(colorMap);
-  };
-  const extractFillValues = (svgString) => {
+  const extractFillValuesbyMakingButton = async (svgString) => {
     const regex = /fill="([^"]*)"/g; // Regex to find fill attributes
     let matches = [];
     let match;
@@ -135,83 +78,62 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
     // Extract unique colors (to display as input fields)
     const uniqueColors = [...new Set(matches)];
 
+    // Generate the three SVG versions (Idle, Hover, Clicked)
+    const createModifiedSvg = (svg, opacity) => {
+      return svg.replace(/fill="([^"]*)"/g, (match, p1) => {
+        // Modify the fill attribute by adding opacity (with the color)
+        return `fill="rgba(${hexToRgb(p1)}, ${opacity})"`;
+      });
+    };
+
+    // Function to convert hex to rgb
+    const hexToRgb = (hex) => {
+      if (hex.startsWith("#")) {
+        hex = hex.slice(1);
+      }
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      return `${r}, ${g}, ${b}`;
+    };
+
+    // Create the three versions
+    const setIdle = svgString; // The original SVG as Idle
+    const setHover = createModifiedSvg(svgString, 0.75); // Modify the SVG for hover (opacity 0.75)
+    const setClicked = createModifiedSvg(svgString, 0.5); // Modify the SVG for clicked (opacity 0.5)
+
+    return { setIdle, setHover, setClicked };
+  };
+
+  /*----------------------------------------------------------------------------------------*/
+  const extractFillValues = (svgString) => {
+    const regex = /fill="([^"]*)"/g; // Regex to find fill attributes
+    let matches = [];
+    let match;
+
+    // Extract all colors and map them to their indices
+    while ((match = regex.exec(svgString)) !== null) {
+      matches.push(match[1]); // Push fill values to the array
+    }
+    // Create a mapping from color to their indices
+    const colorMap = {};
+    matches.forEach((color, index) => {
+      if (!colorMap[color]) {
+        colorMap[color] = [];
+      }
+      colorMap[color].push(index);
+    });
+
+    // Extract unique colors (to display as input fields)
+    const uniqueColors = [...new Set(matches)];
+
     setSvgFills(uniqueColors); // Update state with unique fill values
     setColorIndexMap(colorMap);
   };
 
   /*---------------------------------------------------------------------------------*/
 
-  const updateIdelSvgFill = (color, newFill) => {
-    if (!editedElement.idleImage) return;
-
-    let svgString = editedElement.idleImage;
-
-    // Get the indexes of the color that needs to be updated
-    const indexesToUpdate = idelcolorIndexMap[color] || [];
-
-    // Replace all occurrences of the selected color
-    let updatedSvgString = svgString.replace(
-      /fill="([^"]*)"/g,
-      (matchStr, currentColor) => {
-        if (indexesToUpdate.length > 0 && currentColor === color) {
-          return `fill="${newFill}"`; // Replace all instances of the selected color
-        }
-        return matchStr; // Keep other fills unchanged
-      }
-    );
-
-    // Update the SVG string in editedElement
-    const updatedElement = {
-      ...editedElement,
-      idleImage: updatedSvgString,
-    };
-    setEditedElement(updatedElement);
-    updateElementsList(updatedElement); // Update elements list
-  };
-
-  const updateHoverSvgFill = (color, newFill) => {
-    if (!editedElement.hoverImage) return;
-    let svgString = editedElement.hoverImage;
-    const indexesToUpdate = hovercolorIndexMap[color] || [];
-    let updatedSvgString = svgString.replace(
-      /fill="([^"]*)"/g,
-      (matchStr, currentColor) => {
-        if (indexesToUpdate.length > 0 && currentColor === color) {
-          return `fill="${newFill}"`;
-        }
-        return matchStr;
-      }
-    );
-    const updatedElement = {
-      ...editedElement,
-      hoverImage: updatedSvgString,
-    };
-    setEditedElement(updatedElement);
-    updateElementsList(updatedElement); // Update elements list
-  };
-
-  const updateClickedSvgFill = (color, newFill) => {
-    if (!editedElement.clickedImage) return;
-    let svgString = editedElement.clickedImage;
-    const indexesToUpdate = clickedcolorIndexMap[color] || [];
-    let updatedSvgString = svgString.replace(
-      /fill="([^"]*)"/g,
-      (matchStr, currentColor) => {
-        if (indexesToUpdate.length > 0 && currentColor === color) {
-          return `fill="${newFill}"`;
-        }
-        return matchStr;
-      }
-    );
-    const updatedElement = {
-      ...editedElement,
-      clickedImage: updatedSvgString,
-    };
-    setEditedElement(updatedElement);
-    updateElementsList(updatedElement); // Update elements list
-  };
-
-  const updateSvgFill = (color, newFill) => {
+  const updateSvgFill = async (color, newFill) => {
     if (!editedElement.webformatURL) return;
 
     let svgString = editedElement.webformatURL;
@@ -220,7 +142,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
     const indexesToUpdate = colorIndexMap[color] || [];
 
     // Replace all occurrences of the selected color
-    let updatedSvgString = svgString.replace(
+    let updatedSvgString = await svgString.replace(
       /fill="([^"]*)"/g,
       (matchStr, currentColor) => {
         if (indexesToUpdate.length > 0 && currentColor === color) {
@@ -230,26 +152,18 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       }
     );
 
-    // Update the SVG string in editedElement
     const updatedElement = {
       ...editedElement,
       webformatURL: updatedSvgString,
     };
     setEditedElement(updatedElement);
     updateElementsList(updatedElement); // Update elements list
+    extractFillValues(updatedElement);
   };
 
   /*---------------------------------------------------------------------------------*/
 
-  // Update elements list with the modified element
-  const updateElementsList = (updatedElement) => {
-    const updatedElements = elements.map((el) =>
-      el.id === updatedElement.id ? updatedElement : el
-    );
-    setElements(updatedElements);
-  };
-
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value } = e.target;
     let updatedValue = value;
     if (name === "fontFamily") {
@@ -276,6 +190,18 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       name === "strokeWidth"
     ) {
       updatedValue = parseFloat(value);
+    }
+
+    if (
+      name === "textColor" ||
+      name === "idleColor" ||
+      name === "hoverColor" ||
+      name === "clickedColor" ||
+      name === "borderColor" ||
+      name === "bgColor" ||
+      name === "color"
+    ) {
+      updatedValue = `rgba(${value.r}, ${value.g}, ${value.b}, ${value.a})`;
     }
 
     if (name === "borderThickness") {
@@ -319,10 +245,13 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       name === "makeButton" &&
       value === true
     ) {
+      let svgs = await extractFillValuesbyMakingButton(
+        editedElement.webformatURL
+      );
       updatedElement = {
-        idleImage: editedElement.webformatURL,
-        hoverImage: editedElement.webformatURL,
-        clickedImage: editedElement.webformatURL,
+        idleImage: svgs.setIdle,
+        hoverImage: svgs.setHover,
+        clickedImage: svgs.setClicked,
         onHover: null,
         onClick: null,
         onRelease: null,
@@ -339,7 +268,6 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       };
     }
 
-    console.log(updatedElement);
     setEditedElement(updatedElement);
     updateElementsList(updatedElement);
   };
@@ -563,12 +491,10 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
 
             <div className="flex flex-col items-center justify-center">
               <label className="block text-xs text-transparent">Text</label>
-              <input
-                type="color"
-                name="textColor"
-                value={editedElement.textColor || "#00000"}
-                onChange={handleChange}
-                className="color"
+              <ColorComponent
+                Name="textColor"
+                elementColor={editedElement.textColor}
+                Function={handleChange}
               />
             </div>
 
@@ -576,32 +502,26 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
 
             <div className="flex flex-col items-center justify-center">
               <label className="block text-xs">Colors</label>
-              <input
-                type="color"
-                name="idleColor"
-                value={editedElement.idleColor || "#00000"}
-                onChange={handleChange}
-                className="color"
+              <ColorComponent
+                Name="idleColor"
+                elementColor={editedElement.idleColor}
+                Function={handleChange}
               />
             </div>
             <div className="flex flex-col items-center justify-center">
               <label className="block text-xs text-transparent">Hover</label>
-              <input
-                type="color"
-                name="hoverColor"
-                value={editedElement.hoverColor || "#00000"}
-                onChange={handleChange}
-                className="color"
+              <ColorComponent
+                Name="hoverColor"
+                elementColor={editedElement.hoverColor}
+                Function={handleChange}
               />
             </div>
             <div className="flex flex-col items-center justify-center">
               <label className="block text-xs text-transparent">Clicked</label>
-              <input
-                type="color"
-                name="clickedColor"
-                value={editedElement.clickedColor || "#00000"}
-                onChange={handleChange}
-                className="color"
+              <ColorComponent
+                Name="clickedColor"
+                elementColor={editedElement.clickedColor}
+                Function={handleChange}
               />
             </div>
 
@@ -609,12 +529,10 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
 
             <div className="flex flex-col items-center justify-center">
               <label className="block text-xs">Border</label>
-              <input
-                type="color"
-                name="borderColor"
-                value={editedElement.borderColor || "#00000"}
-                onChange={handleChange}
-                className="color"
+              <ColorComponent
+                Name="borderColor"
+                elementColor={editedElement.borderColor}
+                Function={handleChange}
               />
             </div>
             <div className="flex flex-col justify-center">
@@ -675,7 +593,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   }
                   className="bg-transparent text-lg"
                 >
-                <img src={downSvg} className="w-3"/>
+                  <img src={downSvg} className="w-3" />
                 </button>
                 <input
                   type="text"
@@ -696,7 +614,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   }
                   className="bg-bg-transparent text-md"
                 >
-                <img src={upSvg} className="w-3"/>
+                  <img src={upSvg} className="w-3" />
                 </button>
               </div>
             </div>
@@ -844,12 +762,10 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             {/* Background Color */}
             <div className="flex flex-col justify-center">
               <label className="block text-xs text-transparent">Color</label>
-              <input
-                type="color"
-                name="bgColor"
-                value={editedElement.bgColor || "#ffffff"}
-                onChange={handleChange}
-                className="color"
+              <ColorComponent
+                Name="bgColor"
+                elementColor={editedElement.bgColor}
+                Function={handleChange}
               />
             </div>
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
@@ -917,12 +833,10 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             {/* Text Color */}
             <div className="flex flex-col justify-center">
               <label className="block text-xs text-transparent">Color</label>
-              <input
-                type="color"
-                name="textColor"
-                value={editedElement.textColor || "#323232"}
-                onChange={handleChange}
-                className="color"
+              <ColorComponent
+                Name="textColor"
+                elementColor={editedElement.textColor}
+                Function={handleChange}
               />
             </div>
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
@@ -930,12 +844,10 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             {/* Border Color */}
             <div className="flex flex-col justify-center">
               <label className="block text-xs ">Border</label>
-              <input
-                type="color"
-                name="borderColor"
-                value={editedElement.borderColor || "#c8c8c8"}
-                onChange={handleChange}
-                className="color"
+              <ColorComponent
+                Name="borderColor"
+                elementColor={editedElement.borderColor}
+                Function={handleChange}
               />
             </div>
             <div className="flex flex-col justify-center">
@@ -994,7 +906,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   }
                   className="bg-transparent text-lg"
                 >
-                <img src={downSvg} className="w-3"/>
+                  <img src={downSvg} className="w-3" />
                 </button>
                 <input
                   type="text"
@@ -1015,7 +927,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   }
                   className="bg-bg-transparent text-md"
                 >
-                <img src={upSvg} className="w-3"/>
+                  <img src={upSvg} className="w-3" />
                 </button>
               </div>
             </div>
@@ -1097,12 +1009,10 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
             <div className="flex flex-col justify-center">
               <label className="block text-xs text-transparent">Color</label>
-              <input
-                type="color"
-                name="color"
-                value={editedElement.color || ""}
-                onChange={handleChange}
-                className="color"
+              <ColorComponent
+                Name="color"
+                elementColor={editedElement.color}
+                Function={handleChange}
               />
             </div>
 
@@ -1184,7 +1094,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   }
                   className="bg-transparent text-lg"
                 >
-                <img src={downSvg} className="w-3"/>
+                  <img src={downSvg} className="w-3" />
                 </button>
                 <input
                   type="text"
@@ -1205,7 +1115,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   }
                   className="bg-bg-transparent text-md"
                 >
-                <img src={upSvg} className="w-3"/>
+                  <img src={upSvg} className="w-3" />
                 </button>
               </div>
             </div>
@@ -1320,6 +1230,12 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               <div key={index} className="flex flex-col">
                 <label className="block text-xs text-transparent">Scale</label>
                 {/* <label className="block">{`Fill ${index + 1}`}</label> */}
+
+                <SvgColorComponent
+                  elementColor={color}
+                  Function={updateSvgFill}
+                />
+
                 <input
                   type="color"
                   value={color}
@@ -1377,7 +1293,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   }
                   className="bg-transparent text-lg"
                 >
-                <img src={downSvg} className="w-3"/>
+                  <img src={downSvg} className="w-3" />
                 </button>
                 <input
                   type="text"
@@ -1398,7 +1314,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   }
                   className="bg-bg-transparent text-md"
                 >
-                <img src={upSvg} className="w-3"/>
+                  <img src={upSvg} className="w-3" />
                 </button>
               </div>
             </div>
@@ -1511,7 +1427,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   }
                   className="bg-transparent text-lg"
                 >
-                <img src={downSvg} className="w-3"/>
+                  <img src={downSvg} className="w-3" />
                 </button>
                 <input
                   type="text"
@@ -1532,7 +1448,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   }
                   className="bg-bg-transparent text-md"
                 >
-                <img src={upSvg} className="w-3"/>
+                  <img src={upSvg} className="w-3" />
                 </button>
               </div>
             </div>
@@ -1660,63 +1576,14 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
 
             <div className="flex flex-col items-center justify-center">
               <label className="block text-xs text-transparent">Text</label>
-              <input
-                type="color"
-                name="textColor"
-                value={editedElement.textColor || "#00000"}
-                onChange={handleChange}
-                className="color"
+              <ColorComponent
+                Name="textColor"
+                elementColor={editedElement.textColor}
+                Function={handleChange}
               />
             </div>
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
-            {/* Loop through all the fill values and display them as color pickers */}
-            {idelsvgFills.map((color, index) => (
-              <div key={index} className="flex flex-col">
-                <label className="block text-xs text-transparent">Idle</label>
-                {/* <label className="block">{`Fill ${index + 1}`}</label> */}
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(e) => updateIdelSvgFill(color, e.target.value)}
-                  className="color"
-                />
-              </div>
-            ))}
 
-            <div className="h-[40px] my-auto border-l border-gray-300"></div>
-            {/* Loop through all the fill values and display them as color pickers */}
-            {hoversvgFills.map((color, index) => (
-              <div key={index} className="flex flex-col">
-                <label className="block text-xs text-transparent">Hover</label>
-                {/* <label className="block">{`Fill ${index + 1}`}</label> */}
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(e) => updateHoverSvgFill(color, e.target.value)}
-                  className="color"
-                />
-              </div>
-            ))}
-
-            <div className="h-[40px] my-auto border-l border-gray-300"></div>
-
-            {/* Loop through all the fill values and display them as color pickers */}
-            {clickedsvgFills.map((color, index) => (
-              <div key={index} className="flex flex-col">
-                <label className="block text-xs text-transparent">
-                  Clicked
-                </label>
-                {/* <label className="block">{`Fill ${index + 1}`}</label> */}
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(e) => updateClickedSvgFill(color, e.target.value)}
-                  className="color"
-                />
-              </div>
-            ))}
-
-            <div className="h-[40px] my-auto border-l border-gray-300"></div>
             <div className="flex flex-col justify-center">
               <label className="block text-xs">Layers</label>
               <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
@@ -1732,7 +1599,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   }
                   className="bg-transparent text-lg"
                 >
-                <img src={downSvg} className="w-3"/>
+                  <img src={downSvg} className="w-3" />
                 </button>
                 <input
                   type="text"
@@ -1753,7 +1620,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   }
                   className="bg-bg-transparent text-md"
                 >
-                <img src={upSvg} className="w-3"/>
+                  <img src={upSvg} className="w-3" />
                 </button>
               </div>
             </div>
@@ -1881,12 +1748,10 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
 
             <div className="flex flex-col items-center justify-center">
               <label className="block text-xs text-transparent">Text</label>
-              <input
-                type="color"
-                name="textColor"
-                value={editedElement.textColor || "#00000"}
-                onChange={handleChange}
-                className="color"
+              <ColorComponent
+                Name="textColor"
+                elementColor={editedElement.textColor}
+                Function={handleChange}
               />
             </div>
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
@@ -1905,7 +1770,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   }
                   className="bg-transparent text-lg"
                 >
-                <img src={downSvg} className="w-3"/>
+                  <img src={downSvg} className="w-3" />
                 </button>
                 <input
                   type="text"
@@ -1926,7 +1791,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   }
                   className="bg-bg-transparent text-md"
                 >
-                <img src={upSvg} className="w-3"/>
+                  <img src={upSvg} className="w-3" />
                 </button>
               </div>
             </div>

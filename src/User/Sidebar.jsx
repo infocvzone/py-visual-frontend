@@ -154,7 +154,7 @@ const Sidebar = ({
             tag: newSearchTerm, // search tag
           },
         });
-        console.log(response.data.data);
+        
         const newShapes = response.data.data;
         const pagination = response.data.pagination;
         if (nextPage === 0) {
@@ -391,12 +391,19 @@ const Sidebar = ({
       } else if (activeCategory === "Shapes") {
         fetchShapes(searchTerm);
       } else if (activeCategory === "Icons") {
-        fetchIcons(searchTerm);
+        setIconsData([]);
+        setIconsPage(0);
+        fetchIcons(searchTerm,);
+
       } else if (activeCategory === "element") {
         fetchImages(searchTerm, 1);
         fetchGraphics(searchTerm, 1);
         fetchShapes(searchTerm);
+
+        setIconsData([]);
+        setIconsPage(0);
         fetchIcons(searchTerm);
+        
       }
     }
   };
@@ -1610,7 +1617,7 @@ const Sidebar = ({
                       <div className="h-full w-[350px]">
                         <div className="flex h-[120px] space-x-2 overflow-x-auto">
                           {ImagesData.map((image, index) => (
-                            <div>
+                            <div key={index}>
                               <button
                                 className="w-[120px]"
                                 key={index}
@@ -1664,9 +1671,8 @@ const Sidebar = ({
                       <div className="h-full w-[350px]">
                         <div className="flex space-x-2 overflow-x-auto">
                           {GraphicsData.map((image, index) => (
-                            <div>
+                            <div key={index}>
                               <button
-                                key={index}
                                 className="border p-1 items-center justify-center w-[120px]"
                                 onClick={() => {
                                   let scaleValue = 0.3;
@@ -1840,6 +1846,8 @@ const Sidebar = ({
                                         );
                                       }
                                     }
+
+                                    console.log(svgHeight);
 
                                     // Calculate scale_value to make the SVG 30% of canvas height
                                     return (canvasHeight * 0.3) / svgHeight;

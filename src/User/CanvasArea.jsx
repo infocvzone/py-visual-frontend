@@ -146,7 +146,7 @@ const CanvasArea = ({
           }
           try {
             const fabricElement = await createFabricElement(element);
-           // console.log(element);
+            // console.log(element);
             if (fabricElement) {
               canvasObj.add(fabricElement);
               setTracking(false);
