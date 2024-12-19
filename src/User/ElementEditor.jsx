@@ -7,12 +7,23 @@ import downSvg from "../assets/down.svg";
 import { SketchPicker } from "react-color";
 import ColorComponent from "./colorComponent";
 import SvgColorComponent from "./SvgColorComponent";
+import closeSvg from "../assets/close.svg";
 
 const ElementEditor = ({ selectedElement, elements, setElements }) => {
   const [editedElement, setEditedElement] = useState(null);
   const [Fonts, setFont] = useState([]);
   const [colorIndexMap, setColorIndexMap] = useState({});
   const [svgFills, setSvgFills] = useState([]);
+  const [open, setOpen] = useState(false);
+
+  const [openPickers, setOpenPickers] = useState({}); // State to track open pickers
+
+  const togglePicker = (index) => {
+    setOpenPickers((prev) => ({
+      ...prev,
+      [index]: !prev[index], // Toggle the specific picker's open state
+    }));
+  };
 
   useEffect(() => {
     const fetchFonts = async () => {
@@ -78,14 +89,6 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
     // Extract unique colors (to display as input fields)
     const uniqueColors = [...new Set(matches)];
 
-    // Generate the three SVG versions (Idle, Hover, Clicked)
-    const createModifiedSvg = (svg, opacity) => {
-      return svg.replace(/fill="([^"]*)"/g, (match, p1) => {
-        // Modify the fill attribute by adding opacity (with the color)
-        return `fill="rgba(${hexToRgb(p1)}, ${opacity})"`;
-      });
-    };
-
     // Function to convert hex to rgb
     const hexToRgb = (hex) => {
       if (hex.startsWith("#")) {
@@ -95,6 +98,41 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       const g = parseInt(hex.substring(2, 4), 16);
       const b = parseInt(hex.substring(4, 6), 16);
       return `${r}, ${g}, ${b}`;
+    };
+
+    // Function to modify the color to include opacity
+    const modifyColorOpacity = (color, opacity) => {
+      if (color.startsWith("rgba")) {
+        // Update alpha in existing RGBA color
+        return color.replace(
+          /rgba\(([^,]+),([^,]+),([^,]+),[^)]+\)/,
+          (match, r, g, b) => {
+            return `rgba(${r.trim()}, ${g.trim()}, ${b.trim()}, ${opacity})`;
+          }
+        );
+      } else if (color.startsWith("rgb")) {
+        // Convert RGB to RGBA
+        return color.replace(
+          /rgb\(([^,]+),([^,]+),([^)]+)\)/,
+          (match, r, g, b) => {
+            return `rgba(${r.trim()}, ${g.trim()}, ${b.trim()}, ${opacity})`;
+          }
+        );
+      } else if (color.startsWith("#")) {
+        // Convert HEX to RGBA
+        return `rgba(${hexToRgb(color)}, ${opacity})`;
+      }
+      // If color is not recognized, return as-is
+      return color;
+    };
+
+    // Generate the three SVG versions (Idle, Hover, Clicked)
+    const createModifiedSvg = (svg, opacity) => {
+      return svg.replace(/fill="([^"]*)"/g, (match, color) => {
+        // Modify the fill attribute by adding/updating opacity
+        const modifiedColor = modifyColorOpacity(color, opacity);
+        return `fill="${modifiedColor}"`;
+      });
     };
 
     // Create the three versions
@@ -142,23 +180,25 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
     const indexesToUpdate = colorIndexMap[color] || [];
 
     // Replace all occurrences of the selected color
-    let updatedSvgString = await svgString.replace(
+    const updatedSvgString = await svgString.replace(
       /fill="([^"]*)"/g,
       (matchStr, currentColor) => {
         if (indexesToUpdate.length > 0 && currentColor === color) {
-          return `fill="${newFill}"`; // Replace all instances of the selected color
+          return `fill="${newFill}"`; // Replace with the RGBA color
         }
         return matchStr; // Keep other fills unchanged
       }
     );
 
+    // Update the element and state
     const updatedElement = {
       ...editedElement,
       webformatURL: updatedSvgString,
     };
+
     setEditedElement(updatedElement);
-    updateElementsList(updatedElement); // Update elements list
-    extractFillValues(updatedElement);
+    updateElementsList(updatedElement);
+    extractFillValues(updatedSvgString); // Pass updated string, not element
   };
 
   /*---------------------------------------------------------------------------------*/
@@ -187,6 +227,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       name === "y1" ||
       name === "x2" ||
       name === "y2" ||
+      name === "borderWidth" ||
       name === "strokeWidth"
     ) {
       updatedValue = parseFloat(value);
@@ -199,12 +240,13 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       name === "clickedColor" ||
       name === "borderColor" ||
       name === "bgColor" ||
-      name === "color"
+      name === "color" ||
+      name === "Color"
     ) {
       updatedValue = `rgba(${value.r}, ${value.g}, ${value.b}, ${value.a})`;
     }
 
-    if (name === "borderThickness") {
+    if (name === "borderThickness" || name === "borderWidth") {
       if (updatedValue < 0) {
         updatedValue = 0;
       }
@@ -238,6 +280,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
         name: null,
         tag: null,
         fromImage: true,
+        zIndex: 1,
       };
     }
     if (
@@ -265,6 +308,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
         variableName: "ButtonSvg",
         name: null,
         tag: null,
+        zIndex: 1,
       };
     }
 
@@ -587,7 +631,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "zIndex",
-                        value: (editedElement.zIndex || 1) - 1,
+                        value: editedElement.zIndex - 1,
                       },
                     })
                   }
@@ -598,7 +642,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 <input
                   type="text"
                   name="zIndex"
-                  value={editedElement.zIndex || 1}
+                  value={editedElement.zIndex}
                   onChange={handleChange}
                   className="text-center h-[27px] w-[40px] text-xs outline-none"
                 />
@@ -608,7 +652,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "zIndex",
-                        value: (editedElement.zIndex || 1) + 1,
+                        value: editedElement.zIndex + 1,
                       },
                     })
                   }
@@ -900,7 +944,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "zIndex",
-                        value: (editedElement.zIndex || 1) - 1,
+                        value: editedElement.zIndex - 1,
                       },
                     })
                   }
@@ -911,7 +955,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 <input
                   type="text"
                   name="zIndex"
-                  value={editedElement.zIndex || 1}
+                  value={editedElement.zIndex}
                   onChange={handleChange}
                   className="text-center h-[27px] w-[40px] text-xs outline-none"
                 />
@@ -921,7 +965,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "zIndex",
-                        value: (editedElement.zIndex || 1) + 1,
+                        value: editedElement.zIndex + 1,
                       },
                     })
                   }
@@ -1088,7 +1132,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "zIndex",
-                        value: (editedElement.zIndex || 1) - 1,
+                        value: editedElement.zIndex - 1,
                       },
                     })
                   }
@@ -1099,7 +1143,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 <input
                   type="text"
                   name="zIndex"
-                  value={editedElement.zIndex || 1}
+                  value={editedElement.zIndex}
                   onChange={handleChange}
                   className="text-center h-[27px] w-[40px] text-xs outline-none"
                 />
@@ -1109,7 +1153,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "zIndex",
-                        value: (editedElement.zIndex || 1) + 1,
+                        value: editedElement.zIndex + 1,
                       },
                     })
                   }
@@ -1229,19 +1273,34 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             {svgFills.map((color, index) => (
               <div key={index} className="flex flex-col">
                 <label className="block text-xs text-transparent">Scale</label>
-                {/* <label className="block">{`Fill ${index + 1}`}</label> */}
+                <div className="relative">
+                  {/* Button with dynamic background color */}
+                  <button
+                    onClick={() => togglePicker(index)} // Toggle only this picker
+                    className="rounded-full text-xs p-[15px] border-2"
+                    style={{ backgroundColor: color }}
+                  ></button>
 
-                <SvgColorComponent
-                  elementColor={color}
-                  Function={updateSvgFill}
-                />
-
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(e) => updateSvgFill(color, e.target.value)}
-                  className="color"
-                />
+                  {/* Color picker only visible when its specific 'open' state is true */}
+                  {openPickers[index] && (
+                    <>
+                      <button
+                        onClick={() => togglePicker(index)}
+                        className="absolute z-20 top-8 left-0 p-0"
+                      >
+                        <img src={closeSvg} alt="close" className="w-[17px]" />
+                      </button>
+                      <SketchPicker
+                        className="absolute z-10"
+                        color={color || "#000000"}
+                        onChange={(col) => {
+                          const rgbaColor = `rgba(${col.rgb.r}, ${col.rgb.g}, ${col.rgb.b}, ${col.rgb.a})`; // Construct the RGBA string
+                          updateSvgFill(color, rgbaColor); // Pass the RGBA string
+                        }}
+                      />
+                    </>
+                  )}
+                </div>
               </div>
             ))}
 
@@ -1287,7 +1346,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "zIndex",
-                        value: (editedElement.zIndex || 1) - 1,
+                        value: editedElement.zIndex - 1,
                       },
                     })
                   }
@@ -1298,7 +1357,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 <input
                   type="text"
                   name="zIndex"
-                  value={editedElement.zIndex || 1}
+                  value={editedElement.zIndex}
                   onChange={handleChange}
                   className="text-center h-[27px] w-[40px] text-xs outline-none"
                 />
@@ -1308,7 +1367,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "zIndex",
-                        value: (editedElement.zIndex || 1) + 1,
+                        value: editedElement.zIndex + 1,
                       },
                     })
                   }
@@ -1421,7 +1480,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "zIndex",
-                        value: (editedElement.zIndex || 1) - 1,
+                        value: editedElement.zIndex - 1,
                       },
                     })
                   }
@@ -1432,7 +1491,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 <input
                   type="text"
                   name="zIndex"
-                  value={editedElement.zIndex || 1}
+                  value={editedElement.zIndex}
                   onChange={handleChange}
                   className="text-center h-[27px] w-[40px] text-xs outline-none"
                 />
@@ -1442,7 +1501,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "zIndex",
-                        value: (editedElement.zIndex || 1) + 1,
+                        value: editedElement.zIndex + 1,
                       },
                     })
                   }
@@ -1593,7 +1652,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "zIndex",
-                        value: (editedElement.zIndex || 1) - 1,
+                        value: editedElement.zIndex - 1,
                       },
                     })
                   }
@@ -1604,7 +1663,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 <input
                   type="text"
                   name="zIndex"
-                  value={editedElement.zIndex || 1}
+                  value={editedElement.zIndex}
                   onChange={handleChange}
                   className="text-center h-[27px] w-[40px] text-xs outline-none"
                 />
@@ -1614,7 +1673,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "zIndex",
-                        value: (editedElement.zIndex || 1) + 1,
+                        value: editedElement.zIndex + 1,
                       },
                     })
                   }
@@ -1764,7 +1823,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "zIndex",
-                        value: (editedElement.zIndex || 1) - 1,
+                        value: editedElement.zIndex - 1,
                       },
                     })
                   }
@@ -1775,7 +1834,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 <input
                   type="text"
                   name="zIndex"
-                  value={editedElement.zIndex || 1}
+                  value={editedElement.zIndex}
                   onChange={handleChange}
                   className="text-center h-[27px] w-[40px] text-xs outline-none"
                 />
@@ -1785,7 +1844,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                     handleChange({
                       target: {
                         name: "zIndex",
-                        value: (editedElement.zIndex || 1) + 1,
+                        value: editedElement.zIndex + 1,
                       },
                     })
                   }
@@ -1879,188 +1938,481 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
 
       case "Line":
         return (
-          <>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">X1</label>
-              <input
-                type="number"
-                name="x1"
-                value={editedElement.x1 || 100}
-                onChange={handleChange}
-                className="p-2 h-8 w-[80px] border rounded"
-              />
+          <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Point-A</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "x1",
+                        value: (editedElement.x1 || 1) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="x1"
+                  value={editedElement.x1 || 1}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "x1",
+                        value: (editedElement.x1 || 1) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Radius</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "y1",
+                        value: (editedElement.y1 || 1) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="y1"
+                  value={editedElement.y1 || 1}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "y1",
+                        value: (editedElement.y1 || 1) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+
+
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Point-B</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "x2",
+                        value: (editedElement.x2 || 1) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="x2"
+                  value={editedElement.x2 || 1}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "x2",
+                        value: (editedElement.x2 || 1) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Radius</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "y2",
+                        value: (editedElement.y2 || 1) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="y2"
+                  value={editedElement.y2 || 1}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "y2",
+                        value: (editedElement.y2 || 1) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Width</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "strokeWidth",
+                        value: (editedElement.strokeWidth || 1) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="strokeWidth"
+                  value={editedElement.strokeWidth || 1}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "strokeWidth",
+                        value: (editedElement.strokeWidth || 1) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
             </div>
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Y1</label>
-              <input
-                type="number"
-                name="y1"
-                value={editedElement.y1 || 100}
-                onChange={handleChange}
-                className="p-2 h-8 w-[80px] border rounded"
+              <label className="block text-xs">Color</label>
+              <ColorComponent
+                Name="Color"
+                elementColor={editedElement.Color}
+                Function={handleChange}
               />
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">X2</label>
-              <input
-                type="number"
-                name="x2"
-                value={editedElement.x2 || 300}
-                onChange={handleChange}
-                className="p-2 h-8 w-[80px] border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Y2</label>
-              <input
-                type="number"
-                name="y2"
-                value={editedElement.y2 || 100}
-                onChange={handleChange}
-                className="p-2 h-8 w-[80px] border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Width</label>
-              <input
-                type="number"
-                name="strokeWidth"
-                value={editedElement.strokeWidth || 2}
-                onChange={handleChange}
-                className="p-2 h-8 w-[80px] border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Color</label>
-              <input
-                type="color"
-                name="Color"
-                value={editedElement.Color || "#0f0f0f"}
-                onChange={handleChange}
-                className="p-2 h-8 border rounded-full"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Tag</label>
-              <input
-                type="text"
-                name="tag"
-                value={editedElement.tag || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Variable Name</label>
-              <input
-                type="text"
-                name="variableName"
-                value={editedElement.variableName || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-          </>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            
+          </div>
         );
       case "Circle":
         return (
-          <>
+          <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Radius</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "radius",
+                        value: (editedElement.radius || 1) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="radius"
+                  value={editedElement.radius || 1}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "radius",
+                        value: (editedElement.radius || 1) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Radius</label>
-              <input
-                type="number"
-                name="radius"
-                value={editedElement.radius || 15}
-                onChange={handleChange}
-                className="p-2 h-8 w-[80px] border rounded"
+              <label className="block text-xs">Color</label>
+              <ColorComponent
+                Name="Color"
+                elementColor={editedElement.Color}
+                Function={handleChange}
               />
             </div>
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Color</label>
-              <input
-                type="color"
-                name="Color"
-                value={editedElement.Color || "#0f0f0f"}
-                onChange={handleChange}
-                className="p-2 h-8 border rounded-full"
+              <label className="block text-xs">Border</label>
+              <ColorComponent
+                Name="borderColor"
+                elementColor={editedElement.borderColor}
+                Function={handleChange}
               />
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Tag</label>
-              <input
-                type="text"
-                name="tag"
-                value={editedElement.tag || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Border</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "borderWidth",
+                        value: (editedElement.borderWidth || 0) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="borderWidth"
+                  value={editedElement.borderWidth || 0}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "borderWidth",
+                        value: (editedElement.borderWidth || 0) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Variable Name</label>
-              <input
-                type="text"
-                name="variableName"
-                value={editedElement.variableName || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-          </>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+          </div>
         );
       case "Rect":
         return (
-          <>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Width</label>
-              <input
-                type="number"
-                name="width"
-                value={editedElement.width || 250}
-                onChange={handleChange}
-                className="p-2 h-8 w-[80px] border rounded"
-              />
+          <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Dimensions</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "width",
+                        value: (editedElement.width || 150) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="width"
+                  value={editedElement.width || 150}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "width",
+                        value: (editedElement.width || 150) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Height</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "height",
+                        value: (editedElement.height || 150) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="height"
+                  value={editedElement.height || 150}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "height",
+                        value: (editedElement.height || 150) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
             </div>
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Height</label>
-              <input
-                type="number"
-                name="height"
-                value={editedElement.height || 100}
-                onChange={handleChange}
-                className="p-2 h-8 w-[80px] border rounded"
+              <label className="block text-xs">Color</label>
+              <ColorComponent
+                Name="Color"
+                elementColor={editedElement.Color}
+                Function={handleChange}
               />
             </div>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+
             <div className="flex flex-col items-center justify-center">
-              <label className="block">Color</label>
-              <input
-                type="color"
-                name="Color"
-                value={editedElement.Color || "#0f0f0f"}
-                onChange={handleChange}
-                className="p-2 h-8 border rounded-full"
+              <label className="block text-xs">Border</label>
+              <ColorComponent
+                Name="borderColor"
+                elementColor={editedElement.borderColor}
+                Function={handleChange}
               />
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Tag</label>
-              <input
-                type="text"
-                name="tag"
-                value={editedElement.tag || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs text-transparent">Border</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "borderWidth",
+                        value: (editedElement.borderWidth || 0) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="borderWidth"
+                  value={editedElement.borderWidth || 0}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "borderWidth",
+                        value: (editedElement.borderWidth || 0) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block">Variable Name</label>
-              <input
-                type="text"
-                name="variableName"
-                value={editedElement.variableName || ""}
-                onChange={handleChange}
-                className="p-2 w-[120px] h-8 border rounded"
-              />
-            </div>
-          </>
+
+            <div className="h-[40px] my-auto border-l border-gray-300"></div>
+          </div>
         );
 
       default:
@@ -2335,6 +2687,106 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 type="text"
                 name="name"
                 value={editedElement.name || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-xs">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Tag</label>
+              <input
+                type="text"
+                name="tag"
+                value={editedElement.tag || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <label className="block">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-2 w-[120px] h-8 border rounded"
+              />
+            </div>
+          </div>
+        );
+      case "Circle":
+        return (
+          <div className="flex flex-col gap-[10px]">
+            <h1 className="text-lg py-1">General</h1>
+            <div className="flex flex-col">
+              <label className="block text-xs">Tag</label>
+              <input
+                type="text"
+                name="tag"
+                value={editedElement.tag || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-xs">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+          </div>
+        );
+      case "Rect":
+        return (
+          <div className="flex flex-col gap-[10px]">
+            <h1 className="text-lg py-1">General</h1>
+            <div className="flex flex-col">
+              <label className="block text-xs">Tag</label>
+              <input
+                type="text"
+                name="tag"
+                value={editedElement.tag || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-xs">Variable Name</label>
+              <input
+                type="text"
+                name="variableName"
+                value={editedElement.variableName || ""}
+                onChange={handleChange}
+                className="p-1 w-full text-xs h-8 border rounded"
+              />
+            </div>
+          </div>
+        );
+
+        case "Line":
+        return (
+          <div className="flex flex-col gap-[10px]">
+            <h1 className="text-lg py-1">General</h1>
+            <div className="flex flex-col">
+              <label className="block text-xs">Tag</label>
+              <input
+                type="text"
+                name="tag"
+                value={editedElement.tag || ""}
                 onChange={handleChange}
                 className="p-1 w-full text-xs h-8 border rounded"
               />

@@ -10,7 +10,7 @@ function ColorComponent({ Name, elementColor, Function }) {
       {/* Button with dynamic background color using inline styles */}
       <button
         onClick={() => setOpen(!open)} // Toggle open state
-        className="rounded-full text-xs p-[15px]"
+        className="rounded-full text-xs p-[13px] border-2"
         style={{ backgroundColor: elementColor }}
       ></button>
 

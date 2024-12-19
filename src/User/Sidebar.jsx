@@ -21,6 +21,7 @@ import Swal from "sweetalert2";
 import { Userlogout } from "../Redux/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { SketchPicker } from "react-color";
 
 const Sidebar = ({
   onAddElement,
@@ -35,6 +36,9 @@ const Sidebar = ({
   const [inputfield, setInputfield] = useState([]);
   const [textData, setTextData] = useState([]);
   const [ImageData, setImageData] = useState([]);
+  const [CircleData, setCircleData] = useState([]);
+  const [LineData, setLineData] = useState([]);
+  const [RectData, setRectData] = useState([]);
   const [iconsData, setIconsData] = useState([]);
   const [buttonimageData, setButtonImageData] = useState([]); // New state for images
   const [loading, setLoading] = useState(true);
@@ -43,6 +47,7 @@ const Sidebar = ({
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
 
   const [width, setWidth] = useState(700);
   const [height, setHeight] = useState(400);
@@ -154,7 +159,7 @@ const Sidebar = ({
             tag: newSearchTerm, // search tag
           },
         });
-        
+
         const newShapes = response.data.data;
         const pagination = response.data.pagination;
         if (nextPage === 0) {
@@ -393,8 +398,7 @@ const Sidebar = ({
       } else if (activeCategory === "Icons") {
         setIconsData([]);
         setIconsPage(0);
-        fetchIcons(searchTerm,);
-
+        fetchIcons(searchTerm);
       } else if (activeCategory === "element") {
         fetchImages(searchTerm, 1);
         fetchGraphics(searchTerm, 1);
@@ -403,7 +407,6 @@ const Sidebar = ({
         setIconsData([]);
         setIconsPage(0);
         fetchIcons(searchTerm);
-        
       }
     }
   };
@@ -449,18 +452,28 @@ const Sidebar = ({
       }
     };
 
-    const fetchIcons = async () => {
+    const fetchCircle = async () => {
       try {
-        const response = await axios.get(`${API_KEY}api/icons/`);
-        setIconsData(response.data); // Fetch and store image data
+        const response = await axios.get(`${API_KEY}api/circle`);
+        setCircleData(response.data); // Fetch and store image data
       } catch (error) {
         console.error("Error fetching images:", error);
       }
     };
-    const fetchShape = async () => {
+
+    const fetchRect = async () => {
       try {
-        const response = await axios.get(`${API_KEY}api/shape`);
-        setShapesData(response.data); // Fetch and store image data
+        const response = await axios.get(`${API_KEY}api/rect`);
+        setRectData(response.data); // Fetch and store image data
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+
+    const fetchLine = async () => {
+      try {
+        const response = await axios.get(`${API_KEY}api/line`);
+        setLineData(response.data); // Fetch and store image data
       } catch (error) {
         console.error("Error fetching images:", error);
       }
@@ -470,6 +483,10 @@ const Sidebar = ({
     fetchTextData();
     fetchImageData(); // Fetch images
     fetchInputfieldData();
+
+    fetchCircle();
+    fetchLine();
+    fetchRect();
   }, []);
 
   const handleWindowSizeChange = () => {
@@ -827,7 +844,15 @@ const Sidebar = ({
                   <button
                     key={button._id}
                     className=""
-                    onClick={() => onAddElement("BasicButton", button)}
+                    onClick={() => {
+                      let data = {
+                        ...button,
+                        visibility: true,
+                        diabled: false,
+                        disabled_opacity: 0.3,
+                      };
+                      onAddElement("BasicButton", data);
+                    }}
                   >
                     <ButtonComponent
                       text={button.text}
@@ -903,12 +928,42 @@ const Sidebar = ({
                       <label className="text-sm font-medium text-white">
                         Background
                       </label>
-                      <input
-                        type="color"
-                        value={color}
-                        onChange={(e) => setColor(e.target.value)}
-                        className="color w-[40px]"
-                      />
+
+                      <div className="relative">
+                        {/* Button with dynamic background color using inline styles */}
+                        <button
+                          onClick={() => setOpen(!open)} // Toggle open state
+                          className="rounded-full text-xs p-[15px] border-2"
+                          style={{ backgroundColor: color }}
+                        ></button>
+
+                        {/* Color picker only visible when 'open' is true */}
+                        {open && (
+                          <>
+                            {" "}
+                            <button
+                              onClick={() => {
+                                setOpen(!open);
+                              }}
+                              className="absolute z-20 top-8 left-0 p-0"
+                            >
+                              <img
+                                src={closeSvg}
+                                alt="close"
+                                className="w-[17px]"
+                              />
+                            </button>
+                            <SketchPicker
+                              className="absolute z-10"
+                              color={color || "#FFFFFF"}
+                              onChange={(col) => {
+                                const rgbaColor = `rgba(${col.rgb.r}, ${col.rgb.g}, ${col.rgb.b}, ${col.rgb.a})`; // Construct the RGBA string
+                                setColor(rgbaColor); // Pass the RGBA string
+                              }}
+                            />
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -1917,6 +1972,7 @@ const Sidebar = ({
                         See All..
                       </button>
                     </div>
+
                     <div className="flex flex-col h-full">
                       {/* Image display with horizontal scroll */}
                       <div className="h-full w-[350px]">
@@ -2011,6 +2067,99 @@ const Sidebar = ({
                           ))}
                         </div>
                       </div>
+                    </div>
+
+                    <div className="flex gap-2">
+                      {CircleData.map((circle, index) => (
+                        <button
+                          onClick={() => {
+                            let data = {
+                              ...circle,
+                              borderColor: "rgba(0,0,0,1)",
+                              borderWidth: 0,
+                              visibility: true,
+                              tag: null,
+                              variableName: "CircleShape"
+                            };
+                            onAddElement("Circle", data);
+                          }}
+                          className="border p-1"
+                          key={index}
+                        >
+                          <svg
+                            width={`${circle.radius * 2}`}
+                            height={`${circle.radius * 2}`}
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <circle
+                              cx={`${circle.radius}`}
+                              cy={`${circle.radius}`}
+                              r={`${circle.radius}`}
+                              fill={`${circle.Color}`}
+                            />
+                          </svg>
+                        </button>
+                      ))}
+                      {LineData.map((line, index) => (
+                        <button
+                          onClick={() => {
+                            let data = {
+                              ...line,
+                              visibility: true,
+                              tag: null,
+                              variableName: "LineShape"
+                            };
+                            onAddElement("Line", data);
+                          }}
+                          className="border p-1"
+                          key={index}
+                        >
+                          <svg
+                            width={`${Math.abs(line.x2 - line.x1)}`}
+                            height={`${Math.abs(line.y2 - line.y1)}`}
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <line
+                              x1={`${line.x1}`}
+                              y1={`${line.y1}`}
+                              x2={`${line.x2}`}
+                              y2={`${line.y2}`}
+                              stroke={`${line.Color}`}
+                              strokeWidth={`${line.strokeWidth}`}
+                            />
+                          </svg>
+                        </button>
+                      ))}
+                      {RectData.map((rect, index) => (
+                        <button
+                          onClick={() => {
+                            let data = {
+                              ...rect,
+                              radius: 0,
+                              borderColor: "rgba(0,0,0,1)",
+                              borderWidth: 0,
+                              visibility: true,
+                              tag: null,
+                              variableName: "RectangleShape"
+                            };
+                            onAddElement("Rect", data);
+                          }}
+                          className="border p-1"
+                          key={index}
+                        >
+                          <svg
+                            width={`${rect.width}`}
+                            height={`${rect.height}`}
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <rect
+                              width={`${rect.width}`}
+                              height={`${rect.height}`}
+                              fill={`${rect.Color}`}
+                            />
+                          </svg>
+                        </button>
+                      ))}
                     </div>
                   </>
                 )}

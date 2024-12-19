@@ -40,7 +40,12 @@ const Home = () => {
   // Function to add a new element
   const handleAddElement = (type, element) => {
     // Update the element's id to the current timestamp
-    const updatedElement = { ...element, id: Date.now(), lock: false, zIndex: 1 };
+    const updatedElement = {
+      ...element,
+      id: Date.now(),
+      lock: false,
+      zIndex: 1,
+    };
 
     // Set the updated element and position
     setElements((prev) => [...prev, updatedElement]);
@@ -88,11 +93,16 @@ const Home = () => {
             ? { ...el, scale_value: scale_value > 1 ? 1 : scale_value }
             : el.type === "Svg"
             ? { ...el, scale_value: scale_value }
+            : el.type === "Circle"
+            ? {
+                ...el,
+                radius: scale_value,
+              }
             : el.type === "ButtonImage"
             ? { ...el, scale: scale_value }
             : el.type === "Text"
             ? { ...el, fontSize: scale_value } // Update fontSize for Text
-            : { ...el, width: width, height: height } // Update width/height for others
+            : { ...el, width: Math.floor(width), height: Math.floor(height) } // Update width/height for others
           : el
       );
       console.log("Updated elements:", updatedElements);
@@ -170,48 +180,59 @@ const Home = () => {
       .join(", ");
 
     let pythonCode = `
+#.................... LOGIC CODE ....................#\n\n
+#..................... UI CODE .....................#\n
+
+ui = {}
+
 def create_ui(window):
 
-  ${
-    elements.length > 0
-      ? ` global ${globalElementNames}  # Declaring all UI elements globally`
-      : `pass`
-  } 
+ 
 `; // Initial code string
 
     elements.forEach((el, index) => {
       const pos = positions[el.id] || { x: 50, y: 50 }; // Get position or default
       const elHeight = heights[el.id]?.height || 0;
-      let params = `(window=window, x=${pos.x}, y=${
-        !height ? 400 - pos.y - elHeight : height - pos.y - elHeight
-      }`;
+      let params =
+        el.type === "Line"
+          ? `(window=window`
+          : `(window=window, x=${pos.x}, y=${
+              !height ? 400 - pos.y - elHeight : height - pos.y - elHeight
+            }`;
 
       // Handle parameters for each element type
       switch (el.type) {
         case "BasicButton":
-          params += `, width=${el.width}, height=${el.height}, text='${
-            el.text
-          }',
+          params += `, width=${Math.floor(el.width)}, height=${Math.floor(
+            el.height
+          )}, text='${el.text}', visibility=${
+            el.visibility === true ? `True` : `False`
+          },
           font="assets/fonts/${el.fontFamily}/${
             el.fontFamily
-          }.ttf", font_size=${el.fontSize}, font_color = '${el.textColor}',
-                idle_color = '${el.idleColor}', hover_color = '${
+          }.ttf", font_size=${el.fontSize}, font_color=${normalizeRgba(
+            el.textColor
+          )},
+                idle_color=${normalizeRgba(
+                  el.idleColor
+                )}, hover_color=${normalizeRgba(
             el.hoverColor
-          }', clicked_color = '${el.clickedColor}' ,  
-                border_color='${el.borderColor}', border_thickness=${
-            el.borderThickness
-          },
+          )}, clicked_color=${normalizeRgba(el.clickedColor)} ,  
+                border_color=${normalizeRgba(
+                  el.borderColor
+                )}, border_thickness=${el.borderThickness},
                 on_hover=${
                   el.onHover === null ? "None" : el.onHover
                 }, on_click=${
             el.onClick === null ? "None" : el.onClick
-          }, on_release=${
-            el.onRelease === null ? "None" : el.onRelease
-          }, tag = ${
+          }, on_release=${el.onRelease === null ? "None" : el.onRelease}, 
+          tag=${
             el.name === null || el.name === ""
               ? `"${el.variableName}_${index + 1}"`
               : `"${el.name}"`
-          }
+          }, disabled=${
+            el.disabled === true ? `True` : `False`
+          }, disabled_opacity=0.3 
                 `;
           break;
 
@@ -336,9 +357,7 @@ def create_ui(window):
         case "Image":
           params += `, image_path="assets/Images/image_${index + 1}", scale=${
             el.scale_value
-          }, overlay_color=None, hidden=${
-            el.hiden === false ? "False" : "True"
-          }, tag = ${
+          }, hidden=${el.hiden === false ? "False" : "True"}, tag = ${
             el.name === null || el.name === ""
               ? `"${el.variableName}_${index + 1}"`
               : `"${el.name}"`
@@ -347,7 +366,7 @@ def create_ui(window):
         case "Svg":
           params += `, image_path="assets/Images/image_${
             index + 1
-          }.svg", scale=${el.scale_value}, overlay_color=None, hidden=${
+          }.svg", scale=${el.scale_value}, hidden=${
             el.hiden === false ? "False" : "True"
           }, tag = ${
             el.name === null || el.name === ""
@@ -376,6 +395,32 @@ def create_ui(window):
               ? `"${el.variableName}_${index + 1}"`
               : `"${el.name}"`
           }`;
+        case "Rect":
+          params += `, width=${Math.floor(el.width)}, height=${Math.floor(
+            el.height
+          )}, radius=${el.radius}, 
+          color=${normalizeRgba(el.Color)}, border_color=${normalizeRgba(
+            el.borderColor
+          )}, border_width=${el.borderWidth}, 
+          visibility=${el.visibility === true ? `True` : `False`}, tag=${
+            el.tag === null ? `None` : `"${el.tag}"`
+          }`;
+          break;
+
+        case "Circle":
+          params += `, radius=${Math.floor(el.radius)}, 
+            color=${normalizeRgba(el.Color)}, border_color=${normalizeRgba(
+            el.borderColor
+          )}, border_width=${el.borderWidth}, 
+            visibility= ${el.visibility === true ? `True` : `False`}, tag=${
+            el.tag === null ? `None` : `"${el.tag}"`
+          }`;
+          break;
+
+          case "Line":
+            params += `, points=[${ Math.floor(el.x1)} , ${ Math.floor(height - el.y1)}, ${ Math.floor(el.x2)}, ${ Math.floor(height - el.y2)} ], width=${el.strokeWidth}, 
+              color=${normalizeRgba(el.Color)}, visibility= ${el.visibility === true ? `True` : `False`}, tag=${el.tag === null ? `None` : `"${el.tag}"`}`;
+            break;
 
         default:
           break;
@@ -383,13 +428,17 @@ def create_ui(window):
 
       params += ")";
       pythonCode += ` 
-    #Element ${index + 1}\n   ${el.variableName}_${index + 1} = pv.${
+    #Element ${index + 1}\n   ui["${el.variableName}_${index + 1}"] = pv.${
         el.type === "InputField"
           ? "BasicTextInput"
           : el.type === "ButtonImage"
           ? "CustomButton"
           : el.type === "Svg"
           ? "Image"
+          : el.type === "Rect"
+          ? "RectangleShape"
+          : el.type === "Circle"
+          ? "CircleShape" : el.type === "Line" ? "LineShape"
           : el.type
       }${params}\n`;
     });
@@ -402,7 +451,7 @@ def main():
       !height ? 400 : height
     }, title="PyVisual", background_image=${
       !bgImage ? "None" : `"assets/background/background.jpg"`
-    } , background_color="${!color ? "#ffffff" : color}")
+    } , background_color=${!color ? `(1,1,1,1)` : `${normalizeRgba(color)}`})
   create_ui(window)
   # Display the window
   window.show()
@@ -413,6 +462,49 @@ if __name__ == '__main__':
 
     setGeneratedCode(pythonCode); // Update the generated code state
   };
+
+  function normalizeRgba(color) {
+    if (color.startsWith("rgba")) {
+      // Match the RGBA components using a regular expression
+      const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/);
+
+      if (!match) {
+        throw new Error("Invalid RGBA format");
+      }
+
+      // Extract RGBA components and normalize
+      const r = parseFloat(match[1]) / 255;
+      const g = parseFloat(match[2]) / 255;
+      const b = parseFloat(match[3]) / 255;
+      const a = parseFloat(match[4]);
+
+      return `(${r.toFixed(3)}, ${g.toFixed(3)}, ${b.toFixed(3)}, ${a})`;
+    } else if (color.startsWith("#")) {
+      // Convert hex to RGB
+      const hex = color.replace("#", "");
+
+      if (hex.length === 3) {
+        // Expand shorthand hex (#RGB -> #RRGGBB)
+        const r = parseInt(hex[0] + hex[0], 16) / 255;
+        const g = parseInt(hex[1] + hex[1], 16) / 255;
+        const b = parseInt(hex[2] + hex[2], 16) / 255;
+        const a = 1; // Default alpha for hex
+
+        return `(${r.toFixed(3)}, ${g.toFixed(3)}, ${b.toFixed(3)}, ${a})`;
+      } else if (hex.length === 6) {
+        const r = parseInt(hex.substring(0, 2), 16) / 255;
+        const g = parseInt(hex.substring(2, 4), 16) / 255;
+        const b = parseInt(hex.substring(4, 6), 16) / 255;
+        const a = 1; // Default alpha for hex
+
+        return `(${r.toFixed(3)}, ${g.toFixed(3)}, ${b.toFixed(3)}, ${a})`;
+      } else {
+        throw new Error("Invalid Hexadecimal format");
+      }
+    } else {
+      throw new Error("Unsupported color format");
+    }
+  }
 
   const handleDownloadProject = async () => {
     const zip = new JSZip();

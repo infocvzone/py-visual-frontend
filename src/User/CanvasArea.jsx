@@ -96,6 +96,8 @@ const CanvasArea = ({
             tempRef.current.currentHeight,
             scale_value > 1 ? 1 : scale_value
           );
+        } else if (tempRef.current.type === "Circle") {
+          onScaleElement(tempRef.current.id, 100, 100, tempRef.current.radius);
         } else {
           let scale_value =
             (tempRef.current.currentHeight / tempRef.current.firstHeight) *
@@ -193,6 +195,19 @@ const CanvasArea = ({
                     currentWidth: rect.width,
                     currentHeight: rect.height,
                   };
+                } else if (element.type === "Circle") {
+                  isScaling.current = true;
+                  const rect = fabricElement.getBoundingRect();
+                  console.log(rect);
+
+                  let data = {
+                    id: element.id,
+                    type: element.type,
+                    radius: rect.width / 2,
+                  };
+
+                  setTemp(data);
+                  tempRef.current = data;
                 } else if (element.type === "ButtonImage") {
                   isScaling.current = true;
                   const rect = fabricElement.getBoundingRect();
@@ -644,6 +659,69 @@ const CanvasArea = ({
           element.fontFamily || "Arial", // Default font
           element.fontSize || 16 // Default font size
         ).getFabricElementAsync();
+
+        case "Circle":
+          return new Promise((resolve, reject) => {
+            const circle = new fabric.Circle({
+              radius: element.radius, // Circle radius
+              left: element.x, // X position
+              top: element.y, // Y position
+              fill: element.Color, // Fill color
+              stroke: element.borderColor, // Border color (default to black)
+              strokeWidth: element.borderWidth, // Border width (default to 1)
+              selectable: true, // Allow selecting the circle
+              hasControls: true, // Allow controls to resize
+            });
+        
+            // Disable vertical and horizontal scaling controls
+            circle.setControlsVisibility({
+              mt: false, // middle-top
+              mb: false, // middle-bottom
+              ml: false, // middle-left
+              mr: false, // middle-right
+            });
+        
+            canvasObj.add(circle);
+            canvasObj.renderAll();
+            resolve(circle);
+          });
+        
+
+      case "Rect":
+        return new Promise((resolve, reject) => {
+          const rect = new fabric.Rect({
+            width: element.width, // Rectangle width
+            height: element.height, // Rectangle height
+            left: element.x, // X position
+            top: element.y, // Y position
+            fill: element.Color, // Color
+            stroke: element.borderColor,
+            strokeWidth: element.borderWidth,
+            selectable: true, // Allow selecting the rectangle
+            hasControls: true, // Allow controls to resize
+          });
+
+          canvasObj.add(rect);
+          canvasObj.renderAll();
+          resolve(rect);
+        });
+
+      case "Line":
+        return new Promise((resolve, reject) => {
+          const line = new fabric.Line(
+            [element.x1, element.y1, element.x2, element.y2], // Line coordinates
+            {
+              stroke: element.Color, // Line color
+              strokeWidth: element.strokeWidth || 1, // Stroke width
+              selectable: true, // Allow selecting the line
+              hasControls: true, // Allow controls to resize
+            }
+          );
+
+          canvasObj.add(line);
+          canvasObj.renderAll();
+          resolve(line);
+        });
 
       default:
         return null;
