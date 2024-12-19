@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 //import * as fabric from 'fabric';
+import pyVisualIcon from "../assets/PyVisual-icon.png";
 import FabricButton from "../classes/button";
 import FabricText from "../classes/text";
 import ButtonImage from "../classes/imageButton";
@@ -957,10 +958,36 @@ const CanvasArea = ({
 
   return (
     <div
-      className={`flex ${
+      className={`flex flex-col ${
         !selected ? "top-20" : "top-10"
-      } justify-center h-full relative`}
+      } items-center h-full relative`}
     >
+      {/* Status Bar at the top */}
+      <div
+        style={{
+          width: `${Width}px`,
+           // Height of the status bar
+          backgroundColor: "#333", // Status bar color
+          color: "#fff", // Text color
+          display: "flex",
+          paddingLeft: "10px",
+          fontSize: "14px", // Ensure it stays above the canvas
+        }}
+        className="justify-between px-2"
+      >
+        <div className="flex items-center justify-center gap-1">
+          <img src={pyVisualIcon} alt="Py-Visual" className="w-6" />
+          <div className="text-xs">{Height >= 250 ? "PyVisual Window" : ""}</div>
+        </div>
+        <div className="flex items-center justify-center gap-[5px]">
+          <div className="p-[7px] h-2 bg-[#E53F3F] rounded-full"></div>
+          <div className="p-[7px] h-2 bg-[#4C4949] rounded-full"></div>
+          <div className="p-[7px] h-2 bg-[#2EEF12] rounded-full"></div>
+          <div></div>
+        </div>
+      </div>
+
+      {/* Canvas Container */}
       <div
         style={{
           backgroundImage: Image ? `url('${Image}')` : "none",
@@ -970,11 +997,13 @@ const CanvasArea = ({
           width: `${Width || 700}px`,
           height: `${Height || 400}px`,
           boxShadow: "0 10px 15px rgba(0, 0, 0, 0.1)", // Equivalent to shadow-xl
+          // Push canvas below the status bar
         }}
       >
         <canvas ref={canvasRef} id="canvas" className="shadow-xl" />
       </div>
 
+      {/* Optional: Show selected position information */}
       {selected && (
         <div className="absolute top-2 left-2 p-2 bg-blue-100 border border-blue-300 rounded">
           <p>X: {position.x}</p>
