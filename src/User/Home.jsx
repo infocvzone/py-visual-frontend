@@ -178,7 +178,10 @@ const Home = () => {
     let globalElementNames = elements
       .map((el, index) => `${el.variableName}_${index + 1}`)
       .join(", ");
-
+    // Sort elements by their zIndex property (default to 1 if not defined)
+    const sortedElements = [...elements].sort(
+      (a, b) => (a.zIndex || 1) - (b.zIndex || 1)
+    );
     let pythonCode = `
 #.................... LOGIC CODE ....................#\n\n
 #..................... UI CODE .....................#\n
@@ -190,7 +193,7 @@ def create_ui(window):
  
 `; // Initial code string
 
-    elements.forEach((el, index) => {
+    sortedElements.forEach((el, index) => {
       const pos = positions[el.id] || { x: 50, y: 50 }; // Get position or default
       const elHeight = heights[el.id]?.height || 0;
       let params =
@@ -383,11 +386,9 @@ def create_ui(window):
             el.onRelease === null || el.onRelease === "" ? "None" : el.onRelease
           }, 
           tag = ${
-            el.name === null || el.name === ""
-              ? `None`
-              : `"${el.name}"`
+            el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
-        break;
+          break;
 
         case "Rect":
           params += `, width=${Math.floor(el.width)}, height=${Math.floor(
@@ -536,9 +537,14 @@ if __name__ == '__main__':
       return await res.blob();
     };
 
+    // Sort elements by their zIndex property (default to 1 if not defined)
+    const sortedElements = [...elements].sort(
+      (a, b) => (a.zIndex || 1) - (b.zIndex || 1)
+    );
+
     let index = 0;
     // Loop through elements and handle ButtonImage types
-    for (const element of elements) {
+    for (const element of sortedElements) {
       index += 1;
       if (element.type === "ButtonImage") {
         let Folder = element.Name;
