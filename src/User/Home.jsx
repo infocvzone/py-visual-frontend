@@ -227,9 +227,7 @@ def create_ui(window):
             el.onClick === null ? "None" : el.onClick
           }, on_release=${el.onRelease === null ? "None" : el.onRelease}, 
           tag=${
-            el.name === null || el.name === ""
-              ? `"${el.variableName}_${index + 1}"`
-              : `"${el.name}"`
+            el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }, disabled=${
             el.disabled === true ? `True` : `False`
           }, disabled_opacity=0.3 
@@ -261,9 +259,7 @@ def create_ui(window):
           }", "${el.border_style[3]}"], on_input=${
             !el.on_input ? "None" : `"${el.on_input}"`
           }, tag = ${
-            el.name === null || el.name === ""
-              ? `"${el.variableName}_${index + 1}"`
-              : `"${el.name}"`
+            el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
 
           break;
@@ -278,9 +274,7 @@ def create_ui(window):
             el.fontFamily
           }.ttf", font_color='${el.color}', font_size=${el.fontSize},
                 bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}, tag = ${
-            el.name === null || el.name === ""
-              ? `"${el.variableName}_${index + 1}"`
-              : `"${el.name}"`
+            el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
           break;
 
@@ -358,9 +352,7 @@ def create_ui(window):
           params += `, image_path="assets/Images/image_${index + 1}", scale=${
             el.scale_value
           }, hidden=${el.hiden === false ? "False" : "True"}, tag = ${
-            el.name === null || el.name === ""
-              ? `"${el.variableName}_${index + 1}"`
-              : `"${el.name}"`
+            el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
           break;
         case "Svg":
@@ -369,9 +361,7 @@ def create_ui(window):
           }.svg", scale=${el.scale_value}, hidden=${
             el.hiden === false ? "False" : "True"
           }, tag = ${
-            el.name === null || el.name === ""
-              ? `"${el.variableName}_${index + 1}"`
-              : `"${el.name}"`
+            el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
           break;
 
@@ -382,7 +372,9 @@ def create_ui(window):
           clicked_image = "assets/Buttons/Button_${index + 1}/clicked.png",
           font="assets/fonts/${el.fontFamily}/${
             el.fontFamily
-          }.ttf", font_size=${el.fontSize},font_color="${el.textColor}",
+          }.ttf", font_size=${el.fontSize},font_color="${normalizeRgba(
+            el.textColor
+          )}",
           on_hover=${
             el.onHover === null || el.onHover === "" ? "None" : el.onHover
           }, on_click=${
@@ -392,9 +384,11 @@ def create_ui(window):
           }, 
           tag = ${
             el.name === null || el.name === ""
-              ? `"${el.variableName}_${index + 1}"`
+              ? `None`
               : `"${el.name}"`
           }`;
+        break;
+
         case "Rect":
           params += `, width=${Math.floor(el.width)}, height=${Math.floor(
             el.height
@@ -417,10 +411,16 @@ def create_ui(window):
           }`;
           break;
 
-          case "Line":
-            params += `, points=[${ Math.floor(el.x1)} , ${ Math.floor(height - el.y1)}, ${ Math.floor(el.x2)}, ${ Math.floor(height - el.y2)} ], width=${el.strokeWidth}, 
-              color=${normalizeRgba(el.Color)}, visibility= ${el.visibility === true ? `True` : `False`}, tag=${el.tag === null ? `None` : `"${el.tag}"`}`;
-            break;
+        case "Line":
+          params += `, points=[${Math.floor(el.x1)} , ${Math.floor(
+            height - el.y1
+          )}, ${Math.floor(el.x2)}, ${Math.floor(height - el.y2)} ], width=${
+            el.strokeWidth
+          }, 
+              color=${normalizeRgba(el.Color)}, visibility= ${
+            el.visibility === true ? `True` : `False`
+          }, tag=${el.tag === null ? `None` : `"${el.tag}"`}`;
+          break;
 
         default:
           break;
@@ -428,7 +428,7 @@ def create_ui(window):
 
       params += ")";
       pythonCode += ` 
-    #Element ${index + 1}\n   ui["${el.variableName}_${index + 1}"] = pv.${
+    #Element ${index + 1}\n   ui["${el.variableName}"] = pv.${
         el.type === "InputField"
           ? "BasicTextInput"
           : el.type === "ButtonImage"
@@ -438,7 +438,9 @@ def create_ui(window):
           : el.type === "Rect"
           ? "RectangleShape"
           : el.type === "Circle"
-          ? "CircleShape" : el.type === "Line" ? "LineShape"
+          ? "CircleShape"
+          : el.type === "Line"
+          ? "LineShape"
           : el.type
       }${params}\n`;
     });

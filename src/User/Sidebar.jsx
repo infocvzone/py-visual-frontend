@@ -481,7 +481,7 @@ const Sidebar = ({
 
     fetchButtonData();
     fetchTextData();
-    fetchImageData(); // Fetch images
+   // fetchImageData(); // Fetch images
     fetchInputfieldData();
 
     fetchCircle();
@@ -869,7 +869,8 @@ const Sidebar = ({
                     />
                   </button>
                 ))}
-                {buttonimageData.map((Button, index) => (
+
+                {/*buttonimageData.map((Button, index) => (
                   <button
                     key={index}
                     className=""
@@ -887,7 +888,7 @@ const Sidebar = ({
                       className="max-w-[60px] max-h-[60px] m-auto"
                     />
                   </button>
-                ))}
+                ))*/}
               </div>
             )}
 
@@ -2079,7 +2080,7 @@ const Sidebar = ({
                               borderWidth: 0,
                               visibility: true,
                               tag: null,
-                              variableName: "CircleShape"
+                              variableName: "CircleShape",
                             };
                             onAddElement("Circle", data);
                           }}
@@ -2107,7 +2108,7 @@ const Sidebar = ({
                               ...line,
                               visibility: true,
                               tag: null,
-                              variableName: "LineShape"
+                              variableName: "LineShape",
                             };
                             onAddElement("Line", data);
                           }}
@@ -2140,7 +2141,7 @@ const Sidebar = ({
                               borderWidth: 0,
                               visibility: true,
                               tag: null,
-                              variableName: "RectangleShape"
+                              variableName: "RectangleShape",
                             };
                             onAddElement("Rect", data);
                           }}

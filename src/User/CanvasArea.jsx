@@ -660,32 +660,31 @@ const CanvasArea = ({
           element.fontSize || 16 // Default font size
         ).getFabricElementAsync();
 
-        case "Circle":
-          return new Promise((resolve, reject) => {
-            const circle = new fabric.Circle({
-              radius: element.radius, // Circle radius
-              left: element.x, // X position
-              top: element.y, // Y position
-              fill: element.Color, // Fill color
-              stroke: element.borderColor, // Border color (default to black)
-              strokeWidth: element.borderWidth, // Border width (default to 1)
-              selectable: true, // Allow selecting the circle
-              hasControls: true, // Allow controls to resize
-            });
-        
-            // Disable vertical and horizontal scaling controls
-            circle.setControlsVisibility({
-              mt: false, // middle-top
-              mb: false, // middle-bottom
-              ml: false, // middle-left
-              mr: false, // middle-right
-            });
-        
-            canvasObj.add(circle);
-            canvasObj.renderAll();
-            resolve(circle);
+      case "Circle":
+        return new Promise((resolve, reject) => {
+          const circle = new fabric.Circle({
+            radius: element.radius, // Circle radius
+            left: element.x, // X position
+            top: element.y, // Y position
+            fill: element.Color, // Fill color
+            stroke: element.borderColor, // Border color (default to black)
+            strokeWidth: element.borderWidth, // Border width (default to 1)
+            selectable: true, // Allow selecting the circle
+            hasControls: true, // Allow controls to resize
           });
-        
+
+          // Disable vertical and horizontal scaling controls
+          circle.setControlsVisibility({
+            mt: false, // middle-top
+            mb: false, // middle-bottom
+            ml: false, // middle-left
+            mr: false, // middle-right
+          });
+
+          canvasObj.add(circle);
+          canvasObj.renderAll();
+          resolve(circle);
+        });
 
       case "Rect":
         return new Promise((resolve, reject) => {
@@ -695,10 +694,12 @@ const CanvasArea = ({
             left: element.x, // X position
             top: element.y, // Y position
             fill: element.Color, // Color
-            stroke: element.borderColor,
-            strokeWidth: element.borderWidth,
+            stroke: element.borderColor, // Border color
+            strokeWidth: element.borderWidth, // Border width
             selectable: true, // Allow selecting the rectangle
             hasControls: true, // Allow controls to resize
+            rx: element.radius || 0, // Rounded corners in X direction
+            ry: element.radius || 0, // Rounded corners in Y direction
           });
 
           canvasObj.add(rect);
