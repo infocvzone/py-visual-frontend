@@ -4,6 +4,8 @@ import { API_KEY } from "../constant";
 import deleteImage from "../assets/delete.png";
 import upSvg from "../assets/up.svg";
 import downSvg from "../assets/down.svg";
+import hideEye from "../assets/eye-off.svg";
+import UnhideEye from "../assets/eye.svg";
 import { SketchPicker } from "react-color";
 import ColorComponent from "./colorComponent";
 import SvgColorComponent from "./SvgColorComponent";
@@ -246,7 +248,14 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       updatedValue = `rgba(${value.r}, ${value.g}, ${value.b}, ${value.a})`;
     }
 
-    if (name === "borderThickness" || name === "borderWidth" || name === "radius" || name === "strokeWidth" || name === "width" || name === "height") {
+    if (
+      name === "borderThickness" ||
+      name === "borderWidth" ||
+      name === "radius" ||
+      name === "strokeWidth" ||
+      name === "width" ||
+      name === "height"
+    ) {
       if (updatedValue < 0) {
         updatedValue = 0;
       }
@@ -664,6 +673,27 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            <div className="flex flex-col justify-center items-center">
+              {/* Hidden Checkbox */}
+              <label className="block text-xs">Visibility</label>
+              <button
+                onClick={() =>
+                  handleChange({
+                    target: {
+                      name: "visibility",
+                      value: editedElement.visibility === false ? true : false,
+                    },
+                  })
+                }
+                className="flex items-center"
+              >
+                <img
+                  src={editedElement.visibility === true ? UnhideEye : hideEye} // Change the image paths
+                  alt="Toggle visibility"
+                  className="w-6 h-6"
+                />
+              </button>
+            </div>
           </div>
         );
       case "InputField":
@@ -977,6 +1007,27 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            <div className="flex flex-col justify-center items-center">
+              {/* Hidden Checkbox */}
+              <label className="block text-xs">Visibility</label>
+              <button
+                onClick={() =>
+                  handleChange({
+                    target: {
+                      name: "visibility",
+                      value: editedElement.visibility === false ? true : false,
+                    },
+                  })
+                }
+                className="flex items-center"
+              >
+                <img
+                  src={editedElement.visibility === true ? UnhideEye : hideEye} // Change the image paths
+                  alt="Toggle visibility"
+                  className="w-6 h-6"
+                />
+              </button>
+            </div>
           </div>
         );
       case "Text":
@@ -1165,6 +1216,27 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            <div className="flex flex-col justify-center items-center">
+              {/* Hidden Checkbox */}
+              <label className="block text-xs">Visibility</label>
+              <button
+                onClick={() =>
+                  handleChange({
+                    target: {
+                      name: "visibility",
+                      value: editedElement.visibility === false ? true : false,
+                    },
+                  })
+                }
+                className="flex items-center"
+              >
+                <img
+                  src={editedElement.visibility === true ? UnhideEye : hideEye} // Change the image paths
+                  alt="Toggle visibility"
+                  className="w-6 h-6"
+                />
+              </button>
+            </div>
           </div>
         );
       case "Toggle":
@@ -1379,7 +1451,27 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
-            {/* Other SVG properties */}
+            <div className="flex flex-col justify-center items-center">
+              {/* Hidden Checkbox */}
+              <label className="block text-xs">Visibility</label>
+              <button
+                onClick={() =>
+                  handleChange({
+                    target: {
+                      name: "visibility",
+                      value: editedElement.visibility === false ? true : false,
+                    },
+                  })
+                }
+                className="flex items-center"
+              >
+                <img
+                  src={editedElement.visibility === true ? UnhideEye : hideEye} // Change the image paths
+                  alt="Toggle visibility"
+                  className="w-6 h-6"
+                />
+              </button>
+            </div>
           </div>
         );
       case "Image":
@@ -1440,22 +1532,8 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 className="p-2 border rounded w-full mb-4"
               />
             </div>*/}
-            <div className="flex flex-col justify-center">
-              {/* Hidden Checkbox */}
-              <label className="block text-xs">Hidden</label>
-              <input
-                type="checkbox"
-                name="hiden"
-                checked={editedElement.hiden || false}
-                onChange={(e) =>
-                  handleChange({
-                    target: { name: "hiden", value: e.target.checked },
-                  })
-                }
-                className="p-2 w-5 h-5 border rounded"
-              />
-            </div>
-            <div className="flex flex-col justify-center">
+
+            <div className="flex flex-col justify-center items-center">
               {/* Hidden Checkbox */}
               <label className="block text-xs">Make Button</label>
               <input
@@ -1513,6 +1591,27 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            <div className="flex flex-col justify-center items-center">
+              {/* Hidden Checkbox */}
+              <label className="block text-xs">Visibility</label>
+              <button
+                onClick={() =>
+                  handleChange({
+                    target: {
+                      name: "visibility",
+                      value: editedElement.visibility === false ? true : false,
+                    },
+                  })
+                }
+                className="flex items-center"
+              >
+                <img
+                  src={editedElement.visibility === true ? UnhideEye : hideEye} // Change the image paths
+                  alt="Toggle visibility"
+                  className="w-6 h-6"
+                />
+              </button>
+            </div>
           </div>
         );
 
@@ -1685,6 +1784,27 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            <div className="flex flex-col justify-center items-center">
+              {/* Hidden Checkbox */}
+              <label className="block text-xs">Visibility</label>
+              <button
+                onClick={() =>
+                  handleChange({
+                    target: {
+                      name: "visibility",
+                      value: editedElement.visibility === false ? true : false,
+                    },
+                  })
+                }
+                className="flex items-center"
+              >
+                <img
+                  src={editedElement.visibility === true ? UnhideEye : hideEye} // Change the image paths
+                  alt="Toggle visibility"
+                  className="w-6 h-6"
+                />
+              </button>
+            </div>
           </div>
         );
 
@@ -1856,6 +1976,27 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            <div className="flex flex-col justify-center items-center">
+              {/* Hidden Checkbox */}
+              <label className="block text-xs">Visibility</label>
+              <button
+                onClick={() =>
+                  handleChange({
+                    target: {
+                      name: "visibility",
+                      value: editedElement.visibility === false ? true : false,
+                    },
+                  })
+                }
+                className="flex items-center"
+              >
+                <img
+                  src={editedElement.visibility === true ? UnhideEye : hideEye} // Change the image paths
+                  alt="Toggle visibility"
+                  className="w-6 h-6"
+                />
+              </button>
+            </div>
           </div>
         );
       case "Checkbox":
@@ -2199,8 +2340,27 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
-
-
+            <div className="flex flex-col justify-center items-center">
+              {/* Hidden Checkbox */}
+              <label className="block text-xs">Visibility</label>
+              <button
+                onClick={() =>
+                  handleChange({
+                    target: {
+                      name: "visibility",
+                      value: editedElement.visibility === false ? true : false,
+                    },
+                  })
+                }
+                className="flex items-center"
+              >
+                <img
+                  src={editedElement.visibility === true ? UnhideEye : hideEye} // Change the image paths
+                  alt="Toggle visibility"
+                  className="w-6 h-6"
+                />
+              </button>
+            </div>
           </div>
         );
       case "Circle":
@@ -2350,6 +2510,27 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            <div className="flex flex-col justify-center items-center">
+              {/* Hidden Checkbox */}
+              <label className="block text-xs">Visibility</label>
+              <button
+                onClick={() =>
+                  handleChange({
+                    target: {
+                      name: "visibility",
+                      value: editedElement.visibility === false ? true : false,
+                    },
+                  })
+                }
+                className="flex items-center"
+              >
+                <img
+                  src={editedElement.visibility === true ? UnhideEye : hideEye} // Change the image paths
+                  alt="Toggle visibility"
+                  className="w-6 h-6"
+                />
+              </button>
+            </div>
           </div>
         );
       case "Rect":
@@ -2580,6 +2761,27 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
+            <div className="flex flex-col justify-center items-center">
+              {/* Hidden Checkbox */}
+              <label className="block text-xs">Visibility</label>
+              <button
+                onClick={() =>
+                  handleChange({
+                    target: {
+                      name: "visibility",
+                      value: editedElement.visibility === false ? true : false,
+                    },
+                  })
+                }
+                className="flex items-center"
+              >
+                <img
+                  src={editedElement.visibility === true ? UnhideEye : hideEye} // Change the image paths
+                  alt="Toggle visibility"
+                  className="w-6 h-6"
+                />
+              </button>
+            </div>
           </div>
         );
 
@@ -2869,7 +3071,6 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 className="p-1 w-full text-xs h-8 border rounded"
               />
             </div>
-
           </div>
         );
       case "Circle":
@@ -2962,10 +3163,10 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       {/* Header Section */}
       <header className="flex gap-2 py-3 px-1 items-center justify-center bg-white shadow-md w-[90%] mx-auto rounded-xl mt-2">
         <div>{renderPropertiesByType()}</div>
-        <div className="flex flex-col justify-center">
+        <div className="flex flex-col justify-center items-center">
           <label className="block text-xs">Others</label>
           <button onClick={handleRemoveElement}>
-            <img src={deleteImage} alt="remove" className="w-[17px] h-[20px]" />
+            <img src={deleteImage} alt="remove" className="w-[17px] h-[22px]" />
           </button>
         </div>
       </header>

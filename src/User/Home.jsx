@@ -45,6 +45,7 @@ const Home = () => {
       id: Date.now(),
       lock: false,
       zIndex: 1,
+      visibility: true,
     };
 
     // Set the updated element and position
@@ -238,8 +239,8 @@ def create_ui(window):
           break;
 
         case "InputField":
-          params += `, width=${el.width}, height=${
-            el.height
+          params += `, width=${el.width}, height=${el.height}, visibility=${
+            el.visibility === true ? `True` : `False`
           }, background_color=${hexToRgb(el.bgColor)}, input_type='${
             el.input_type
           }',
@@ -276,7 +277,9 @@ def create_ui(window):
                 font="assets/fonts/${el.fontFamily}/${
             el.fontFamily
           }.ttf", font_color='${el.color}', font_size=${el.fontSize},
-                bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}, tag = ${
+                bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}, visibility=${
+            el.visibility === true ? `True` : `False`
+          }, tag = ${
             el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
           break;
@@ -354,15 +357,15 @@ def create_ui(window):
         case "Image":
           params += `, image_path="assets/Images/image_${index + 1}", scale=${
             el.scale_value
-          }, hidden=${el.hiden === false ? "False" : "True"}, tag = ${
+          }, visibility=${el.visibility === false ? "False" : "True"}, tag = ${
             el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
           break;
         case "Svg":
           params += `, image_path="assets/Images/image_${
             index + 1
-          }.svg", scale=${el.scale_value}, hidden=${
-            el.hiden === false ? "False" : "True"
+          }.svg", scale=${el.scale_value}, visibility=${
+            el.visibility === true ? `True` : `False`
           }, tag = ${
             el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
@@ -377,7 +380,7 @@ def create_ui(window):
             el.fontFamily
           }.ttf", font_size=${el.fontSize},font_color="${normalizeRgba(
             el.textColor
-          )}",
+          )}", visibility=${el.visibility === true ? `True` : `False`},
           on_hover=${
             el.onHover === null || el.onHover === "" ? "None" : el.onHover
           }, on_click=${
