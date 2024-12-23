@@ -1,113 +1,160 @@
 import React, { useEffect, useRef, useState } from "react";
 import hljs from "highlight.js"; // Import highlight.js
 import "highlight.js/styles/atom-one-dark.css";
+import axios from "axios"; // For making API requests
+import { API_KEY } from "../constant";
 
 const CodeDisplay = ({ code, setCodeDisplay, onDownloadProject }) => {
   const [copySuccess, setCopySuccess] = useState(""); // State to show copy success message
+  const [isChatMode, setIsChatMode] = useState(false); // State to toggle chat mode
+  const [chatInput, setChatInput] = useState(""); // State for chat input
+  const [chatMessages, setChatMessages] = useState([]); // State for chat messages
+  const [currentCode, setCurrentCode] = useState(code); // State for displayed code
   const codeRef = useRef(null); // Ref to the <pre><code> block
 
-  // Use effect to highlight code after the component renders or when code changes
+  // Highlight code on component mount or code changes
   useEffect(() => {
     if (codeRef.current) {
       hljs.highlightElement(codeRef.current);
     }
-  }, [code]);
+  }, [currentCode]);
 
-  // Function to handle copying the code to the clipboard
+  // Handle copying code to clipboard
   const handleCopy = () => {
     navigator.clipboard
-      .writeText(code)
+      .writeText(currentCode)
       .then(() => {
         setCopySuccess("Code copied!");
         setTimeout(() => {
           setCopySuccess("");
           setCodeDisplay(false);
-        }, 700); // Reset the message after 2 seconds
+        }, 700);
       })
       .catch(() => {
         setCopySuccess("Failed to copy.");
       });
   };
 
+  // Handle sending data to API
+  const handleSendMessage = async () => {
+    if (!chatInput.trim()) return;
+
+    const payload = {
+      prompt: chatInput,
+      code: currentCode,
+    };
+
+    try {
+      const response = await axios.post(`${API_KEY}api/openai`, payload); // Replace with your API endpoint
+      console.log(response.data);
+      const chat = response.data.data.chat;
+      const code = response.data.data.code;
+
+      // Update state with the new chat message and updated code
+      setChatMessages((prev) => [
+        ...prev,
+        { sender: "user", text: chatInput },
+        { sender: "ai", text: chat },
+      ]);
+      setCurrentCode(code);
+      setChatInput(""); // Clear the input field
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setChatMessages((prev) => [
+        ...prev,
+        { sender: "system", text: "Failed to fetch response. Try again." },
+      ]);
+    }
+  };
+
   return (
-    <div className="fixed top-16 right-2 w-[70%] lg:w-[60%] p-4 bg-white shadow-lg border rounded-lg z-20 overflow-hidden my-4">
+    <div className={`fixed top-0 right-0 w-full h-full z-20 bg-white p-6`}>
       <button onClick={() => setCodeDisplay(false)}>
         <svg
           width="24px"
           height="24px"
-          viewBox="0 0 24.00 24.00"
-          fill="none"
+          viewBox="0 0 1024 1024"
           xmlns="http://www.w3.org/2000/svg"
-          stroke="#22c55e"
+          fill="#5c5c5c"
+          stroke="#5c5c5c"
         >
-          <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
           <g
             id="SVGRepo_tracerCarrier"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            stroke-linecap="round"
+            stroke-linejoin="round"
           ></g>
           <g id="SVGRepo_iconCarrier">
-            {" "}
             <path
-              d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5"
-              stroke=""
-              strokeWidth="2.4"
-              strokeLinecap="round"
-            ></path>{" "}
+              fill="#000000"
+              d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"
+            ></path>
             <path
-              d="M7 3.33782C8.47087 2.48697 10.1786 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 10.1786 2.48697 8.47087 3.33782 7"
-              stroke=""
-              strokeWidth="2.4"
-              strokeLinecap="round"
-            ></path>{" "}
+              fill="#000000"
+              d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"
+            ></path>
           </g>
         </svg>
       </button>
 
-      {copySuccess && (
-        <div className="text-green-400 text-sm mb-2">{copySuccess}</div>
-      )}
+      <div className="flex h-full">
+        {/* Chat Section */}
+        <div className="w-1/2 bg-gray-100 p-4 flex flex-col">
+          <div className="flex-1 overflow-auto mb-2">
+            {chatMessages.map((msg, index) => (
+              <div
+                key={index}
+                className={`mb-2 p-2 rounded-lg ${
+                  msg.sender === "user"
+                    ? "bg-blue-500 text-white self-start"
+                    : "bg-gray-300 self-end"
+                }`}
+              >
+                {msg.text}
+              </div>
+            ))}
+          </div>
+          <div className="flex">
+            <input
+              type="text"
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-1 p-2 border rounded-lg"
+            />
+            <button
+              onClick={handleSendMessage}
+              className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            >
+              Send
+            </button>
+          </div>
+        </div>
 
-      <button
-        onClick={onDownloadProject}
-        className="absolute top-2 right-24 p-2 bg-sky-500 hover:bg-blue-600 text-white shadow-md rounded text-sm flex items-center justify-center gap-1"
-      >
-        Download
-      </button>
-
-      <button
-        onClick={handleCopy}
-        className="absolute top-2 right-2 p-2 bg-green-500 hover:bg-green-600 text-white rounded text-sm flex items-center justify-center gap-1"
-      >
-        <svg
-          width="20px"
-          height="20px"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          stroke="#FFF"
-        >
-          <path
-            d="M6 11C6 8.17157 6 6.75736 6.87868 5.87868C7.75736 5 9.17157 5 12 5H15C17.8284 5 19.2426 5 20.1213 5.87868C21 6.75736 21 8.17157 21 11V16C21 18.8284 21 20.2426 20.1213 21.1213C19.2426 22 17.8284 22 15 22H12C9.17157 22 7.75736 22 6.87868 21.1213C6 20.2426 6 18.8284 6 16V11Z"
-            stroke="#fff"
-            strokeWidth="1.5"
-          ></path>
-          <path
-            d="M6 19C4.34315 19 3 17.6569 3 16V10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H15C16.6569 2 18 3.34315 18 5"
-            stroke="#fff"
-            strokeWidth="1.5"
-          ></path>
-        </svg>
-        Copy
-      </button>
-
-      {/* Scrollable preformatted block for displaying the code */}
-      <div className="max-h-[450px] overflow-auto mt-2 rounded-lg bg-[#edf9fc] p-4">
-        <pre>
-          <code ref={codeRef} className="language-python text-xs">
-            {code}
-          </code>
-        </pre>
+        {/* Code Display Section */}
+        <div className="w-1/2 bg-[#edf9fc] p-4 overflow-auto">
+          <div className="flex justify-end items-center">
+            <div className="flex gap-2">
+              <button
+                onClick={onDownloadProject}
+                className="p-2 bg-sky-500 hover:bg-blue-600 text-white shadow-md rounded text-sm"
+              >
+                Download
+              </button>
+              <button
+                onClick={handleCopy}
+                className="p-2 bg-green-500 hover:bg-green-600 text-white rounded text-sm"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+          <pre className="rounded-lg p-4 mt-2">
+            <code ref={codeRef} className="language-python text-xs">
+              {currentCode}
+            </code>
+          </pre>
+        </div>
       </div>
     </div>
   );

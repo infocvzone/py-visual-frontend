@@ -966,7 +966,7 @@ const CanvasArea = ({
       <div
         style={{
           width: `${Width}px`,
-          // Height of the status bar
+           // Height of the status bar
           backgroundColor: "#333", // Status bar color
           color: "#fff", // Text color
           display: "flex",
@@ -977,9 +977,7 @@ const CanvasArea = ({
       >
         <div className="flex items-center justify-center gap-1">
           <img src={pyVisualIcon} alt="Py-Visual" className="w-6" />
-          <div className="text-xs text-gray-200">
-            {Height >= 250 ? "PyVisual Window" : ""}
-          </div>
+          <div className="text-xs text-gray-200">{Height >= 250 ? "PyVisual Window" : ""}</div>
         </div>
         <div className="flex items-center justify-center gap-[5px]">
           <div className="p-[7px] h-2 bg-[#E53F3F] shadow-full rounded-full"></div>
