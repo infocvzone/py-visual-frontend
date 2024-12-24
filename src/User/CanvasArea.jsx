@@ -386,10 +386,10 @@ const CanvasArea = ({
           element.fontSize,
           element.textColor,
           element.idleColor,
-          element.hoverColor,
-          element.clickedColor,
           element.borderColor,
           element.borderThickness,
+          element.opacity,
+          element.borderRadius,
           element.onClick,
           element.onHover,
           element.onRelease

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { SketchPicker } from "react-color";
 import closeSvg from "../assets/close.svg";
 
+
+
 function ColorComponent({ Name, elementColor, Function }) {
   const [open, setOpen] = useState(false);
 
@@ -10,9 +12,13 @@ function ColorComponent({ Name, elementColor, Function }) {
       {/* Button with dynamic background color using inline styles */}
       <button
         onClick={() => setOpen(!open)} // Toggle open state
-        className="rounded-full text-xs p-[13px] border-2"
+        className={`rounded-full ${Name === "borderColor" ? "flex items-center justifu-center text-xs p-[6px]" : "p-[13px]"} border-2`}
         style={{ backgroundColor: elementColor }}
-      ></button>
+      >
+        {Name === "borderColor" && (
+          <div className="bg-white p-[8px] rounded-full"></div>
+        )}
+      </button>
 
       {/* Color picker only visible when 'open' is true */}
       {open && (

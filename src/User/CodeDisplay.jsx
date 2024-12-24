@@ -26,7 +26,7 @@ const CodeDisplay = ({ code, setCodeDisplay, onDownloadProject }) => {
         setCopySuccess("Code copied!");
         setTimeout(() => {
           setCopySuccess("");
-          setCodeDisplay(false);
+          
         }, 700);
       })
       .catch(() => {

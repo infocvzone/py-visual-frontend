@@ -40,13 +40,27 @@ const Home = () => {
   // Function to add a new element
   const handleAddElement = (type, element) => {
     // Update the element's id to the current timestamp
-    const updatedElement = {
-      ...element,
-      id: Date.now(),
-      lock: false,
-      zIndex: 1,
-      visibility: true,
-    };
+    let updatedElement = {};
+    if (type === "BasicButton") {
+      updatedElement = {
+        ...element,
+        id: Date.now(),
+        lock: false,
+        zIndex: 1,
+        visibility: true,
+        opacity: 1,
+        borderRadius: 0,
+      };
+    } else {
+      updatedElement = {
+        ...element,
+        id: Date.now(),
+        lock: false,
+        zIndex: 1,
+        visibility: true,
+        opacity: 1,
+      };
+    }
 
     // Set the updated element and position
     setElements((prev) => [...prev, updatedElement]);
@@ -207,35 +221,15 @@ def create_ui(window):
       // Handle parameters for each element type
       switch (el.type) {
         case "BasicButton":
-          params += `, width=${Math.floor(el.width)}, height=${Math.floor(
-            el.height
-          )}, text='${el.text}', visibility=${
-            el.visibility === true ? `True` : `False`
-          },
-          font="assets/fonts/${el.fontFamily}/${
-            el.fontFamily
-          }.ttf", font_size=${el.fontSize}, font_color=${normalizeRgba(
-            el.textColor
-          )},
-                idle_color=${normalizeRgba(
-                  el.idleColor
-                )}, hover_color=${normalizeRgba(
-            el.hoverColor
-          )}, clicked_color=${normalizeRgba(el.clickedColor)} ,  
-                border_color=${normalizeRgba(
-                  el.borderColor
-                )}, border_thickness=${el.borderThickness},
-                on_hover=${
-                  el.onHover === null ? "None" : el.onHover
-                }, on_click=${
-            el.onClick === null ? "None" : el.onClick
-          }, on_release=${el.onRelease === null ? "None" : el.onRelease}, 
-          tag=${
-            el.name === null || el.name === "" ? `None` : `"${el.name}"`
-          }, disabled=${
-            el.disabled === true ? `True` : `False`
-          }, disabled_opacity=0.3 
-                `;
+          params += `, 
+          width=${Math.floor(el.width)}, height=${Math.floor(el.height)}, text='${el.text}', 
+          font="assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf", font_size=${el.fontSize}, font_color=${normalizeRgba(el.textColor)},
+          bold = False, italic = False, underline = False, strikethrough = False,
+          button_color=${normalizeRgba(el.idleColor)}, hover_opacity= 0.7, clicked_opacity= 0.5,  
+          border_color=${normalizeRgba(el.borderColor)}, border_thickness=${el.borderThickness}, corner_radius = ${el.borderRadius},
+          is_visible=${el.visibility === true ? `True` : `False`}, disabled = False, disabled_opacity = 0.3, opacity=${el.opacity},
+          on_hover=${el.onHover === null ? "None" : el.onHover}, on_click=${el.onClick === null ? "None" : el.onClick}, on_release=${el.onRelease === null ? "None" : el.onRelease}, tag=${el.name === null || el.name === "" ? `None` : `"${el.name}"`}      
+          `;
           break;
 
         case "InputField":
@@ -276,7 +270,9 @@ def create_ui(window):
           params += `, text='${el.text}',
                 font="assets/fonts/${el.fontFamily}/${
             el.fontFamily
-          }.ttf", font_color='${normalizeRgba(el.color)}', font_size=${el.fontSize},
+          }.ttf", font_color='${normalizeRgba(el.color)}', font_size=${
+            el.fontSize
+          },
                 bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}, visibility=${
             el.visibility === true ? `True` : `False`
           }, tag = ${
@@ -453,11 +449,8 @@ def create_ui(window):
     
 def main():
   # Create a window for the calculator
-  window = pv.Window(width=${!width ? 700 : width},height=${
-      !height ? 400 : height
-    }, title="PyVisual", background_image=${
-      !bgImage ? "None" : `"assets/background/background.jpg"`
-    } , background_color=${!color ? `(1,1,1,1)` : `${normalizeRgba(color)}`})
+  window = pv.Window(title="PyVisual Window", width=${!width ? 700 : width}, height=${!height ? 400 : height}, bg_color=${!color ? `(1,1,1,1)` : `${normalizeRgba(color)}`},
+  icon = None, bg_image=${!bgImage ? "None" : `"assets/background/background.jpg"`}, is_frameless = False, is_resizeable = False)
   create_ui(window)
   # Display the window
   window.show()

@@ -10,6 +10,7 @@ import { SketchPicker } from "react-color";
 import ColorComponent from "./colorComponent";
 import SvgColorComponent from "./SvgColorComponent";
 import closeSvg from "../assets/close.svg";
+import SvgButtonWithRange from "./opacityComponent";
 
 const ElementEditor = ({ selectedElement, elements, setElements }) => {
   const [editedElement, setEditedElement] = useState(null);
@@ -214,7 +215,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
     if (
       (editedElement.type === "ButtonImage" ||
         editedElement.type === "Image") &&
-      (name === "scale" || name === "scale_value")
+      (name === "scale" || name === "scale_value" || name === "opacity")
     ) {
       if (updatedValue > 1) {
         updatedValue = 1;
@@ -230,7 +231,8 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       name === "x2" ||
       name === "y2" ||
       name === "borderWidth" ||
-      name === "strokeWidth"
+      name === "strokeWidth" ||
+      name === "opacity"
     ) {
       updatedValue = parseFloat(value);
     }
@@ -254,7 +256,9 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       name === "radius" ||
       name === "strokeWidth" ||
       name === "width" ||
-      name === "height"
+      name === "height" ||
+      name === "borderRadius" ||
+      name === "opacity"
     ) {
       if (updatedValue < 0) {
         updatedValue = 0;
@@ -501,6 +505,15 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               </select>
             </div>
 
+            <div className="flex flex-col items-center justify-center">
+              <label className="block text-xs text-transparent">Text</label>
+              <ColorComponent
+                Name="textColor"
+                elementColor={editedElement.textColor}
+                Function={handleChange}
+              />
+            </div>
+
             <div className="flex flex-col justify-center">
               <label className="block text-xs text-transparent">Font</label>
               <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
@@ -542,15 +555,6 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
               </div>
             </div>
 
-            <div className="flex flex-col items-center justify-center">
-              <label className="block text-xs text-transparent">Text</label>
-              <ColorComponent
-                Name="textColor"
-                elementColor={editedElement.textColor}
-                Function={handleChange}
-              />
-            </div>
-
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
 
             <div className="flex flex-col items-center justify-center">
@@ -561,33 +565,9 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                 Function={handleChange}
               />
             </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block text-xs text-transparent">Hover</label>
-              <ColorComponent
-                Name="hoverColor"
-                elementColor={editedElement.hoverColor}
-                Function={handleChange}
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <label className="block text-xs text-transparent">Clicked</label>
-              <ColorComponent
-                Name="clickedColor"
-                elementColor={editedElement.clickedColor}
-                Function={handleChange}
-              />
-            </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
 
-            <div className="flex flex-col items-center justify-center">
-              <label className="block text-xs">Border</label>
-              <ColorComponent
-                Name="borderColor"
-                elementColor={editedElement.borderColor}
-                Function={handleChange}
-              />
-            </div>
             <div className="flex flex-col justify-center">
               <label className="block text-xs text-transparent">Border</label>
               <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
@@ -627,6 +607,56 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   +
                 </button>
               </div>
+            </div>
+
+            <div className="flex flex-col justify-center">
+              <label className="block text-xs">Radius</label>
+              <div className="flex items-center space-x-1 border rounded-lg px-[3px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "borderRadius",
+                        value: (editedElement.borderThickness || 0) - 1,
+                      },
+                    })
+                  }
+                  className="bg-transparent text-lg"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  name="borderRadius"
+                  value={editedElement.borderRadius || 0}
+                  onChange={handleChange}
+                  className="text-center w-[40px] text-xs outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "borderRadius",
+                        value: (editedElement.borderRadius || 0) + 1,
+                      },
+                    })
+                  }
+                  className="bg-bg-transparent text-md"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center justify-center">
+              <label className="block text-xs">Border</label>
+              <ColorComponent
+                Name="borderColor"
+                elementColor={editedElement.borderColor}
+                Function={handleChange}
+              />
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
@@ -673,27 +703,6 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
-            <div className="flex flex-col justify-center items-center">
-              {/* Hidden Checkbox */}
-              <label className="block text-xs">Visibility</label>
-              <button
-                onClick={() =>
-                  handleChange({
-                    target: {
-                      name: "visibility",
-                      value: editedElement.visibility === false ? true : false,
-                    },
-                  })
-                }
-                className="flex items-center"
-              >
-                <img
-                  src={editedElement.visibility === true ? UnhideEye : hideEye} // Change the image paths
-                  alt="Toggle visibility"
-                  className="w-6 h-6"
-                />
-              </button>
-            </div>
           </div>
         );
       case "InputField":
@@ -3163,11 +3172,25 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
       {/* Header Section */}
       <header className="flex gap-2 py-3 px-1 items-center justify-center bg-white shadow-md w-[90%] mx-auto rounded-xl mt-2">
         <div>{renderPropertiesByType()}</div>
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col justify-center">
           <label className="block text-xs">Others</label>
-          <button onClick={handleRemoveElement}>
-            <img src={deleteImage} alt="remove" className="w-[17px] h-[22px]" />
-          </button>
+          <div className="flex items-center justify-center gap-4">
+            <div className="flex flex-col justify-center items-center">
+              
+              <SvgButtonWithRange
+                Name={"opacity"}
+                value={editedElement.opacity}
+                onChange={handleChange}
+              />
+            </div>
+            <button onClick={handleRemoveElement}>
+              <img
+                src={deleteImage}
+                alt="remove"
+                className="w-[17px] h-[22px]"
+              />
+            </button>
+          </div>
         </div>
       </header>
       {/* Main Content */}
