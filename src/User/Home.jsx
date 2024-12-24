@@ -450,7 +450,7 @@ def create_ui(window):
 def main():
   # Create a window for the calculator
   window = pv.Window(title="PyVisual Window", width=${!width ? 700 : width}, height=${!height ? 400 : height}, bg_color=${!color ? `(1,1,1,1)` : `${normalizeRgba(color)}`},
-  icon = None, bg_image=${!bgImage ? "None" : `"assets/background/background.jpg"`}, is_frameless = False, is_resizeable = False)
+  icon=None, bg_image=${!bgImage ? "None" : `"assets/background/background.jpg"`}, is_frameless=False, is_resizable=False)
   create_ui(window)
   # Display the window
   window.show()
