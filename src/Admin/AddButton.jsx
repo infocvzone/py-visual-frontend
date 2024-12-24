@@ -23,10 +23,10 @@ const AddButton = () => {
     fontSize: 16,
     textColor: "#FFFFFF",
     idleColor: "#38b6ff",
-    hoverColor: "#7cc8f4",
-    clickedColor: "#155980",
     borderColor: "#000000",
     borderThickness: 0,
+    opacity : 1,  // Default opacity
+    borderRadius : 0,
   });
 
   const [loading, setLoading] = useState(false);
@@ -126,10 +126,10 @@ const AddButton = () => {
       element.fontSize,
       element.textColor,
       element.idleColor,
-      element.hoverColor,
-      element.clickedColor,
       element.borderColor,
       element.borderThickness,
+      element.opacity,  // Default opacity
+      element.borderRadius,
       element.onClick,
       element.onHover,
       element.onRelease
@@ -164,6 +164,8 @@ const AddButton = () => {
       "height",
       "borderThickness",
       "fontSize",
+      "opacity",
+      "borderRadius"
     ].includes(name)
       ? parseFloat(value) || 0 // Convert to float, default to 0 if NaN
       : value || ""; // Keep as string or empty string
@@ -229,7 +231,9 @@ const AddButton = () => {
                     ? "color"
                     : key.includes("borderThickness") ||
                       key.includes("height") ||
-                      key.includes("width")
+                      key.includes("width") ||
+                      key.includes("opacity") ||
+                      key.includes("borderRadius")
                     ? "number"
                     : "text"
                 }

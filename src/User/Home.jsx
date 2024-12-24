@@ -48,8 +48,6 @@ const Home = () => {
         lock: false,
         zIndex: 1,
         visibility: true,
-        opacity: 1,
-        borderRadius: 0,
       };
     } else {
       updatedElement = {
