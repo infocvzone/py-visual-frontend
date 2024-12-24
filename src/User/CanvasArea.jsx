@@ -966,8 +966,8 @@ const CanvasArea = ({
       <div
         style={{
           width: `${Width}px`,
-           // Height of the status bar
-          backgroundColor: "#333", // Status bar color
+          // Height of the status bar
+          backgroundColor: "#262626", // Status bar color
           color: "#fff", // Text color
           display: "flex",
           paddingLeft: "10px",
@@ -977,12 +977,119 @@ const CanvasArea = ({
       >
         <div className="flex items-center justify-center gap-1">
           <img src={pyVisualIcon} alt="Py-Visual" className="w-6" />
-          <div className="text-xs text-gray-200">{Height >= 250 ? "PyVisual Window" : ""}</div>
+          <div className="text-xs text-gray-200">
+            {Height >= 250 ? "PyVisual Window" : ""}
+          </div>
         </div>
-        <div className="flex items-center justify-center gap-[5px]">
-          <div className="p-[7px] h-2 bg-[#E53F3F] shadow-full rounded-full"></div>
-          <div className="p-[7px] h-2 bg-[#4C4949] shadow-full rounded-full"></div>
-          <div className="p-[7px] h-2 bg-[#2EEF12] shadow-full rounded-full"></div>
+        <div className="flex items-center justify-center gap-[9px]">
+          <div className="h-4">
+            <svg
+              width="14px"
+              height="14px"
+              viewBox="0 0 24 24"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              fill="#ffffff"
+              stroke="#ffffff"
+            >
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g
+                id="SVGRepo_tracerCarrier"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></g>
+              <g id="SVGRepo_iconCarrier">
+                {" "}
+                <title>minimize_line</title>{" "}
+                <g
+                  id="页面-1"
+                  stroke="none"
+                  stroke-width="1"
+                  fill="none"
+                  fill-rule="evenodd"
+                >
+                  {" "}
+                  <g
+                    id="System"
+                    transform="translate(-192.000000, -192.000000)"
+                  >
+                    {" "}
+                    <g
+                      id="minimize_line"
+                      transform="translate(192.000000, 192.000000)"
+                    >
+                      {" "}
+                      <path
+                        d="M24,0 L24,24 L0,24 L0,0 L24,0 Z M12.5934901,23.257841 L12.5819402,23.2595131 L12.5108777,23.2950439 L12.4918791,23.2987469 L12.4918791,23.2987469 L12.4767152,23.2950439 L12.4056548,23.2595131 C12.3958229,23.2563662 12.3870493,23.2590235 12.3821421,23.2649074 L12.3780323,23.275831 L12.360941,23.7031097 L12.3658947,23.7234994 L12.3769048,23.7357139 L12.4804777,23.8096931 L12.4953491,23.8136134 L12.4953491,23.8136134 L12.5071152,23.8096931 L12.6106902,23.7357139 L12.6232938,23.7196733 L12.6232938,23.7196733 L12.6266527,23.7031097 L12.609561,23.275831 C12.6075724,23.2657013 12.6010112,23.2592993 12.5934901,23.257841 L12.5934901,23.257841 Z M12.8583906,23.1452862 L12.8445485,23.1473072 L12.6598443,23.2396597 L12.6498822,23.2499052 L12.6498822,23.2499052 L12.6471943,23.2611114 L12.6650943,23.6906389 L12.6699349,23.7034178 L12.6699349,23.7034178 L12.678386,23.7104931 L12.8793402,23.8032389 C12.8914285,23.8068999 12.9022333,23.8029875 12.9078286,23.7952264 L12.9118235,23.7811639 L12.8776777,23.1665331 C12.8752882,23.1545897 12.8674102,23.1470016 12.8583906,23.1452862 L12.8583906,23.1452862 Z M12.1430473,23.1473072 C12.1332178,23.1423925 12.1221763,23.1452606 12.1156365,23.1525954 L12.1099173,23.1665331 L12.0757714,23.7811639 C12.0751323,23.7926639 12.0828099,23.8018602 12.0926481,23.8045676 L12.108256,23.8032389 L12.3092106,23.7104931 L12.3186497,23.7024347 L12.3186497,23.7024347 L12.3225043,23.6906389 L12.340401,23.2611114 L12.337245,23.2485176 L12.337245,23.2485176 L12.3277531,23.2396597 L12.1430473,23.1473072 Z"
+                        id="MingCute"
+                        fill-rule="nonzero"
+                      >
+                        {" "}
+                      </path>{" "}
+                      <path
+                        d="M3,12 C3,11.4477 3.44772,11 4,11 L20,11 C20.5523,11 21,11.4477 21,12 C21,12.5523 20.5523,13 20,13 L4,13 C3.44772,13 3,12.5523 3,12 Z"
+                        id="路径"
+                        fill="#ffffff"
+                      >
+                        {" "}
+                      </path>{" "}
+                    </g>{" "}
+                  </g>{" "}
+                </g>{" "}
+              </g>
+            </svg>
+          </div>
+          <div className="h-4">
+            <svg
+              width="12px"
+              height="12px"
+              viewBox="0 0 17 17"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              fill="#ffffff"
+              stroke="#ffffff"
+            >
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g
+                id="SVGRepo_tracerCarrier"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></g>
+              <g id="SVGRepo_iconCarrier">
+                {" "}
+                <path
+                  d="M0 0v17h17v-17h-17zM16 16h-15v-15h15v15z"
+                  fill="#ffffff"
+                ></path>{" "}
+              </g>
+            </svg>
+          </div>
+          <div className="h-4">
+            <svg
+              width="14px"
+              height="14px"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              stroke="#ffffff"
+            >
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g
+                id="SVGRepo_tracerCarrier"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></g>
+              <g id="SVGRepo_iconCarrier">
+                {" "}
+                <path
+                  d="M20.7457 3.32851C20.3552 2.93798 19.722 2.93798 19.3315 3.32851L12.0371 10.6229L4.74275 3.32851C4.35223 2.93798 3.71906 2.93798 3.32854 3.32851C2.93801 3.71903 2.93801 4.3522 3.32854 4.74272L10.6229 12.0371L3.32856 19.3314C2.93803 19.722 2.93803 20.3551 3.32856 20.7457C3.71908 21.1362 4.35225 21.1362 4.74277 20.7457L12.0371 13.4513L19.3315 20.7457C19.722 21.1362 20.3552 21.1362 20.7457 20.7457C21.1362 20.3551 21.1362 19.722 20.7457 19.3315L13.4513 12.0371L20.7457 4.74272C21.1362 4.3522 21.1362 3.71903 20.7457 3.32851Z"
+                  fill="#ffffff"
+                ></path>{" "}
+              </g>
+            </svg>
+          </div>
           <div></div>
         </div>
       </div>

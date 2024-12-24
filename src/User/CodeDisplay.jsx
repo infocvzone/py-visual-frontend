@@ -11,7 +11,6 @@ const CodeDisplay = ({ code, setCodeDisplay, onDownloadProject }) => {
   const [chatMessages, setChatMessages] = useState([]); // State for chat messages
   const [currentCode, setCurrentCode] = useState(code); // State for displayed code
   const codeRef = useRef(null); // Ref to the <pre><code> block
-
   // Highlight code on component mount or code changes
   useEffect(() => {
     if (codeRef.current) {

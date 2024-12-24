@@ -17,6 +17,7 @@ import Assets from "./Admin/Assets";
 import Signup from "./User/UserSignup";
 import Login from "./User/UserLogin";
 import Projects from "./User/Projects";
+import Persona from "./Admin/CodePersona";
 
 
 /*---------------------------*/
@@ -72,6 +73,7 @@ function App() {
             element={isAdmin ? <Dashboard /> : <Navigate to="/admin-signup" />}
           />
           <Route path="/assets" element={<Assets />} />
+          <Route path="/persona" element={<Persona/>} />
           <Route path="/element-types" element={<TypesComponent />} />
           <Route path="/add-element" element={<AddElementComponent />} />
           <Route path="/edit-element" element={<EditPanel />} />

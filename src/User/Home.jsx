@@ -241,7 +241,7 @@ def create_ui(window):
         case "InputField":
           params += `, width=${el.width}, height=${el.height}, visibility=${
             el.visibility === true ? `True` : `False`
-          }, background_color=${hexToRgb(el.bgColor)}, input_type='${
+          }, background_color=${normalizeRgba(el.bgColor)}, input_type='${
             el.input_type
           }',
           placeholder='${el.placeholder}', default_text="${el.text}", 
@@ -252,10 +252,10 @@ def create_ui(window):
           },
           font="assets/fonts/${el.fontFamily}/${
             el.fontFamily
-          }.ttf", font_size=${el.fontSize}, font_color=${hexToRgb(
+          }.ttf", font_size=${el.fontSize}, font_color=${normalizeRgba(
             el.textColor
           )},
-          border_color=${hexToRgb(el.borderColor)}, border_thickness=${
+          border_color=${normalizeRgba(el.borderColor)}, border_thickness=${
             el.borderThickness
           }, 
           border_style= ["${el.border_style[0]}", "${el.border_style[1]}", "${
@@ -276,7 +276,7 @@ def create_ui(window):
           params += `, text='${el.text}',
                 font="assets/fonts/${el.fontFamily}/${
             el.fontFamily
-          }.ttf", font_color='${el.color}', font_size=${el.fontSize},
+          }.ttf", font_color='${normalizeRgba(el.color)}', font_size=${el.fontSize},
                 bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}, visibility=${
             el.visibility === true ? `True` : `False`
           }, tag = ${
