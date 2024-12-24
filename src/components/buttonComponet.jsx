@@ -24,6 +24,40 @@ const ButtonComponent = ({
     });
   }, [fontFamily]);
 
+  // Parse color string (hex, rgb, rgba) and return an object with r, g, b, a values
+  const parseColor = (color) => {
+    let r,
+      g,
+      b,
+      a = 1;
+
+    if (color.startsWith("#")) {
+      // Hex color code (e.g., #ff0000 or #ff0000ff)
+      const hex = color.slice(1);
+      if (hex.length === 6) {
+        r = parseInt(hex.slice(0, 2), 16);
+        g = parseInt(hex.slice(2, 4), 16);
+        b = parseInt(hex.slice(4, 6), 16);
+      } else if (hex.length === 8) {
+        r = parseInt(hex.slice(0, 2), 16);
+        g = parseInt(hex.slice(2, 4), 16);
+        b = parseInt(hex.slice(4, 6), 16);
+        a = parseInt(hex.slice(6, 8), 16) / 255;
+      }
+    } else if (color.startsWith("rgb")) {
+      // RGB or RGBA color (e.g., rgb(255, 0, 0) or rgba(255, 0, 0, 0.5))
+      const rgba = color.match(/(\d+), (\d+), (\d+),? ?(\d*\.?\d*)/);
+      if (rgba) {
+        r = parseInt(rgba[1]);
+        g = parseInt(rgba[2]);
+        b = parseInt(rgba[3]);
+        a = rgba[4] ? parseFloat(rgba[4]) : 1;
+      }
+    }
+
+    return { r, g, b, a };
+  };
+
   useEffect(() => {
     const container = buttonContainerRef.current;
 
@@ -36,6 +70,10 @@ const ButtonComponent = ({
 
     // Instantiate the PlainButton class and attach it to the container
     if (container) {
+      const { r, g, b, a } = parseColor(idleColor);
+      let hoverColor = `rgba(${r}, ${g}, ${b}, ${a * 0.75})`; // Hover color with 75% opacity
+      let clickedColor = `rgba(${r}, ${g}, ${b}, ${a * 0.50})`;
+      
       buttonInstanceRef.current = new PlainButton(
         container,
         text, // Button text
