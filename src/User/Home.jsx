@@ -222,7 +222,7 @@ def create_ui(window):
           params += `, 
           width=${Math.floor(el.width)}, height=${Math.floor(el.height)}, text='${el.text}', 
           font="assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf", font_size=${el.fontSize}, font_color=${normalizeRgba(el.textColor)},
-          bold = False, italic = False, underline = False, strikethrough = False,
+          bold = ${el.bold === true ? `True` : `False`}, italic = ${el.italic === true ? `True` : `False`}, underline = ${el.underline === true ? `True` : `False`}, strikethrough = ${el.strikethrough === true ? `True` : `False`},
           button_color=${normalizeRgba(el.idleColor)}, hover_opacity= 0.7, clicked_opacity= 0.5,  
           border_color=${normalizeRgba(el.borderColor)}, border_thickness=${el.borderThickness}, corner_radius = ${el.borderRadius},
           is_visible=${el.visibility === true ? `True` : `False`}, disabled = False, disabled_opacity = 0.3, opacity=${el.opacity},

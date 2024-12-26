@@ -18,6 +18,7 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
   const [colorIndexMap, setColorIndexMap] = useState({});
   const [svgFills, setSvgFills] = useState([]);
   const [open, setOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [openPickers, setOpenPickers] = useState({}); // State to track open pickers
 
@@ -46,6 +47,11 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
         families: [fontName],
       },
     });
+  };
+
+  // Function to toggle dropdown visibility
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   // Update elements list with the modified element
@@ -553,6 +559,109 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
                   +
                 </button>
               </div>
+            </div>
+
+            <div className="flex flex-col items-center justify-center">
+              <label className="block text-xs text-transparent">Text</label>
+              <button
+                onClick={toggleDropdown}
+                className="text-xs bg-[#1c4bad] text-white p-2 rounded-full"
+              >
+                More
+              </button>
+
+              {/* Dropdown menu */}
+              {isDropdownOpen && (
+                <div className="absolute right- top-16 mt-2 bg-white shadow-lg rounded-lg p-4 w-48 z-10">
+                  <h3 className="text-sm font-semibold mb-2">Font Styles</h3>
+
+                  {/* Bold checkbox */}
+                  <div className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id="bold"
+                      name="bold"
+                      checked={!!editedElement.bold} // Ensure boolean value
+                      onChange={(e) => {
+                        handleChange({
+                          target: { name: "bold", value: e.target.checked },
+                        });
+                        toggleDropdown();
+                      }}
+                      className="mr-2"
+                    />
+                    <label htmlFor="bold" className="text-sm">
+                      Bold
+                    </label>
+                  </div>
+
+                  {/* Italic checkbox */}
+                  <div className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id="italic"
+                      name="italic"
+                      checked={!!editedElement.italic} // Ensure boolean value
+                      onChange={(e) => {
+                        handleChange({
+                          target: { name: "italic", value: e.target.checked },
+                        });
+                        toggleDropdown();
+                      }}
+                      className="mr-2"
+                    />
+                    <label htmlFor="italic" className="text-sm">
+                      Italic
+                    </label>
+                  </div>
+
+                  {/* Underline checkbox */}
+                  <div className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id="underline"
+                      name="underline"
+                      checked={!!editedElement.underline} // Ensure boolean value
+                      onChange={(e) => {
+                        handleChange({
+                          target: {
+                            name: "underline",
+                            value: e.target.checked,
+                          },
+                        });
+                        toggleDropdown();
+                      }}
+                      className="mr-2"
+                    />
+                    <label htmlFor="underline" className="text-sm">
+                      Underline
+                    </label>
+                  </div>
+
+                  {/* Strikethrough checkbox */}
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="strikethrough"
+                      name="strikethrough"
+                      checked={!!editedElement.strikethrough} // Ensure boolean value
+                      onChange={(e) => {
+                        handleChange({
+                          target: {
+                            name: "strikethrough",
+                            value: e.target.checked,
+                          },
+                        });
+                        toggleDropdown();
+                      }}
+                      className="mr-2"
+                    />
+                    <label htmlFor="strikethrough" className="text-sm">
+                      Strikethrough
+                    </label>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
@@ -3176,7 +3285,6 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
           <label className="block text-xs">Others</label>
           <div className="flex items-center justify-center gap-4">
             <div className="flex flex-col justify-center items-center">
-              
               <SvgButtonWithRange
                 Name={"opacity"}
                 value={editedElement.opacity}

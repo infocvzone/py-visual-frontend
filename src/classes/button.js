@@ -16,7 +16,11 @@ class FabricButton {
     borderRadius = 0,  // Default border radius
     onClick = null,
     onHover = null,
-    onRelease = null
+    onRelease = null,
+    bold = false,       // Default value for bold
+    italic = false,     // Default value for italic
+    underline = false,  // Default value for underline
+    strikethrough = false // Default value for strikethrough
   ) {
     // Initialize button properties
     this.canvas = canvas;
@@ -41,6 +45,12 @@ class FabricButton {
 
     this.isPressed = false;
 
+    // Text styles (new properties)
+    this.bold = bold;
+    this.italic = italic;
+    this.underline = underline;
+    this.strikethrough = strikethrough;
+
     // Generate hover and clicked colors based on idle color
     const { r, g, b, a } = this.parseColor(idleColor);
     this.hoverColor = `rgba(${r}, ${g}, ${b}, ${a * 0.75})`; // Hover color with 75% opacity
@@ -57,10 +67,9 @@ class FabricButton {
       strokeWidth: this.borderThickness,
       rx: this.borderRadius,  // Apply border radius for rounded corners
       ry: this.borderRadius,  // Apply border radius for rounded corners
-      
     });
 
-    // Create the Fabric text for the button
+    // Create the Fabric text for the button with added styles
     this.buttonText = new fabric.Text(this.text, {
       left: this.x + this.borderThickness / 2 + this.width / 2,
       top: this.y + this.borderThickness / 2 + this.height / 2,
@@ -69,6 +78,10 @@ class FabricButton {
       fill: this.textColor,
       fontFamily: this.fontFamily,
       fontSize: this.fontSize,
+      fontWeight: this.bold ? 'bold' : 'normal',  // Apply bold
+      fontStyle: this.italic ? 'italic' : 'normal',  // Apply italic
+      underline: this.underline,  // Apply underline
+      linethrough: this.strikethrough,  // Apply strikethrough
     });
 
     // Group the button rectangle and text
@@ -78,7 +91,6 @@ class FabricButton {
       opacity: this.opacity,
       selectable: true,
       hoverCursor: "pointer",
-
     });
 
     // Add the button to the canvas
@@ -182,6 +194,17 @@ class FabricButton {
       fontSize: fontSize,
       left: this.x + this.borderThickness / 2 + this.width / 2,
       top: this.y + this.borderThickness / 2 + this.height / 2,
+    });
+    this.canvas.renderAll(); // Re-render the canvas
+  }
+
+  // Method to update text style (for bold, italic, underline, strikethrough)
+  updateTextStyle() {
+    this.buttonText.set({
+      fontWeight: this.bold ? 'bold' : 'normal',
+      fontStyle: this.italic ? 'italic' : 'normal',
+      underline: this.underline,
+      linethrough: this.strikethrough,
     });
     this.canvas.renderAll(); // Re-render the canvas
   }

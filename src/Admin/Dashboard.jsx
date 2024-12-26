@@ -262,43 +262,43 @@ function Dashboard() {
       <div className="flex-grow p-6 ml-64 mt-14">
         <h1 className="text-4xl font-bold text-blue-900 mb-6">Buttons</h1>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {buttonData.map((button) => (
-            <button
-              key={button._id} // Use _id from the API response
-              onClick={() => onAddElement("Button", button)}
-              className="bg-gray-100 p-3 rounded-lg shadow-lg transition-all transform hover:scale-105"
-            >
-              <ButtonComponent
-                text={button.text}
-                idleColor={button.idleColor} // Green idle color
-                hoverColor={button.hoverColor} // Light green hover color
-                clickedColor={button.clickedColor} // Dark green clicked color
-                textColor={button.textColor} // White text
-                width={150}
-                height={40}
-                border_thickness={button.borderThickness}
-                borderColor={button.borderColor}
-                fontFamily={button.fontFamily}
-              />
-            </button>
-          ))}
-          {buttonImmageData.map((Button, index) => (
-            <button
-              key={index}
-              className="bg-gray-100 p-3 rounded-lg shadow-lg transition-all transform hover:scale-105"
-              onClick={() => onAddElement("ButtonImage", Button)}
-              onMouseEnter={() => setHoveredIndex(index)} // Set hovered index on mouse enter
-              onMouseLeave={() => setHoveredIndex(null)} // Reset hovered index on mouse leave
-            >
-              <img
-                src={
-                  hoveredIndex === index ? Button.hoverImage : Button.idleImage
-                }
-                alt="Button"
-                className="max-w-[110px] max-h-[70px] m-auto p-2"
-              />
-            </button>
-          ))}
+          {buttonData.map((button) => {
+                  // Define the maximum width
+                  const maxWidth = 150;
+                  // Check if the button's width exceeds the maximum allowed width
+                  let scaleFactor = 1;
+                  if (button.width > maxWidth) {
+                    scaleFactor = maxWidth / button.width;
+                  }
+                  // Scale down the width and height while maintaining the aspect ratio
+                  const scaledWidth = button.width * scaleFactor;
+                  const scaledHeight = button.height * scaleFactor;
+                  // Adjust font size based on the scaled height or width
+                  const baseFontSize = button.fontSize; // Default font size if not provided
+                  const scaledFontSize = baseFontSize * scaleFactor;
+                  return (
+                    <button
+                      key={button._id}
+                      className=""
+                      onClick={() => onAddElement("Button", button)}
+                    >
+                      <ButtonComponent
+                        text={button.text}
+                        idleColor={button.idleColor}
+                        hoverColor={button.hoverColor}
+                        clickedColor={button.clickedColor}
+                        textColor={button.textColor}
+                        width={scaledWidth} // Use scaled width
+                        height={scaledHeight} // Use scaled height
+                        fontSize={scaledFontSize} // Use scaled font size
+                        border_thickness={button.borderThickness}
+                        borderColor={button.borderColor}
+                        fontFamily={button.fontFamily}
+                        borderRadius={button.borderRadius}
+                      />
+                    </button>
+                  );
+                })}
         </div>
       </div>
       <div className="flex-grow p-6 ml-64 mt-6">

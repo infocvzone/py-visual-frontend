@@ -12,6 +12,8 @@ const ButtonComponent = ({
   border_thickness = 1,
   borderColor = "#000000",
   fontFamily = "Roboto",
+  fontSize = 16,
+  borderRadius = 0,
 }) => {
   const buttonContainerRef = useRef(null); // Create a reference to the container
   const buttonInstanceRef = useRef(null); // Create a reference to store the PlainButton instance
@@ -85,7 +87,9 @@ const ButtonComponent = ({
         height,
         border_thickness,
         borderColor,
-        fontFamily
+        fontFamily,
+        fontSize,
+        borderRadius
       );
     }
 

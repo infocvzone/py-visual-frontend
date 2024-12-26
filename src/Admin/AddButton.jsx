@@ -4,6 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import load from "../assets/loading.gif";
 import { API_KEY } from "../constant";
+import ColorComponent from "../User/colorComponent";
 //import { fabric } from 'fabric';
 
 const AddButton = () => {
@@ -15,18 +16,22 @@ const AddButton = () => {
     type: "BasicButton",
     x: 150,
     y: 150,
-    name:"Button",
+    name: "Button",
     width: 150,
     height: 30,
     text: "Submit",
     fontFamily: "Roboto-Bold",
     fontSize: 16,
-    textColor: "#FFFFFF",
-    idleColor: "#38b6ff",
-    borderColor: "#000000",
+    textColor: "rgba(255,255,255,100)",
+    idleColor: "rgba(155,155,155,1)",
+    borderColor: "rgba(0,0,0,1",
     borderThickness: 0,
-    opacity : 1,  // Default opacity
-    borderRadius : 0,
+    opacity: 1, // Default opacity
+    borderRadius: 0,
+    bold: false,
+    italic: false,
+    underline: false,
+    strikethrough: false,
   });
 
   const [loading, setLoading] = useState(false);
@@ -128,11 +133,15 @@ const AddButton = () => {
       element.idleColor,
       element.borderColor,
       element.borderThickness,
-      element.opacity,  // Default opacity
+      element.opacity, // Default opacity
       element.borderRadius,
       element.onClick,
       element.onHover,
-      element.onRelease
+      element.onRelease,
+      element.bold,
+      element.italic,
+      element.underline,
+      element.strikethrough
     ).buttonGroup;
 
     fabricElement.set({
@@ -152,23 +161,30 @@ const AddButton = () => {
 
   // Handle input changes
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
 
     if (name === "fontFamily") {
       loadFont(value);
     }
 
-    // Check if the field should be a number and convert if necessary
-    const updatedValue = [
-      "width",
-      "height",
-      "borderThickness",
-      "fontSize",
-      "opacity",
-      "borderRadius"
-    ].includes(name)
-      ? parseFloat(value) || 0 // Convert to float, default to 0 if NaN
-      : value || ""; // Keep as string or empty string
+    // Determine the updated value based on the input type
+    let updatedValue =
+      type === "checkbox"
+        ? checked // Handle checkbox values
+        : [
+            "width",
+            "height",
+            "borderThickness",
+            "fontSize",
+            "opacity",
+            "borderRadius",
+          ].includes(name)
+        ? parseFloat(value) || 0 // Convert to float, default to 1 if NaN for specific fields
+        : value || ""; // Keep as string for other fields
+
+    if (name.includes("Color")) {
+      updatedValue = `rgba(${value.r}, ${value.g}, ${value.b}, ${value.a})`;
+    }
 
     setElementData((prev) => ({
       ...prev,
@@ -224,6 +240,25 @@ const AddButton = () => {
                   </option>
                 ))}
               </select>
+            ) : key.includes("Color") ? (
+              <div>
+                <ColorComponent
+                  Name={key}
+                  elementColor={elementData[key]}
+                  Function={handleInputChange}
+                />
+              </div>
+            ) : key === "bold" ||
+              key === "italic" ||
+              key === "underline" ||
+              key === "strikethrough" ? (
+              <input
+                type="checkbox"
+                name={key}
+                checked={elementData[key]}
+                onChange={handleInputChange}
+                className="border p-1 rounded"
+              />
             ) : (
               <input
                 type={

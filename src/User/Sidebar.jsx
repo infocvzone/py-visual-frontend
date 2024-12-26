@@ -481,7 +481,7 @@ const Sidebar = ({
 
     fetchButtonData();
     fetchTextData();
-   // fetchImageData(); // Fetch images
+    // fetchImageData(); // Fetch images
     fetchInputfieldData();
 
     fetchCircle();
@@ -839,36 +839,56 @@ const Sidebar = ({
             {/* Show elements for the active category */}
 
             {activeCategory === "BasicButton" && (
-              <div className="grid grid-cols-3 gap-[5px]">
-                {buttonData.map((button) => (
-                  <button
-                    key={button._id}
-                    className=""
-                    onClick={() => {
-                      let data = {
-                        ...button,
-                        visibility: true,
-                        diabled: false,
-                        disabled_opacity: 0.3,
-                      };
-                      onAddElement("BasicButton", data);
-                    }}
-                  >
-                    <ButtonComponent
-                      text={button.text}
-                      idleColor={button.idleColor}
-                      hoverColor={button.hoverColor}
-                      clickedColor={button.clickedColor}
-                      textColor={button.textColor}
-                      width={60}
-                      height={60}
-                      fontSize={10}
-                      border_thickness={button.borderThickness}
-                      borderColor={button.borderColor}
-                      fontFamily={button.fontFamily}
-                    />
-                  </button>
-                ))}
+              <div className="grid grid-cols-2 gap-[5px]">
+                {buttonData.map((button) => {
+                  // Define the maximum width
+                  const maxWidth = 100;
+
+                  // Check if the button's width exceeds the maximum allowed width
+                  let scaleFactor = 1;
+                  if (button.width > maxWidth) {
+                    scaleFactor = maxWidth / button.width;
+                  }
+
+                  // Scale down the width and height while maintaining the aspect ratio
+                  const scaledWidth = button.width * scaleFactor;
+                  const scaledHeight = button.height * scaleFactor;
+
+                  // Adjust font size based on the scaled height or width
+                  const baseFontSize = button.fontSize; // Default font size if not provided
+                  const scaledFontSize = baseFontSize * scaleFactor;
+
+                  return (
+                    <button
+                      key={button._id}
+                      className=""
+                      onClick={() => {
+                        let data = {
+                          ...button,
+                          visibility: true,
+                          diabled: false,
+                          disabled_opacity: 0.3,
+                        };
+                        onAddElement("BasicButton", data);
+                      }}
+                    >
+                      <ButtonComponent
+                        text={button.text}
+                        idleColor={button.idleColor}
+                        hoverColor={button.hoverColor}
+                        clickedColor={button.clickedColor}
+                        textColor={button.textColor}
+                        width={scaledWidth} // Use scaled width
+                        height={scaledHeight} // Use scaled height
+                        fontSize={scaledFontSize} // Use scaled font size
+                        border_thickness={button.borderThickness}
+                        borderColor={button.borderColor}
+                        fontFamily={button.fontFamily}
+                        borderRadius={button.borderRadius}
+                      />
+                    </button>
+                  );
+                })}
 
                 {/*buttonimageData.map((Button, index) => (
                   <button

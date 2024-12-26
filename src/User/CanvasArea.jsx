@@ -392,7 +392,11 @@ const CanvasArea = ({
           element.borderRadius,
           element.onClick,
           element.onHover,
-          element.onRelease
+          element.onRelease,
+          element.bold,
+          element.italic,
+          element.underline,
+          element.strikethrough
         ).buttonGroup;
 
       case "InputField":
