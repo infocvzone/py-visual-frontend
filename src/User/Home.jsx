@@ -114,7 +114,7 @@ const Home = () => {
             : el.type === "ButtonImage"
             ? { ...el, scale: scale_value }
             : el.type === "Text"
-            ? { ...el, fontSize: scale_value } // Update fontSize for Text
+            ? { ...el, boxWidth: width, fontSize: scale_value } // Update fontSize for Text
             : { ...el, width: Math.floor(width), height: Math.floor(height) } // Update width/height for others
           : el
       );
@@ -220,13 +220,33 @@ def create_ui(window):
       switch (el.type) {
         case "BasicButton":
           params += `, 
-          width=${Math.floor(el.width)}, height=${Math.floor(el.height)}, text='${el.text}', 
-          font="assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf", font_size=${el.fontSize}, font_color=${normalizeRgba(el.textColor)},
-          bold = ${el.bold === true ? `True` : `False`}, italic = ${el.italic === true ? `True` : `False`}, underline = ${el.underline === true ? `True` : `False`}, strikethrough = ${el.strikethrough === true ? `True` : `False`},
-          button_color=${normalizeRgba(el.idleColor)}, hover_opacity= 0.7, clicked_opacity= 0.5,  
-          border_color=${normalizeRgba(el.borderColor)}, border_thickness=${el.borderThickness}, corner_radius = ${el.borderRadius},
-          is_visible=${el.visibility === true ? `True` : `False`}, disabled = False, disabled_opacity = 0.3, opacity=${el.opacity},
-          on_hover=${el.onHover === null ? "None" : el.onHover}, on_click=${el.onClick === null ? "None" : el.onClick}, on_release=${el.onRelease === null ? "None" : el.onRelease}, tag=${el.name === null || el.name === "" ? `None` : `"${el.name}"`}      
+          width=${Math.floor(el.width)}, height=${Math.floor(
+            el.height
+          )}, text='${el.text}', 
+          font="assets/fonts/${el.fontFamily}/${
+            el.fontFamily
+          }.ttf", font_size=${el.fontSize}, font_color=${normalizeRgba(
+            el.textColor
+          )},
+          bold = ${el.bold === true ? `True` : `False`}, italic = ${
+            el.italic === true ? `True` : `False`
+          }, underline = ${
+            el.underline === true ? `True` : `False`
+          }, strikethrough = ${el.strikethrough === true ? `True` : `False`},
+          button_color=${normalizeRgba(
+            el.idleColor
+          )}, hover_opacity= 0.7, clicked_opacity= 0.5,  
+          border_color=${normalizeRgba(el.borderColor)}, border_thickness=${
+            el.borderThickness
+          }, corner_radius = ${el.borderRadius},
+          is_visible=${
+            el.visibility === true ? `True` : `False`
+          }, disabled = False, disabled_opacity = 0.3, opacity=${el.opacity},
+          on_hover=${el.onHover === null ? "None" : el.onHover}, on_click=${
+            el.onClick === null ? "None" : el.onClick
+          }, on_release=${el.onRelease === null ? "None" : el.onRelease}, tag=${
+            el.name === null || el.name === "" ? `None` : `"${el.name}"`
+          }      
           `;
           break;
 
@@ -351,7 +371,9 @@ def create_ui(window):
         case "Image":
           params += `, image_path="assets/Images/image_${index + 1}", scale=${
             el.scale_value
-          }, is_visible=${el.visibility === false ? "False" : "True"}, opacity=${el.opacity}, tag = ${
+          }, is_visible=${
+            el.visibility === false ? "False" : "True"
+          }, opacity=${el.opacity}, tag = ${
             el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
           break;
@@ -447,8 +469,14 @@ def create_ui(window):
     
 def main():
   # Create a window for the calculator
-  window = pv.Window(title="PyVisual Window", width=${!width ? 700 : width}, height=${!height ? 400 : height}, bg_color=${!color ? `(1,1,1,1)` : `${normalizeRgba(color)}`},
-  icon=None, bg_image=${!bgImage ? "None" : `"assets/background/background.jpg"`}, is_frameless=False, is_resizable=False)
+  window = pv.Window(title="PyVisual Window", width=${
+    !width ? 700 : width
+  }, height=${!height ? 400 : height}, bg_color=${
+      !color ? `(1,1,1,1)` : `${normalizeRgba(color)}`
+    },
+  icon=None, bg_image=${
+    !bgImage ? "None" : `"assets/background/background.jpg"`
+  }, is_frameless=False, is_resizable=False)
   create_ui(window)
   # Display the window
   window.show()

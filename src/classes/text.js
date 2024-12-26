@@ -1,126 +1,133 @@
-//import { fabric } from 'fabric';
-
-// Class definition
-class FabricText extends fabric.Text {
+class FabricText {
   constructor(
-    x,
-    y,
-    text = "Hello",
-    scale = 1.0,
-    fontPath = null,
-    color = "#000000",
-    fontFamily = "Roboto",
-    fontSize = 30,
+    canvas,
+    x = 50,
+    y = 50,
+    text = "Text",
+    font = "Roboto",
+    fontSize = 20,
+    fontColor = "#666666",
     bold = false,
     italic = false,
     underline = false,
-    strikethrough = false
+    strikethrough = false,
+    bgColor = "rgba(0, 0, 0, 0)",
+    boxWidth = 200,
+    textAlignment = "center",
+    isVisible = true,
+    opacity = 1,
+    tag = null
   ) {
-    // Initialize with individual properties
-    super(text, {
-      left: x,
-      top: y,
-      fontSize: fontSize * scale, // Adjust font size by scale
-      fill: color, // Text color
-      fontFamily: fontFamily, // Default font
-      fontWeight: bold ? "bold" : "normal", // Bold style
-      fontStyle: italic ? "italic" : "normal", // Italic style
-      underline: underline, // Underline style
-      linethrough: strikethrough, // Strikethrough style
+    this.canvas = canvas;
+    this.text = text;
+    this.x = x;
+    this.y = y;
+    this.font = font;
+    this.fontSize = fontSize;
+    this.fontColor = fontColor;
+    this.bold = bold;
+    this.italic = italic;
+    this.underline = underline;
+    this.strikethrough = strikethrough;
+    this.bgColor = bgColor;
+    this.boxWidth = boxWidth;
+    this.textAlignment = textAlignment;
+    this.isVisible = isVisible;
+    this.opacity = opacity;
+    this.tag = tag;
+
+    // Create background rectangle
+    this.bgRect = new fabric.Rect({
+      left: this.x,
+      top: this.y,
+      width: this.boxWidth,
+      height: this.fontSize + 10,
+      fill: this.bgColor,
+      selectable: false,
     });
 
-    // Store initial properties
-    this.anchorX = x;
-    this.anchorY = y;
-    this.fontPath = fontPath;
-    this.rawText = text; // Store original text
-    this.scale = scale;
+    // Create text with styles and alignment
+    this.textObj = new fabric.Textbox(this.text, {
+      left: this.x,
+      top: this.y,
+      width: this.boxWidth,
+      fontFamily: this.font,
+      fontSize: this.fontSize,
+      fill: this.fontColor,
+      fontWeight: this.bold ? "bold" : "normal",
+      fontStyle: this.italic ? "italic" : "normal",
+      underline: this.underline,
+      linethrough: this.strikethrough,
+      textAlign: this.textAlignment,
+      selectable: true,
+    });
 
-    // Apply custom font if provided
-    if (fontPath) {
-      this.setFont(fontPath);
-    }
+    // Group the rectangle and text
+    this.group = new fabric.Group([this.bgRect, this.textObj], {
+      left: this.x,
+      top: this.y,
+      opacity: this.opacity,
+      selectable: true,
+    });
 
-    // Update the coordinates after scaling
-    this.setScale(scale);
+    // Add to canvas
+    this.canvas.add(this.group);
+
+    // Set visibility
+    this.setVisibility(this.isVisible);
   }
 
-  // Method to apply scaling
-  setScale(scale) {
-    this.scale = scale;
-    this.fontSize = Math.round(this.fontSize * scale); // Update font size based on scale
-    this.setCoords(); // Update positioning
-  }
-
-  // Method to update text content
-  updateText(newText) {
-    this.rawText = newText;
+  setText(newText) {
     this.text = newText;
-    this.set({ text: newText });
-    this.setCoords(); // Update positioning
+    this.textObj.text = newText;
+    this.canvas.requestRenderAll();
   }
 
-  // Method to change position
-  setPosition(x, y) {
-    this.set({ left: x, top: y });
-    this.anchorX = x;
-    this.anchorY = y;
-    this.setCoords();
+  setFontSize(newFontSize) {
+    this.fontSize = newFontSize;
+    this.textObj.fontSize = newFontSize;
+    this.bgRect.height = newFontSize + 10;
+    this.canvas.requestRenderAll();
   }
 
-  // Method to apply a new font from a file path
-  setFont(fontPath) {
-    if (fontPath) {
-      const font = new FontFace("CustomFont", `url(${fontPath})`);
-      font.load().then(() => {
-        document.fonts.add(font);
-        this.set({ fontFamily: "CustomFont" });
-        this.setCoords(); // Update positioning
-      });
-    }
+  setFontColor(newFontColor) {
+    this.fontColor = newFontColor;
+    this.textObj.fill = newFontColor;
+    this.canvas.requestRenderAll();
   }
 
-  // Method to change text color
-  setColor(color) {
-    this.set({ fill: color });
-    this.setCoords();
+  setBgColor(newBgColor) {
+    this.bgColor = newBgColor;
+    this.bgRect.fill = newBgColor;
+    this.canvas.requestRenderAll();
   }
 
-  // Method to change font size
-  setFontSize(fontSize) {
-    this.set({ fontSize: fontSize * this.scale });
-    this.setCoords();
+  setTextAlignment(newAlignment) {
+    this.textAlignment = newAlignment;
+    this.textObj.textAlign = newAlignment;
+    this.canvas.requestRenderAll();
   }
 
-  // Method to toggle bold style
-  setBold(isBold) {
-    this.set({ fontWeight: isBold ? "bold" : "normal" });
-    this.setCoords();
+  setVisibility(isVisible) {
+    this.isVisible = isVisible;
+    this.group.visible = isVisible;
+    this.canvas.requestRenderAll();
   }
 
-  // Method to toggle italic style
-  setItalic(isItalic) {
-    this.set({ fontStyle: isItalic ? "italic" : "normal" });
-    this.setCoords();
+  setOpacity(newOpacity) {
+    this.opacity = newOpacity;
+    this.group.opacity = newOpacity;
+    this.canvas.requestRenderAll();
   }
 
-  // Method to toggle underline style
-  setUnderline(isUnderline) {
-    this.set({ underline: isUnderline });
-    this.setCoords();
+  // Add the object to a layout (e.g., another group or canvas layer)
+  addToLayout(layout) {
+    layout.add(this.group);
   }
 
-  // Method to toggle strikethrough (linethrough) style
-  setStrikethrough(isStrikethrough) {
-    this.set({ linethrough: isStrikethrough });
-    this.setCoords();
-  }
-
-  // Method to update position based on current text dimensions
-  updatePosition() {
-    this.left = this.anchorX;
-    this.top = this.anchorY - this.height; // Adjust Y position to account for height
-    this.setCoords();
+  // Get plain text (removing formatting if needed)
+  getText() {
+    return this.text;
   }
 }
 

@@ -77,16 +77,25 @@ const CanvasArea = ({
             tempRef.current.height
           );
         } else if (tempRef.current.type === "Text") {
-          let fontSize = Math.round(
-            (tempRef.current.currentHeight / tempRef.current.firstHeight) *
+          if (tempRef.current.currentHeight !== tempRef.current.firstHeight) {
+            let fontSize = Math.round(
+              (tempRef.current.currentHeight / tempRef.current.firstHeight) *
+                tempRef.current.fontSize
+            );
+            onScaleElement(
+              tempRef.current.id,
+              tempRef.current.firstWidth,
+              tempRef.current.currentHeight,
+              fontSize
+            );
+          } else {
+            onScaleElement(
+              tempRef.current.id,
+              tempRef.current.currentWidth,
+              tempRef.current.currentHeight,
               tempRef.current.fontSize
-          );
-          onScaleElement(
-            tempRef.current.id,
-            tempRef.current.currentWidth,
-            tempRef.current.currentHeight,
-            fontSize
-          );
+            );
+          }
         } else if (tempRef.current.type === "ButtonImage") {
           let scale_value =
             (tempRef.current.currentHeight / tempRef.current.firstHeight) *
@@ -420,19 +429,21 @@ const CanvasArea = ({
 
       case "Text":
         return new FabricText(
+          canvasObj,
           element.x,
           element.y,
           element.text,
-          element.scale,
-          element.fontPath || null,
-          element.color,
-          element.fontFamily || "sans-serif",
+          element.fontFamily || "Roboto",
           element.fontSize,
+          element.color,
           element.bold,
           element.italic,
           element.underline,
-          element.strikethrough
-        );
+          element.strikethrough,
+          element.bgColor,
+          element.boxWidth,
+          element.textAlignment
+        ).group;
 
       case "Toggle":
         return new FabricToggle(
