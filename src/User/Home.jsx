@@ -351,7 +351,7 @@ def create_ui(window):
         case "Image":
           params += `, image_path="assets/Images/image_${index + 1}", scale=${
             el.scale_value
-          }, visibility=${el.visibility === false ? "False" : "True"}, tag = ${
+          }, is_visible=${el.visibility === false ? "False" : "True"}, opacity=${el.opacity}, tag = ${
             el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
           break;

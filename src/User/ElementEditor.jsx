@@ -1709,27 +1709,6 @@ const ElementEditor = ({ selectedElement, elements, setElements }) => {
             </div>
 
             <div className="h-[40px] my-auto border-l border-gray-300"></div>
-            <div className="flex flex-col justify-center items-center">
-              {/* Hidden Checkbox */}
-              <label className="block text-xs">Visibility</label>
-              <button
-                onClick={() =>
-                  handleChange({
-                    target: {
-                      name: "visibility",
-                      value: editedElement.visibility === false ? true : false,
-                    },
-                  })
-                }
-                className="flex items-center"
-              >
-                <img
-                  src={editedElement.visibility === true ? UnhideEye : hideEye} // Change the image paths
-                  alt="Toggle visibility"
-                  className="w-6 h-6"
-                />
-              </button>
-            </div>
           </div>
         );
 

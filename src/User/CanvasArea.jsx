@@ -561,6 +561,7 @@ const CanvasArea = ({
                 scaleY: element.scale_value || 1,
                 selectable: true,
                 hasControls: true,
+                opacity: element.opacity,
               });
 
               // Disable vertical and horizontal scaling controls

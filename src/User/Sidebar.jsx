@@ -1202,11 +1202,12 @@ const Sidebar = ({
                           y: 100,
                           variableName: "Image",
                           name: null,
-                          hidden: false,
+                          hidden: true,
                           type: "Image",
                           scale_value: 0.3,
                           makeButton: false,
                           id: Date.now(),
+                          opacity: 1,
                         };
                         // Pass the modified image object to onAddElement
                         onAddElement("Image", modifiedImage);
@@ -1704,11 +1705,12 @@ const Sidebar = ({
                                     y: 100,
                                     variableName: "Image",
                                     name: null,
-                                    hidden: false,
+                                    hidden: true,
                                     type: "Image",
                                     scale_value: 0.3,
                                     makeButton: false,
                                     id: Date.now(),
+                                    opacity: 1,
                                   };
                                   onAddElement("Image", modifiedImage);
                                 }}
