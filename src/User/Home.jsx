@@ -196,8 +196,28 @@ const Home = () => {
       (a, b) => (a.zIndex || 1) - (b.zIndex || 1)
     );
     let pythonCode = `
-#.................... LOGIC CODE ....................#\n\n
-#..................... UI CODE .....................#\n
+#.................... 1. LOGIC CODE ....................#\n\n
+#.................... 2. EVENTS BINDING ....................#\n
+def attach_events():
+    pass
+
+#.................... 3. MAIN FUNCTION ....................#\n
+def main():
+  # Create a window for the calculator
+  window = pv.Window(title="PyVisual Window", width=${
+    !width ? 700 : width
+  }, height=${!height ? 400 : height}, bg_color=${
+      !color ? `(1,1,1,1)` : `${normalizeRgba(color)}`
+    },
+  icon=None, bg_image=${
+    !bgImage ? "None" : `"assets/background/background.jpg"`
+  }, is_frameless=False, is_resizable=False)
+  create_ui(window)
+  attach_events()
+  # Display the window
+  window.show()
+
+#..................... 4. UI CODE .....................#\n
 
 ui = {}
 
@@ -286,15 +306,10 @@ def create_ui(window):
           let Underline = el.underline === true ? "True" : "False";
           let Strike = el.strikethrough === true ? "True" : "False";
           params += `, text='${el.text}',
-                font="assets/fonts/${el.fontFamily}/${
-            el.fontFamily
-          }.ttf", font_color='${normalizeRgba(el.color)}', font_size=${
-            el.fontSize
-          },
-                bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}, visibility=${
-            el.visibility === true ? `True` : `False`
-          }, tag = ${
-            el.name === null || el.name === "" ? `None` : `"${el.name}"`
+          font="assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf", font_color='${normalizeRgba(el.color)}', font_size=${el.fontSize},
+          bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}, 
+          bg_color=${el.bgColor}, box_width=${el.boxWidth}, text_alignment="${el.textAlignment}",
+          is_visible=${el.visibility === true ? `True` : `False`}, opacity=${el.opacity}, tag = ${el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
           break;
 
@@ -369,12 +384,8 @@ def create_ui(window):
                          text_offset=${el.textOffset}, show_text=${el.showText}`;
           break;
         case "Image":
-          params += `, image_path="assets/Images/image_${index + 1}", scale=${
-            el.scale_value
-          }, is_visible=${
-            el.visibility === false ? "False" : "True"
-          }, opacity=${el.opacity}, tag = ${
-            el.name === null || el.name === "" ? `None` : `"${el.name}"`
+          params += `, image_path="assets/Images/image_${index + 1}", 
+          scale=${el.scale_value}, is_visible=${el.visibility === false ? "False" : "True"}, opacity=${el.opacity}, tag=${el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
           break;
         case "Svg":
@@ -412,21 +423,21 @@ def create_ui(window):
         case "Rect":
           params += `, width=${Math.floor(el.width)}, height=${Math.floor(
             el.height
-          )}, radius=${el.radius}, 
-          color=${normalizeRgba(el.Color)}, border_color=${normalizeRgba(
+          )}, corner_radius=${el.radius}, 
+          bg_color=${normalizeRgba(el.Color)}, border_color=${normalizeRgba(
             el.borderColor
-          )}, border_width=${el.borderWidth}, 
-          visibility=${el.visibility === true ? `True` : `False`}, tag=${
+          )}, border_thickness=${el.borderWidth}, 
+          is_visible=${el.visibility === true ? `True` : `False`}, opacity=1, tag=${
             el.tag === null ? `None` : `"${el.tag}"`
           }`;
           break;
 
         case "Circle":
           params += `, radius=${Math.floor(el.radius)}, 
-            color=${normalizeRgba(el.Color)}, border_color=${normalizeRgba(
+            bg_color=${normalizeRgba(el.Color)}, border_color=${normalizeRgba(
             el.borderColor
-          )}, border_width=${el.borderWidth}, 
-            visibility= ${el.visibility === true ? `True` : `False`}, tag=${
+          )}, border_thickness=${el.borderWidth}, 
+            is_visible=${el.visibility === true ? `True` : `False`}, opacity=1, tag=${
             el.tag === null ? `None` : `"${el.tag}"`
           }`;
           break;
@@ -434,12 +445,12 @@ def create_ui(window):
         case "Line":
           params += `, points=[${Math.floor(el.x1)} , ${Math.floor(
             height - el.y1
-          )}, ${Math.floor(el.x2)}, ${Math.floor(height - el.y2)} ], width=${
+          )}, ${Math.floor(el.x2)}, ${Math.floor(height - el.y2)} ], thickness=${
             el.strokeWidth
           }, 
-              color=${normalizeRgba(el.Color)}, visibility= ${
+            color=${normalizeRgba(el.Color)}, is_visible= ${
             el.visibility === true ? `True` : `False`
-          }, tag=${el.tag === null ? `None` : `"${el.tag}"`}`;
+          }, opacity=1, tag=${el.tag === null ? `None` : `"${el.tag}"`}`;
           break;
 
         default:
@@ -467,19 +478,6 @@ def create_ui(window):
 
     pythonCode += `
     
-def main():
-  # Create a window for the calculator
-  window = pv.Window(title="PyVisual Window", width=${
-    !width ? 700 : width
-  }, height=${!height ? 400 : height}, bg_color=${
-      !color ? `(1,1,1,1)` : `${normalizeRgba(color)}`
-    },
-  icon=None, bg_image=${
-    !bgImage ? "None" : `"assets/background/background.jpg"`
-  }, is_frameless=False, is_resizable=False)
-  create_ui(window)
-  # Display the window
-  window.show()
 
 if __name__ == '__main__':
   import pyvisual as pv

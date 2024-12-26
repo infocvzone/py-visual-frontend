@@ -442,7 +442,9 @@ const CanvasArea = ({
           element.strikethrough,
           element.bgColor,
           element.boxWidth,
-          element.textAlignment
+          element.textAlignment,
+          element.isVisible || true,
+          element.opacity
         ).group;
 
       case "Toggle":
