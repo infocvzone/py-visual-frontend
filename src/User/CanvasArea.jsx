@@ -690,6 +690,7 @@ const CanvasArea = ({
             strokeWidth: element.borderWidth, // Border width (default to 1)
             selectable: true, // Allow selecting the circle
             hasControls: true, // Allow controls to resize
+            opacity: element.opacity,
           });
 
           // Disable vertical and horizontal scaling controls
@@ -719,6 +720,7 @@ const CanvasArea = ({
             hasControls: true, // Allow controls to resize
             rx: element.radius || 0, // Rounded corners in X direction
             ry: element.radius || 0, // Rounded corners in Y direction
+            opacity: element.opacity, // Opacity (default is 1, fully opaque)
           });
 
           canvasObj.add(rect);
@@ -735,6 +737,7 @@ const CanvasArea = ({
               strokeWidth: element.strokeWidth || 1, // Stroke width
               selectable: true, // Allow selecting the line
               hasControls: true, // Allow controls to resize
+              opacity: element.opacity, // Opacity (default is 1, fully opaque)
             }
           );
 
@@ -985,8 +988,9 @@ const CanvasArea = ({
         style={{
           width: `${Width}px`,
           // Height of the status bar
-          backgroundColor: "#262626", // Status bar color
-          color: "#fff", // Text color
+          height:"40px",
+          backgroundColor: "#FFFFFF", // Status bar color
+          color: "#000000", // Text color
           display: "flex",
           paddingLeft: "10px",
           fontSize: "14px", // Ensure it stays above the canvas
@@ -995,12 +999,12 @@ const CanvasArea = ({
       >
         <div className="flex items-center justify-center gap-1">
           <img src={pyVisualIcon} alt="Py-Visual" className="w-6" />
-          <div className="text-xs text-gray-200">
+          <div className="text-sm text-black">
             {Height >= 250 ? "PyVisual Window" : ""}
           </div>
         </div>
-        <div className="flex items-center justify-center gap-[9px]">
-          <div className="h-4">
+        <div className="flex items-center justify-center gap-[20px]">
+          <div className="h-4 mr-[20px]">
             <svg
               width="14px"
               height="14px"
@@ -1008,8 +1012,8 @@ const CanvasArea = ({
               version="1.1"
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
-              fill="#ffffff"
-              stroke="#ffffff"
+              fill="#000000"
+              stroke="#000000"
             >
               <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
               <g
@@ -1048,7 +1052,7 @@ const CanvasArea = ({
                       <path
                         d="M3,12 C3,11.4477 3.44772,11 4,11 L20,11 C20.5523,11 21,11.4477 21,12 C21,12.5523 20.5523,13 20,13 L4,13 C3.44772,13 3,12.5523 3,12 Z"
                         id="路径"
-                        fill="#ffffff"
+                        fill="#000000"
                       >
                         {" "}
                       </path>{" "}
@@ -1058,7 +1062,7 @@ const CanvasArea = ({
               </g>
             </svg>
           </div>
-          <div className="h-4">
+          <div className="h-4 mr-[20px]">
             <svg
               width="12px"
               height="12px"
@@ -1066,8 +1070,8 @@ const CanvasArea = ({
               version="1.1"
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
-              fill="#ffffff"
-              stroke="#ffffff"
+              fill="#949494"
+              stroke="#949494"
             >
               <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
               <g
@@ -1079,7 +1083,7 @@ const CanvasArea = ({
                 {" "}
                 <path
                   d="M0 0v17h17v-17h-17zM16 16h-15v-15h15v15z"
-                  fill="#ffffff"
+                  fill="#949494"
                 ></path>{" "}
               </g>
             </svg>
@@ -1091,7 +1095,7 @@ const CanvasArea = ({
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              stroke="#ffffff"
+              stroke="#949494"
             >
               <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
               <g
@@ -1103,7 +1107,7 @@ const CanvasArea = ({
                 {" "}
                 <path
                   d="M20.7457 3.32851C20.3552 2.93798 19.722 2.93798 19.3315 3.32851L12.0371 10.6229L4.74275 3.32851C4.35223 2.93798 3.71906 2.93798 3.32854 3.32851C2.93801 3.71903 2.93801 4.3522 3.32854 4.74272L10.6229 12.0371L3.32856 19.3314C2.93803 19.722 2.93803 20.3551 3.32856 20.7457C3.71908 21.1362 4.35225 21.1362 4.74277 20.7457L12.0371 13.4513L19.3315 20.7457C19.722 21.1362 20.3552 21.1362 20.7457 20.7457C21.1362 20.3551 21.1362 19.722 20.7457 19.3315L13.4513 12.0371L20.7457 4.74272C21.1362 4.3522 21.1362 3.71903 20.7457 3.32851Z"
-                  fill="#ffffff"
+                  fill="#000000"
                 ></path>{" "}
               </g>
             </svg>

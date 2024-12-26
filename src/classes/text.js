@@ -39,9 +39,9 @@ class FabricText {
     // Create background rectangle
     this.bgRect = new fabric.Rect({
       left: this.x,
-      top: this.y,
+      top: this.y-3,
       width: this.boxWidth,
-      height: this.fontSize + 10,
+      height: this.fontSize + 3,
       fill: this.bgColor,
       selectable: false,
     });

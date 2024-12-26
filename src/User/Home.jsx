@@ -306,9 +306,9 @@ def create_ui(window):
           let Underline = el.underline === true ? "True" : "False";
           let Strike = el.strikethrough === true ? "True" : "False";
           params += `, text='${el.text}',
-          font="assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf", font_color='${normalizeRgba(el.color)}', font_size=${el.fontSize},
+          font="assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf", font_color=${normalizeRgba(el.color)}, font_size=${el.fontSize},
           bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}, 
-          bg_color=${el.bgColor}, box_width=${el.boxWidth}, text_alignment="${el.textAlignment}",
+          bg_color=${normalizeRgba(el.bgColor)}, box_width=${el.boxWidth}, text_alignment="${el.textAlignment}",
           is_visible=${el.visibility === true ? `True` : `False`}, opacity=${el.opacity}, tag = ${el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
           break;
@@ -427,7 +427,7 @@ def create_ui(window):
           bg_color=${normalizeRgba(el.Color)}, border_color=${normalizeRgba(
             el.borderColor
           )}, border_thickness=${el.borderWidth}, 
-          is_visible=${el.visibility === true ? `True` : `False`}, opacity=1, tag=${
+          is_visible=${el.visibility === true ? `True` : `False`}, opacity=${el.opacity}, tag=${
             el.tag === null ? `None` : `"${el.tag}"`
           }`;
           break;
@@ -437,7 +437,7 @@ def create_ui(window):
             bg_color=${normalizeRgba(el.Color)}, border_color=${normalizeRgba(
             el.borderColor
           )}, border_thickness=${el.borderWidth}, 
-            is_visible=${el.visibility === true ? `True` : `False`}, opacity=1, tag=${
+            is_visible=${el.visibility === true ? `True` : `False`}, opacity=${el.opacity}, tag=${
             el.tag === null ? `None` : `"${el.tag}"`
           }`;
           break;
@@ -450,7 +450,7 @@ def create_ui(window):
           }, 
             color=${normalizeRgba(el.Color)}, is_visible= ${
             el.visibility === true ? `True` : `False`
-          }, opacity=1, tag=${el.tag === null ? `None` : `"${el.tag}"`}`;
+          }, opacity=${el.opacity}, tag=${el.tag === null ? `None` : `"${el.tag}"`}`;
           break;
 
         default:
@@ -459,7 +459,7 @@ def create_ui(window):
 
       params += ")";
       pythonCode += ` 
-    #Element ${index + 1}\n   ui["${el.variableName}"] = pv.${
+    #Element ${index + 1}\n   ui["${el.variableName}_${index + 1}"] = pv.${
         el.type === "InputField"
           ? "BasicTextInput"
           : el.type === "ButtonImage"
