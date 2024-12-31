@@ -384,7 +384,7 @@ def create_ui(window):
                          text_offset=${el.textOffset}, show_text=${el.showText}`;
           break;
         case "Image":
-          params += `, image_path="assets/Images/image_${index + 1}", 
+          params += `, image_path="assets/Images/image_${index + 1}.png", 
           scale=${el.scale_value}, is_visible=${el.visibility === false ? "False" : "True"}, opacity=${el.opacity}, tag=${el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
           break;
@@ -607,7 +607,7 @@ if __name__ == '__main__':
       if (element.type === "Image") {
         try {
           const image = await downloadResource(element.webformatURL);
-          Images.file(`image_${index}`, image);
+          Images.file(`image_${index}.png`, image);
         } catch (error) {
           console.error("Failed to download background image:", error);
         }
