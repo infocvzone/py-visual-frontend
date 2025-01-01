@@ -306,10 +306,19 @@ def create_ui(window):
           let Underline = el.underline === true ? "True" : "False";
           let Strike = el.strikethrough === true ? "True" : "False";
           params += `, text='${el.text}',
-          font="assets/fonts/${el.fontFamily}/${el.fontFamily}.ttf", font_color=${normalizeRgba(el.color)}, font_size=${el.fontSize},
+          font="assets/fonts/${el.fontFamily}/${
+            el.fontFamily
+          }.ttf", font_color=${normalizeRgba(el.color)}, font_size=${
+            el.fontSize
+          },
           bold=${Bold} , italic=${Italic}, underline=${Underline}, strikethrough=${Strike}, 
-          bg_color=${normalizeRgba(el.bgColor)}, box_width=${el.boxWidth}, text_alignment="${el.textAlignment}",
-          is_visible=${el.visibility === true ? `True` : `False`}, opacity=${el.opacity}, tag = ${el.name === null || el.name === "" ? `None` : `"${el.name}"`
+          bg_color=${normalizeRgba(el.bgColor)}, box_width=${
+            el.boxWidth
+          }, text_alignment="${el.textAlignment}",
+          is_visible=${el.visibility === true ? `True` : `False`}, opacity=${
+            el.opacity
+          }, tag = ${
+            el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
           break;
 
@@ -385,7 +394,10 @@ def create_ui(window):
           break;
         case "Image":
           params += `, image_path="assets/Images/image_${index + 1}.png", 
-          scale=${el.scale_value}, is_visible=${el.visibility === false ? "False" : "True"}, opacity=${el.opacity}, tag=${el.name === null || el.name === "" ? `None` : `"${el.name}"`
+          scale=${el.scale_value}, is_visible=${
+            el.visibility === false ? "False" : "True"
+          }, opacity=${el.opacity}, tag=${
+            el.name === null || el.name === "" ? `None` : `"${el.name}"`
           }`;
           break;
         case "Svg":
@@ -427,9 +439,9 @@ def create_ui(window):
           bg_color=${normalizeRgba(el.Color)}, border_color=${normalizeRgba(
             el.borderColor
           )}, border_thickness=${el.borderWidth}, 
-          is_visible=${el.visibility === true ? `True` : `False`}, opacity=${el.opacity}, tag=${
-            el.tag === null ? `None` : `"${el.tag}"`
-          }`;
+          is_visible=${el.visibility === true ? `True` : `False`}, opacity=${
+            el.opacity
+          }, tag=${el.tag === null ? `None` : `"${el.tag}"`}`;
           break;
 
         case "Circle":
@@ -437,20 +449,22 @@ def create_ui(window):
             bg_color=${normalizeRgba(el.Color)}, border_color=${normalizeRgba(
             el.borderColor
           )}, border_thickness=${el.borderWidth}, 
-            is_visible=${el.visibility === true ? `True` : `False`}, opacity=${el.opacity}, tag=${
-            el.tag === null ? `None` : `"${el.tag}"`
-          }`;
+            is_visible=${el.visibility === true ? `True` : `False`}, opacity=${
+            el.opacity
+          }, tag=${el.tag === null ? `None` : `"${el.tag}"`}`;
           break;
 
         case "Line":
           params += `, points=[${Math.floor(el.x1)} , ${Math.floor(
             height - el.y1
-          )}, ${Math.floor(el.x2)}, ${Math.floor(height - el.y2)} ], thickness=${
-            el.strokeWidth
-          }, 
+          )}, ${Math.floor(el.x2)}, ${Math.floor(
+            height - el.y2
+          )} ], thickness=${el.strokeWidth}, 
             color=${normalizeRgba(el.Color)}, is_visible= ${
             el.visibility === true ? `True` : `False`
-          }, opacity=${el.opacity}, tag=${el.tag === null ? `None` : `"${el.tag}"`}`;
+          }, opacity=${el.opacity}, tag=${
+            el.tag === null ? `None` : `"${el.tag}"`
+          }`;
           break;
 
         default:

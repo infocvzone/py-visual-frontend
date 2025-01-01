@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_KEY } from "../constant";
 import backgroundImage from "../assets/Background.png";
+import Swal from "sweetalert2";
 
 const AdminSignup = () => {
   const [formData, setFormData] = useState({
@@ -28,7 +29,14 @@ const AdminSignup = () => {
     }
 
     try {
-      const response = await axios.post(`${API_KEY}api/admins/signup`, {
+      Swal.fire({
+        title: "You Are Not Allow To Register As Admin",
+        icon: "warning",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
+      });
+
+      /*const response = await axios.post(`${API_KEY}api/admins/signup`, {
         username,
         email,
         password,
@@ -38,7 +46,7 @@ const AdminSignup = () => {
         navigate(`/admin-verify/${email}`);
       } else {
         setError(response.data.message || "Signup failed. Please try again.");
-      }
+      }*/
     } catch (err) {
       // Log error for debugging
       console.error("Signup error:", err);

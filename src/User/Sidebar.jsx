@@ -2157,15 +2157,9 @@ const Sidebar = ({
                         <button
                           onClick={() => {
                             let data = {
-                              ...rect,
-                              radius: 0,
-                              borderColor: "rgba(0,0,0,1)",
-                              borderWidth: 0,
-                              visibility: true,
-                              tag: null,
-                              variableName: "RectangleShape",
+                              type:"GroupLayout"
                             };
-                            onAddElement("Rect", data);
+                            onAddElement("GroupLayout", data);
                           }}
                           className="border p-1"
                           key={index}
