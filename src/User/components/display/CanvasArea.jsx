@@ -168,6 +168,9 @@ const CanvasArea = ({
               handleElementSizing(fabricElement, element.id); // Update size when selected
               fabricElement.on("moving", () => {
                 handleElementMovement(fabricElement, element.id);
+                if(fabricElement.customType !== "GroupLayout"){
+                  AddToLayout(fabricElement)
+                }
                 debounce(
                   requestAnimationFrame(() =>
                     updateAlignmentLines(fabricElement)
