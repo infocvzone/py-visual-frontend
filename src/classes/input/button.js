@@ -20,7 +20,8 @@ class FabricButton {
     bold = false,       // Default value for bold
     italic = false,     // Default value for italic
     underline = false,  // Default value for underline
-    strikethrough = false // Default value for strikethrough
+    strikethrough = false, // Default value for strikethrough
+    id = 1
   ) {
     // Initialize button properties
     this.canvas = canvas;
@@ -50,6 +51,7 @@ class FabricButton {
     this.italic = italic;
     this.underline = underline;
     this.strikethrough = strikethrough;
+    this.id = id;
 
     // Generate hover and clicked colors based on idle color
     const { r, g, b, a } = this.parseColor(idleColor);
@@ -91,10 +93,11 @@ class FabricButton {
       opacity: this.opacity,
       selectable: true,
       hoverCursor: "pointer",
+      id: this.id,
     });
 
     // Add the button to the canvas
-    this.canvas.add(this.buttonGroup);
+    //this.canvas.add(this.buttonGroup);
 
     // Bind events for hover, click, and release
     this.bindEvents();

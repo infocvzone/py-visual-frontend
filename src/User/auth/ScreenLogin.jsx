@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { EyeIcon, EyeOffIcon } from '@heroicons/react/solid'; // You can use Heroicons or any icon library
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 
 function ScreenLogin() {
     const [passwordVisible, setPasswordVisible] = useState(false);

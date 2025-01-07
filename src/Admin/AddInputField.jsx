@@ -3,7 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import load from "../assets/loading.gif";
 import { API_KEY } from "../constant";
-import FabricInputField from "../classes/inputField";
+import FabricInputField from "../classes/input/inputField";
 
 const AddInputField = () => {
   const canvasRef = useRef(null);

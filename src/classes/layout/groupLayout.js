@@ -1,12 +1,12 @@
-import FabricButton from "./button";
-import FabricInputField from "./inputField";
-import FabricText from "./text";
+import FabricButton from "../input/button";
+import FabricInputField from "../input/inputField";
+import FabricText from "../output/text";
 
 class GroupLayout {
   constructor(
     canvas,
-    x = 0,
-    y = 0,
+    x = 100,
+    y = 100,
     orientation = "horizontal",
     spacing = 10,
     padding = [10, 10, 10, 10],
@@ -14,6 +14,7 @@ class GroupLayout {
     borderColor = "red",
     borderWidth = 1,
     radius = 0,
+    id = 1,
     elements = []
   ) {
     this.canvas = canvas;
@@ -27,6 +28,7 @@ class GroupLayout {
     this.borderWidth = borderWidth;
     this.radius = radius;
     this.elements = elements;
+    this.id = id;
 
     // Create a background rectangle
     this.bgRect = new fabric.Rect({
@@ -44,6 +46,7 @@ class GroupLayout {
       left: this.x,
       top: this.y,
       selectable: true,
+      id: this.id,
     });
 
     this.updateGroupLayout(); // Apply layout and add elements
@@ -56,13 +59,14 @@ class GroupLayout {
     const children = [];
 
     for (const element of this.elements) {
+      
       const child = await this.createElement(element);
 
       // Get dimensions using getBoundingRect to handle cases where width or height is missing
       const boundingRect = child.getBoundingRect();
 
-      const childWidth = boundingRect.width || 0; // Fallback to 0 if not defined
-      const childHeight = boundingRect.height || 0;
+      const childWidth = boundingRect.width; // Fallback to 0 if not defined
+      const childHeight = boundingRect.height;
 
       if (this.orientation === "horizontal") {
         child.left = currentX;
@@ -93,12 +97,13 @@ class GroupLayout {
           this.padding[2];
 
     this.bgRect.set({
-      width: totalWidth,
-      height: totalHeight,
+      width: this.elements.length > 0 ? totalWidth : 100,
+      height: this.elements.length > 0 ? totalHeight : 100,
     });
 
     // Add background and elements to the group
     this.group._objects = [this.bgRect, ...children];
+    this.group.customType = "GroupLayout";
     this.group.addWithUpdate();
     this.canvas.renderAll();
   }
@@ -472,6 +477,11 @@ class GroupLayout {
       default:
         throw new Error(`Unsupported element type: ${element.type}`);
     }
+  }
+
+  async getFabricElement() {
+    await this.updateGroupLayout();
+    return this.group;
   }
 
   addElements(elements) {

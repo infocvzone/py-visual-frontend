@@ -1,6 +1,6 @@
 // components/InputComponent.js
 import React, { useEffect, useRef } from "react";
-import PlainInput from "../classes/PlainInputField"; // Import the PlainInput class
+import PlainInput from "../classes/input/PlainInputField"; // Import the PlainInput class
 
 const InputComponent = ({
   width = 300,

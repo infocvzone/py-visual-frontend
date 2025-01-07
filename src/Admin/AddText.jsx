@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import FabricText from "../classes/text";
+import FabricText from "../classes/output/text";
 import axios from "axios";
 import Swal from "sweetalert2";
 import load from "../assets/loading.gif";

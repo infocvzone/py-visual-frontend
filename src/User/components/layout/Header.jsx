@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import logo from "../assets/cv-zone.svg";
-import code from "../assets/download.png";
-import save from "../assets/save.png";
-import DownloadSvg from "../assets/download.svg";
+import logo from "../../../assets/cv-zone.svg";
+import code from "../../../assets/download.png";
+import save from "../../../assets/save.png";
+
 
 function Header({ onGenerateCode, onSaveProject, ProjectName }) {
   const [projectName, setProjectName] = useState(ProjectName);

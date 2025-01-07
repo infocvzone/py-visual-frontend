@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import FabricButton from "../classes/button";
 import axios from "axios";
 import Swal from "sweetalert2";
 import load from "../assets/loading.gif";

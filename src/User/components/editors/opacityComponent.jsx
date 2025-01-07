@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import opacitySvg from "../assets/opacity.svg";
+import opacitySvg from "../../../assets/opacity.svg";
 
 const SvgButtonWithRange = ({ Name, value, onChange }) => {
   const [showSlider, setShowSlider] = useState(false);

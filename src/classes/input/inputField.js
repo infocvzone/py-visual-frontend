@@ -15,6 +15,7 @@ class FabricInputField {
     cursorBlinkSpeed = 500,
     padding = 10,
     fontFamily = "Roboto",
+    id = 1,
     input_type = "text",
     default_text = "",
     padding_left = 10,
@@ -53,6 +54,7 @@ class FabricInputField {
     this.default_text = default_text;
     this.border_style = border_style;
     this.on_input = on_input;
+    this.id = id;
 
     // Create a Fabric rectangle to represent the input field
     this.inputRect = new fabric.Rect({
@@ -83,6 +85,7 @@ class FabricInputField {
       top: this.y,
       selectable: true,
       hoverCursor: "text",
+      id : id,
     });
 
     // Add the input field to the canvas

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SketchPicker } from "react-color";
-import closeSvg from "../assets/close.svg";
+import closeSvg from "../../../assets/close.svg";
 
 function ColorComponent({ Name, elementColor, Function }) {
   const [open, setOpen] = useState(false);

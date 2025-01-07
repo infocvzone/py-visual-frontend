@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import PlainButton from "../classes/plainButton"; // Import the class
+import PlainButton from "../classes/input/plainButton"; // Import the class
 
 const ButtonComponent = ({
   text = "My Button",

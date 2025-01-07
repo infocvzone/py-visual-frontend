@@ -2,11 +2,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { API_KEY } from "../constant";
+import { API_KEY } from "../../constant";
 import { useDispatch } from "react-redux";
-import { Userlogin } from "../Redux/authSlice";
-import logo from "../assets/logo.png"; // Add your logo image in assets folder
-import backgroundImage from "../assets/Background.png"; // Background image for styling
+import { Userlogin } from "../../Redux/authSlice";
+import logo from "../../assets/logo.png"; // Add your logo image in assets folder
+import backgroundImage from "../../assets/Background.png"; // Background image for styling
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });

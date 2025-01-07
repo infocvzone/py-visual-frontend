@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { API_KEY } from "../constant";
+import { API_KEY } from "../../constant";
 import { useSelector } from "react-redux";
 import { FaTrashAlt } from "react-icons/fa"; // Import delete icon
 import Swal from "sweetalert2";

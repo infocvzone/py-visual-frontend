@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import PlainText from "../classes/plainText"; // Import the PlainText class
+import PlainText from "../classes/output/plainText"; // Import the PlainText class
 
 const TextComponent = ({
   text = "Default Text",

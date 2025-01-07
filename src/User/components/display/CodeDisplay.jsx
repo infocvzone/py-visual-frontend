@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import hljs from "highlight.js"; // Import highlight.js
 import "highlight.js/styles/atom-one-dark.css";
 import axios from "axios"; // For making API requests
-import { API_KEY } from "../constant";
+import { API_KEY } from "../../../constant";
 
 const CodeDisplay = ({ code, setCodeDisplay, onDownloadProject }) => {
   const [copySuccess, setCopySuccess] = useState(""); // State to show copy success message
@@ -77,11 +77,11 @@ const CodeDisplay = ({ code, setCodeDisplay, onDownloadProject }) => {
           fill="#5c5c5c"
           stroke="#5c5c5c"
         >
-          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
           <g
             id="SVGRepo_tracerCarrier"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           ></g>
           <g id="SVGRepo_iconCarrier">
             <path

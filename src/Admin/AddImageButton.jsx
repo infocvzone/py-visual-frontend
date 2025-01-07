@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import ButtonImage from "../classes/imageButton";
+import ButtonImage from "../classes/input/imageButton";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { API_KEY } from "../constant";

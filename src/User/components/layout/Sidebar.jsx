@@ -1,24 +1,24 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import ButtonSvg from "../assets/categories/button-svg.svg";
-import ButtonComponent from "../components/buttonComponet";
-import TextSvg from "../assets/categories/text-svg.svg";
-import LogoutSvg from "../assets/log-out.svg";
-import InputSvg from "../assets/categories/input-svg.svg";
-import ShapesSvg from "../assets/categories/shapes.svg";
-import IconSvg from "../assets/categories/icons.svg";
-import BackgroundSvg from "../assets/categories/background.svg";
-import GraphicsSvg from "../assets/search-svg.svg";
-import LoadingGif from "../assets/loading1.gif";
-import WindowSvg from "../assets/categories/window.svg";
-import closeSvg from "../assets/close.svg";
-import TextComponent from "../components/textComponent";
-import ImageSvg from "../assets/categories/image-pen.svg";
-import { API_KEY } from "../constant";
-import InputComponent from "../components/InputComponent";
+import ButtonSvg from "../../../assets/categories/button-svg.svg";
+import ButtonComponent from "../../../components/buttonComponet";
+import TextSvg from "../../../assets/categories/text-svg.svg";
+import LogoutSvg from "../../../assets/log-out.svg";
+import InputSvg from "../../../assets/categories/input-svg.svg";
+import ShapesSvg from "../../../assets/categories/shapes.svg";
+import IconSvg from "../../../assets/categories/icons.svg";
+import BackgroundSvg from "../../../assets/categories/background.svg";
+import GraphicsSvg from "../../../assets/search-svg.svg";
+import LoadingGif from "../../../assets/loading1.gif";
+import WindowSvg from "../../../assets/categories/window.svg";
+import closeSvg from "../../../assets/close.svg";
+import TextComponent from "../../../components/textComponent";
+import ImageSvg from "../../../assets/categories/image-pen.svg";
+import { API_KEY } from "../../../constant";
+import InputComponent from "../../../components/InputComponent";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
-import { Userlogout } from "../Redux/authSlice";
+import { Userlogout } from "../../../Redux/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { SketchPicker } from "react-color";
@@ -2157,7 +2157,93 @@ const Sidebar = ({
                         <button
                           onClick={() => {
                             let data = {
-                              type:"GroupLayout"
+                              id: 1,
+                              type: "GroupLayout",
+                              x: 0,
+                              y: 0,
+                              orientatio: "vertical",
+                              spacing: 10,
+                              padding: [10, 10, 10, 10],
+                              backgroundColor: "rgba(255, 255, 255, 0)",
+                              borderColor: "red",
+                              borderWidth: 1,
+                              radius: 0,
+                              arr: [
+                                {
+                                  variableName: "Button",
+                                  opacity: 1,
+                                  borderRadius: 0,
+                                  bold: false,
+                                  italic: false,
+                                  underline: false,
+                                  strikethrough: false,
+                                  _id: "6710ab5af770facc291ab934",
+                                  id: 1735890233420,
+                                  type: "BasicButton",
+                                  x: 150,
+                                  y: 150,
+                                  width: 63,
+                                  height: 63,
+                                  text: "0",
+                                  fontFamily: "Time New Roman",
+                                  fontSize: 18,
+                                  textColor: "#4a4a4a",
+                                  idleColor: "#e0e0e0",
+                                  hoverColor: "#b7b8b8",
+                                  clickedColor: "#6b6b6b",
+                                  borderColor: "#000000",
+                                  borderThickness: 0,
+                                  onClick: null,
+                                  onRelease: null,
+                                  onHover: null,
+                                  name: null,
+                                  createdAt: "2024-10-17T06:14:50.354Z",
+                                  updatedAt: "2024-10-17T06:14:50.354Z",
+                                  __v: 0,
+                                  visibility: true,
+                                  diabled: false,
+                                  disabled_opacity: 0.3,
+                                  lock: false,
+                                  zIndex: 1,
+                                },
+                                {
+                                  variableName: "Button",
+                                  opacity: 1,
+                                  borderRadius: 0,
+                                  bold: false,
+                                  italic: false,
+                                  underline: false,
+                                  strikethrough: false,
+                                  _id: "6710ac34f770facc291ab938",
+                                  id: 1735890234090,
+                                  type: "BasicButton",
+                                  x: 150,
+                                  y: 150,
+                                  width: 63,
+                                  height: 63,
+                                  text: "=",
+                                  fontFamily: "Poppins",
+                                  fontSize: 18,
+                                  textColor: "#FFFFFF",
+                                  idleColor: "#aa42ff",
+                                  hoverColor: "#9233e1",
+                                  clickedColor: "#642895",
+                                  borderColor: "#000000",
+                                  borderThickness: 0,
+                                  onClick: null,
+                                  onRelease: null,
+                                  onHover: null,
+                                  name: null,
+                                  createdAt: "2024-10-17T06:18:28.431Z",
+                                  updatedAt: "2024-10-17T06:18:28.431Z",
+                                  __v: 0,
+                                  visibility: true,
+                                  diabled: false,
+                                  disabled_opacity: 0.3,
+                                  lock: false,
+                                  zIndex: 1,
+                                },
+                              ],
                             };
                             onAddElement("GroupLayout", data);
                           }}

@@ -3,7 +3,7 @@ import Dashboard from "./Admin/Dashboard";
 import "./App.css";
 import TypesComponent from "./Admin/TypesComponent";
 import AddElementComponent from "./Admin/AddElementComponent";
-import Home from "./User/Home";
+import Home from "./User/pages/Home";
 import EditPanel from "./Admin/EditPanel";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,9 +14,9 @@ import AdminLogin from "./Admin/AdminLogin";
 import ShapeDisplay from "./Admin/ShapeDisplay";
 import AssetManagement from "./Admin/AssetsManagement";
 import Assets from "./Admin/Assets";
-import Signup from "./User/UserSignup";
-import Login from "./User/UserLogin";
-import Projects from "./User/Projects";
+import Signup from "./User/auth/UserSignup";
+import Login from "./User/auth/UserLogin";
+import Projects from "./User/pages/Projects";
 import Persona from "./Admin/CodePersona";
 
 

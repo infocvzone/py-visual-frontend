@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import FabricButton from "../classes/button";
+import FabricButton from "../classes/input/button";
 import axios from "axios";
 import Swal from "sweetalert2";
 import load from "../assets/loading.gif";
 import { API_KEY } from "../constant";
-import ColorComponent from "../User/colorComponent";
+import ColorComponent from "../User/components/editors/colorComponent";
 //import { fabric } from 'fabric';
 
 const AddButton = () => {

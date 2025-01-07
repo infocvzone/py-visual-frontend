@@ -16,7 +16,9 @@ class FabricText {
     textAlignment = "center",
     isVisible = true,
     opacity = 1,
-    tag = null
+    id = 1,
+    tag = null,
+    
   ) {
     this.canvas = canvas;
     this.text = text;
@@ -34,6 +36,7 @@ class FabricText {
     this.textAlignment = textAlignment;
     this.isVisible = isVisible;
     this.opacity = opacity;
+    this.id = id;
     this.tag = tag;
 
     // Create background rectangle
@@ -68,6 +71,7 @@ class FabricText {
       top: this.y,
       opacity: this.opacity,
       selectable: true,
+      id: id,
     });
 
     // Add to canvas

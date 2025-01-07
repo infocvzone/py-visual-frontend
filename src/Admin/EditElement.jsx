@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import FabricButton from "../classes/button";
-import FabricText from "../classes/text";
-import ButtonImage from "../classes/imageButton";
+import FabricButton from "../classes/input/button";
+import FabricText from "../classes/output/text";
+import ButtonImage from "../classes/input/imageButton";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import load from "../assets/loading.gif";
 import { API_KEY } from "../constant";
-import FabricInputField from "../classes/inputField";
+import FabricInputField from "../classes/input/inputField";
 
 function EditElement({ type, element }) {
   const canvasRef = useRef(null);
