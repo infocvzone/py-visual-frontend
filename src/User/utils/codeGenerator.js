@@ -25,7 +25,7 @@ def attach_events():
 #.................... 3. MAIN FUNCTION ....................#\n
 def main():
   # Create a window for the calculator
-  window = pv.Window(title="PyVisual Window", width=${
+  window = pv.PvWindow(title="PyVisual Window", width=${
     !width ? 700 : width
   }, height=${!height ? 400 : height}, bg_color=${
     !color ? `(1,1,1,1)` : `${normalizeRgba(color)}`
@@ -52,8 +52,8 @@ def create_ui(window):
     const elHeight = heights[el.id]?.height || 0;
     let params =
       el.type === "Line"
-        ? `(window=window`
-        : `(window=window, x=${pos.x}, y=${
+        ? `(container=window`
+        : `(container=window, x=${pos.x}, y=${
             !height ? 400 - pos.y - elHeight : height - pos.y - elHeight
           }`;
 
